@@ -1,0 +1,32 @@
+{
+  "name": "youtube-music-player",
+  "version": "0.1.0",
+  "description": "Best music youtube player",
+  "main": "main.js",
+  "build": {
+    "appId": "youtube-music-player",
+    "win": {
+      "target": [
+        "NSIS"
+      ],
+      "icon": "icon.png"
+    }
+  },
+  "scripts": {
+    "start": "electron .",
+    "build": "./node_modules/.bin/electron-builder build",
+    "build32": "./node_modules/.bin/electron-builder build --ia32"
+  },
+  "author": "4FuN",
+  "devDependencies": {
+    "electron": "^4.0.7",
+    "electron-builder": "^20.39.0"
+  },
+  "dependencies": {
+    "discord-rpc": "^3.0.1",
+    "electron-drag": "^1.2.2",
+    "jquery": "^3.3.1",
+    "lowdb": "^1.0.0",
+    "register-scheme": "0.0.2"
+  }
+}
