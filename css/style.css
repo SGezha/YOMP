@@ -203,7 +203,7 @@ input:focus {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(270deg, #b42097, #2377e3);
+  background: linear-gradient(0deg, #b42097, #2377e3);
   height: 50%;
   border-radius: 3px;
 }
@@ -235,13 +235,20 @@ input:focus {
 }
 
 .btn {
-	padding: 5px 5px;
-	background: linear-gradient(270deg, #b42097, #2377e3);
+	padding: 5px 20px;
+	background: rgb(190, 190, 190);
 	color: white;
-	border-radius: 5px;
+	border-radius: 30px;
 	cursor: pointer;
 	font-size: 22px;
-	margin: 10px;
+  margin: 10px;
+  background: linear-gradient(90deg, #00F260, #0575E6);
+  transition: 0.5s;
+  font-weight: 700;
+}
+
+.btn:hover {
+  box-shadow: 0px 0px 10px#00F260;
 }
 
 .ui-titlebar {
@@ -249,7 +256,8 @@ input:focus {
 	width: 100vw;
 	height: 32px;
 	background: linear-gradient(270deg, #b42097, #2377e3);
-	cursor: default;
+  cursor: default;
+  z-index: 99999;
 } 
 .ui-titleicon {
 	flex-grow: 1;
@@ -336,13 +344,17 @@ input:focus {
     flex: 1 1 50%;
     order: 2;
   }
+
+  .pl-container {
+    padding-bottom: 5%;
+  }
 }
 /*--------------------
   PlayList
 --------------------*/
 .pl-container {
   position: fixed;
-  top: 0;
+  top: 32px;
   right: 0;
   bottom: 50px;
   left: 0;
@@ -489,6 +501,19 @@ input:focus {
 	text-shadow: 0px 0px 7px rgba(255,255,255,0.5);
 }
 
+.fa-file-upload {
+  background: linear-gradient(270deg, #b42097, #2377e3);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+  font-size: 27px;
+  position: absolute;
+  top: 32.5%;
+  right: 17.5%;
+	cursor: pointer;
+	transition: 1s ease;
+	text-shadow: 0px 0px 7px rgba(255,255,255,0.5);
+}
+
 .fa-times {
 	background: linear-gradient(270deg, #b42097, #2377e3);
 	-webkit-background-clip: text;
@@ -616,6 +641,12 @@ input {
 	}
   }
 
+
+.img-t {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
 
 *::-webkit-scrollbar 
 {

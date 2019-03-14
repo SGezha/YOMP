@@ -60,7 +60,7 @@ function createWindow () {
     });
     mainWindow.on('hide', () => {
         appIcon.setHighlightMode('never');
-    })  ;  
+    });  
     appIcon.setContextMenu(contextMenu);
 
     globalShortcut.register('CommandOrControl+Space', () => {

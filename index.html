@@ -9,6 +9,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<link rel="stylesheet" href="css/style.css">
+	<title>YTMusicPlayer</title>
 	<link rel="stylesheet" href="css/toastr.min.css">
 </head>
 <body>
@@ -41,8 +42,10 @@
 			<h3>Add file to playlist</h3>
 			<i @click="showModal = false" class="fas fa-times"></i>
 			<input placeholder="Title" type="text" id="title">
-			<input placeholder="Link" type="text" id="link">
+			<input placeholder="Link" type="text" id="link"><i onclick="openFile()" class="fas fa-file-upload"></i>
 			<button @click="add" class="btn">SEND</button>
+			<input placeholder="Youtube playlist id" type="text" id="ytplaylist">
+			<button @click="addPlaylist" class="btn">ADD</button>
 		</div>
 	</div>
 
@@ -136,7 +139,7 @@
 			showModal: false
 		},
 		created: function() {
-			axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=no Copyright music&maxResults=50&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs")
+			axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=no copyright music&maxResults=50&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs")
 			.then(res => {
 				this.music = [];
 				res.data.items.forEach(v => {
@@ -176,6 +179,15 @@
                 }).write();
                 toastr.success(`${document.getElementById('title').value} added to playlist :3`);
                 refresh();
+			},
+			addPlaylist() {
+				axios.get(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${document.getElementById("ytplaylist").value}&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs`).then(r => {
+					r.data.items.forEach((m, ind) => {
+						setTimeout(() => {
+							youtube(m.snippet.resourceId.videoId, m.snippet.title, m.snippet.thumbnails.default.url)
+						}, 200*ind)
+					})
+				})
 			}
 		}
 	})

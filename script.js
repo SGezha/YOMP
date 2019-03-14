@@ -8,8 +8,16 @@ const lowdb = require('lowdb'),
     db = lowdb(adapter);
 
 window.onload = function () {
+    var id = 0;
+    db.get("music").value().forEach((m, ind) => {
+        db.get("music").find({id: m.id}).assign({
+            id: id
+        }).write()
+        id++;
+    });
    start();
    refresh();
+   fixmusic();
 };
 
 function hidetray() {
@@ -21,6 +29,46 @@ document.onkeydown = function(e) {
 		app.search();
 	}
 };
+
+function openFile() {
+    var path = remote.dialog.showOpenDialog({title: 'Select file', filters: [{name: "MP3 files", extensions: ['mp3'], properties: ['openFile']}]});
+    document.getElementById("link").value = path[0];
+}
+
+function fixmusic() {
+    var masMusic = db.get("music").value();
+    masMusic.forEach((m, ind) => {
+        if(m.file.indexOf("googlevideo.com/videoplayback") == -1) return;
+        console.log(m.title + " Fixed")
+        $.get("https://images"+~~(Math.random()*33)+"-focus-opensocial.googleusercontent.com/gadgets/proxy?container=none&url=https%3A%2F%2Fwww.youtube.com%2Fget_video_info%3Fvideo_id%3D" + m.videoId, function(data) {
+            if(data.indexOf("errorcode=150") > -1) return toastr.error('Error: Copyright');
+            var data = parse_str(data),
+                streams = (data.url_encoded_fmt_stream_map + ',' + data.adaptive_fmts).split(',');
+            $.each(streams, function(n, s) {
+                var stream = parse_str(s),
+                itag = stream.itag * 1,
+                quality = false;
+                switch (itag) {
+                case 139:
+                    quality = "48kbps";
+                    break;
+                case 140:
+                    quality = "128kbps";
+                    break;
+                case 141:
+                    quality = "256kbps";
+                    break;
+                }
+                if (quality) {
+                    db.get("music").find({id: ind}).assign({
+                        file: stream.url
+                    }).write();
+                    refresh();
+                } 
+            });
+        });
+    })
+}
 
 let fullscreen = 0;
 
@@ -83,7 +131,6 @@ function start() {
             prevBtn.addEventListener('click', prev, false);
             nextBtn.addEventListener('click', next, false);
             apActive = true;
-            renderPL();
             plBtn.addEventListener('click', plToggle, false);
             audio = new Audio();
             audio.volume = settings.volume;
@@ -114,7 +161,7 @@ function start() {
             var html = [];
             var tpl = '<li data-track="{count}">' + '<div class="pl-number">' + '<div class="pl-count">' + '<svg fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M0 0h24v24H0z" fill="none"/>' + '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>' + '</svg>' + '</div>' + '<div class="pl-playing">' + '<div class="eq">' + '<div class="eq-bar"></div>' + '<div class="eq-bar"></div>' + '<div class="eq-bar"></div>' + '</div>' + '</div>' + '</div>' + '<div class="pl-title">{title}</div>' + '<button class="pl-remove">' + '<svg fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>' + '<path d="M0 0h24v24H0z" fill="none"/>' + '</svg>' + '</button>' + '</li>';
             playList.forEach(function(item, i) {
-                html.push(tpl.replace('{count}', i).replace('{title}', item.title));
+                html.push(tpl.replace('{count}', i).replace('{title}', item.title).replace('{icon}', item.icon));
             });
             pl = create('div', {
                 'className': 'pl-container hide',
@@ -131,12 +178,23 @@ function start() {
             if (evt.target.className === 'pl-title') {
                 var current = parseInt(evt.target.parentNode.getAttribute('data-track'), 10);
                 index = current;
-                play();
+                audio.readyState = 0;
                 plActive();
+                play();
+                setTimeout(() => {
+                    play();
+                }, 300)
             } else {
                 var target = evt.target;
                 while (target.className !== pl.className) {
                     if (target.className === 'pl-remove') {
+                        var id = 0;
+                        db.get("music").value().forEach((m, ind) => {
+                            db.get("music").find({id: m.id}).assign({
+                                id: id
+                            }).write()
+                            id++;
+                        });
                         var isDel = parseInt(target.parentNode.getAttribute('data-track'), 10);
                         playList.splice(isDel, 1);
                         db.get("music").remove({id: isDel}).write();
@@ -195,17 +253,12 @@ function start() {
             audio.preload = 'auto';
             document.title = trackTitle.innerHTML = playList[index].title;
             audio.play();
-            notify(playList[index].title, {
-                icon: playList[index].icon,
-                body: 'Now playing',
-                tag: 'music-player'
-            });
+            playBtn.classList.add('playing');
+            plActive();
             ipc.send("rpc", {
                 status: "playing",
                 title: playList[index].title
             });
-            playBtn.classList.add('playing');
-            plActive();
         }
 
         function prev() {
@@ -245,10 +298,6 @@ function start() {
             }
             if (audio.paused) {
                 audio.play();
-                notify(playList[index].title, {
-                    icon: playList[index].icon,
-                    body: 'Now playing'
-                });
                 this.classList.add('playing');
                 ipc.send("rpc", {
                     status: "playing",
@@ -388,25 +437,6 @@ function start() {
             }
         }
 
-        function notify(title, attr) {
-            if (!settings.notification) {
-                return;
-            }
-            if (window.Notification === undefined) {
-                return;
-            }
-            window.Notification.requestPermission(function(access) {
-                if (access === 'granted') {
-                    var notice = new Notification(title.substr(0, 110), attr);
-                    notice.onshow = function() {
-                        setTimeout(function() {
-                            notice.close();
-                        }, 5000);
-                    };
-                }
-            });
-        }
-
         function destroy() {
             if (!apActive) return;
             playBtn.removeEventListener('click', playToggle, false);
@@ -499,12 +529,16 @@ function refresh() {
     AP.init({
         playList: musicPlayList
     });
+
+    
+    if(document.getElementsByClassName("pl-container")[1] != undefined) {
+        document.getElementsByClassName("pl-container")[1].parentNode.removeChild(document.getElementsByClassName("pl-container")[1]);
+    }
 }
 
 toastr.options.progressBar = true;
 
 function youtube(vid, title, icon) {
-    var audio_streams = {};
     $.get("https://images"+~~(Math.random()*33)+"-focus-opensocial.googleusercontent.com/gadgets/proxy?container=none&url=https%3A%2F%2Fwww.youtube.com%2Fget_video_info%3Fvideo_id%3D" + vid, function(data) {
         if(data.indexOf("errorcode=150") > -1) return toastr.error('Error: Copyright');
         var data = parse_str(data),
@@ -525,7 +559,6 @@ function youtube(vid, title, icon) {
                 break;
             }
             if (quality) {
-                audio_streams[quality] = stream.url;
                 var id = 0;
                 if(db.get("music").value().length != undefined) {
                     id = db.get("music").value().length;
@@ -534,10 +567,16 @@ function youtube(vid, title, icon) {
                     id: id,
                     icon: icon,
                     title: title,
-                    file: stream.url
+                    file: stream.url,
+                    videoId: vid
                 }).write();
                 toastr.success(`${title} added to playlist :3`);
                 refresh();
+                axios.get(stream.url).catch(er => {
+                    toastr.error(`${title} cant find mp3 file :c`);
+                    db.get("music").remove({id: id}).write();
+                    refresh();
+                })
             } 
         });
     });
