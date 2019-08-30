@@ -1,10 +1,11 @@
 {
-  "name": "Youtube Music Player",
-  "version": "1.1.0",
+  "name": "youtube-music-player",
+  "version": "1.2.0",
   "description": "Best music youtube player",
   "main": "main.js",
   "build": {
-    "appId": "youtube-music-player",
+    "productName": "YouTube Music Player",
+    "appId": "YouTube Music Player",
     "win": {
       "target": [
         "NSIS"

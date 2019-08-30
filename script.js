@@ -1,5 +1,5 @@
 const fs = require("fs");
-if(!fs.existsSync("./database.json")) fs.writeFileSync("./database.json", '{"music":[]}');
+if(!fs.existsSync("database.json")) fs.writeFileSync("./database.json", '{"music":[]}');
 const { remote, ipcRenderer: ipc } = require('electron');
 var musicSelectedId = 0;
 const lowdb = require('lowdb'),
@@ -20,6 +20,16 @@ window.onload = function () {
    fixmusic();
 };
 
+function openMenu() {
+    if(document.getElementsByClassName('menu-left')[0].className.indexOf('act-menu') == -1) {
+        document.getElementsByClassName('menu-left')[0].classList.add('act-menu');
+        document.getElementsByClassName('shadow')[0].style.display = "block";
+    } else { 
+        document.getElementsByClassName('menu-left')[0].classList.remove('act-menu');
+        document.getElementsByClassName('shadow')[0].style.display = "none";
+    }
+}
+
 function hidetray() {
     remote.BrowserWindow.getFocusedWindow().hide();
 }
@@ -37,11 +47,12 @@ function openFile() {
 
 function fixmusic() {
     var masMusic = db.get("music").value();
-    masMusic.forEach((m, ind) => {
+    let ind = 1;
+    masMusic.forEach((m) => {
         if(m.file.indexOf("googlevideo.com/videoplayback") == -1) return;
-        console.log(m.title + " Fixed")
         $.get("https://images"+~~(Math.random()*33)+"-focus-opensocial.googleusercontent.com/gadgets/proxy?container=none&url=https%3A%2F%2Fwww.youtube.com%2Fget_video_info%3Fvideo_id%3D" + m.videoId, function(data) {
             if(data.indexOf("errorcode=150") > -1) return toastr.error('Error: Copyright');
+            console.log(m.title);
             var data = parse_str(data),
                 streams = (data.url_encoded_fmt_stream_map + ',' + data.adaptive_fmts).split(',');
             $.each(streams, function(n, s) {
@@ -60,7 +71,7 @@ function fixmusic() {
                     break;
                 }
                 if (quality) {
-                    db.get("music").find({id: ind}).assign({
+                    db.get("music").find({videoId:  m.videoId}).assign({
                         file: stream.url
                     }).write();
                     refresh();
@@ -68,6 +79,7 @@ function fixmusic() {
             });
         });
     })
+    document.getElementById('ap').style.opacity = "1";
 }
 
 let fullscreen = 0;
@@ -80,6 +92,53 @@ function maxsize() {
         remote.BrowserWindow.getFocusedWindow().unmaximize();
         fullscreen = 0;
     }
+}
+
+function random() {
+    var mas = shuffle(db.get("music").value());
+    db.set('music', []).write()
+    mas.forEach((m, ind) => {
+        let obj = {
+            id: ind,
+            title: m.title,
+            icon: m.icon,
+            videoId: m.videoId,
+            file: m.file
+        }
+        db.get("music").push(m).write();
+    })
+    refresh();
+}
+
+function openAdd() {
+    app.showModal = true;
+}
+
+function searchbtn() {
+    app.search();
+}
+
+function addMusicFolder() {
+    let dir = remote.dialog.showOpenDialog({title: 'Select Music Folder', properties: ['openDirectory']});
+    fs.readdir(dir[0], function(err, items) {
+        items.forEach((i, ind) => {
+            setTimeout(() => {
+                if(i.toLocaleLowerCase().indexOf(".mp3") > -1) {
+                    var id = 0;
+                    if (db.get("music").value().length != undefined) {
+                        id = db.get("music").value().length;
+                    }
+                    db.get("music").push({
+                        id: id,
+                        title: i.toLocaleLowerCase().split(".mp3"),
+                        file: `${dir[0]}/${i}`
+                    }).write();
+                    toastr.success(`${i.toLocaleLowerCase().split(".mp3")} added to playlist :3`);
+                    refresh();
+                }
+            }, 1000*ind)
+        })
+    });
 }
 
 function start() {
@@ -112,7 +171,7 @@ function start() {
             nextBtn = player.querySelector('.ap-next-btn');
             repeatBtn = player.querySelector('.ap-repeat-btn');
             volumeBtn = player.querySelector('.ap-volume-btn');
-            plBtn = player.querySelector('.ap-playlist-btn');
+            plBtn = document.querySelector('.ap-playlist-btn');
             curTime = player.querySelector('.ap-time--current');
             durTime = player.querySelector('.ap-time--duration');
             trackTitle = player.querySelector('.ap-title');
@@ -164,7 +223,7 @@ function start() {
                 html.push(tpl.replace('{count}', i).replace('{title}', item.title).replace('{icon}', item.icon));
             });
             pl = create('div', {
-                'className': 'pl-container hide',
+                'className': 'pl-container',
                 'id': 'pl',
                 'innerHTML': !isEmptyList() ? '<ul class="pl-list">' + html.join('') + '</ul>' : '<div class="pl-empty">PlayList is empty</div>'
             });
@@ -343,7 +402,7 @@ function start() {
         }
 
         function plToggle() {
-            this.classList.toggle('ap-active');
+            document.getElementById('ap').classList.toggle('ap-active');
             pl.classList.toggle('hide');
         }
 
@@ -539,6 +598,7 @@ function refresh() {
 toastr.options.progressBar = true;
 
 function youtube(vid, title, icon) {
+    if(db.get("music").find({videoId: vid}).value() != undefined) return toastr.error('Song already in playlist :3');
     $.get("https://images"+~~(Math.random()*33)+"-focus-opensocial.googleusercontent.com/gadgets/proxy?container=none&url=https%3A%2F%2Fwww.youtube.com%2Fget_video_info%3Fvideo_id%3D" + vid, function(data) {
         if(data.indexOf("errorcode=150") > -1) return toastr.error('Error: Copyright');
         var data = parse_str(data),
@@ -593,3 +653,14 @@ function parse_str(str) {
 }
 
 function getRandomInt(min, max) { return Math.round(Math.random() * (max - min)) + min; };
+
+function shuffle(arr){
+	var j, temp;
+	for(var i = arr.length - 1; i > 0; i--){
+		j = Math.floor(Math.random()*(i + 1));
+		temp = arr[j];
+		arr[j] = arr[i];
+		arr[i] = temp;
+	}
+	return arr;
+}

@@ -1,34 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<link href="https://fonts.googleapis.com/css?family=Exo+2" rel="stylesheet">
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">	<title>osu-player</title>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+		integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<link rel="stylesheet" href="css/style.css">
 	<title>YTMusicPlayer</title>
 	<link rel="stylesheet" href="css/toastr.min.css">
 </head>
+
 <body>
 	<div class="ui-titlebar">
-		<div class="ui-titletext"><i style="font-size: 24px !important; transform: translateY(3px);" class="fab fa-youtube"></i> Music Player</div>
+		<div class="ui-titletext"><i style="font-size: 24px !important; transform: translateY(3px);"
+				class="fab fa-youtube"></i> Music Player</div>
 		<div class="ui-titlecontrols">
 			<button onclick="hidetray()" class="ui-btn minimize">
-				<svg x="0px" y="0px" viewBox="0 0 10.2 1"><rect x="0" y="50%" width="10.2" height="1" /></svg>
+				<svg x="0px" y="0px" viewBox="0 0 10.2 1">
+					<rect x="0" y="50%" width="10.2" height="1" /></svg>
 			</button><button onclick="maxsize()" class="ui-btn maximize">
-				<svg viewBox="0 0 10 10"><path d="M0,0v10h10V0H0z M9,9H1V1h8V9z" /></svg>
+				<svg viewBox="0 0 10 10">
+					<path d="M0,0v10h10V0H0z M9,9H1V1h8V9z" /></svg>
 			</button><button onclick="window.close()" class="ui-btn close">
-				<svg viewBox="0 0 10 10"><polygon points="10.2,0.7 9.5,0 5.1,4.4 0.7,0 0,0.7 4.4,5.1 0,9.5 0.7,10.2 5.1,5.8 9.5,10.2 10.2,9.5 5.8,5.1" /></svg>
+				<svg viewBox="0 0 10 10">
+					<polygon
+						points="10.2,0.7 9.5,0 5.1,4.4 0.7,0 0,0.7 4.4,5.1 0,9.5 0.7,10.2 5.1,5.8 9.5,10.2 10.2,9.5 5.8,5.1" />
+					</svg>
 			</button>
 		</div>
 	</div>
-
+	<div class="menu-left">
+		<div class="menu">
+			<div class="links" style="height:100vh;">
+				<ul class="links-block">
+					<li class="ap-playlist-btn"><a href="#"><svg class="btn-menu" fill="#ffffff" height="24" viewBox="0 0 24 24" width="24"xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none" /><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" /></svg><span>Playlist</span></a></li>
+					<li><a onclick="searchbtn()" href="#"><i class="fab fa-youtube"></i><span>YouTube</span></a></li>
+					<li class="cat"></li>
+					<li><a onclick="openAdd()" href="#"><i class="far fa-plus-square"></i><span>Import music</span></a></li>
+					<li><a onclick="openAdd()" href="#"><i class="far fa-save"></i></i><span>Export music</span></a></li>
+				</ul>
+			</div>
+		</div>
+		<div onclick="openMenu()" class="shadow"></div>
+	</div>
 	<div id="app">
-		<div class="search">
-			<input placeholder="Youtube search..." type="text" id="search"><i @click="showModal = true" class="fas fa-plus"></i> <i style="margin-left: 5px;" @click="search()" class="fas fa-search"></i>
+		<div class="wow">
+			<div class="menu-icon">
+				<i onclick="openMenu()" class="fas fa-bars"></i>
+			</div>
+			<input id="search" class="search" type="text" placeholder="search">
+			<i @click="search()" class="fas fa-search"></i>
 		</div>
 		<div class="video-pl">
 			<template v-for="m in music">
@@ -46,32 +72,37 @@
 			<button @click="add" class="btn">SEND</button>
 			<input placeholder="Youtube playlist id" type="text" id="ytplaylist">
 			<button @click="addPlaylist" class="btn">ADD</button>
+			<button onclick="addMusicFolder()" class="btn">Add Music Folder</button>
 		</div>
 	</div>
 
-	
-	<div class="ap" id="ap">
+
+	<div style="opacity: 0;" class="ap" id="ap">
 		<div class="ap-inner">
 			<div class="ap-panel">
 				<div class="ap-item ap--playback">
 					<button class="ap-controls ap-prev-btn">
-						<svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff" height="24" viewBox="0 0 24 24" width="24">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff" height="24" viewBox="0 0 24 24"
+							width="24">
 							<path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
 							<path d="M0 0h24v24H0z" fill="none" />
 						</svg>
 					</button>
 					<button class="ap-controls ap-toggle-btn">
-						<svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="30" viewBox="0 0 24 24" width="30" class="ap--play">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="30" viewBox="0 0 24 24" width="30"
+							class="ap--play">
 							<path d="M8 5v14l11-7z" />
 							<path d="M0 0h24v24H0z" fill="none" />
 						</svg>
-						<svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff" height="30" viewBox="0 0 24 24" width="30" class="ap--pause">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff" height="30" viewBox="0 0 24 24"
+							width="30" class="ap--pause">
 							<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
 							<path d="M0 0h24v24H0z" fill="none" />
 						</svg>
 					</button>
 					<button class="ap-controls ap-next-btn">
-						<svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff" height="24" viewBox="0 0 24 24" width="24">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff" height="24" viewBox="0 0 24 24"
+							width="24">
 							<path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
 							<path d="M0 0h24v24H0z" fill="none" />
 						</svg>
@@ -80,7 +111,8 @@
 				<div class="ap-item ap--track">
 					<div class="ap-info">
 						<div class="ap-title">Unknown</div>
-						<div class="ap-time"><span class="ap-time--current">--</span><span>/</span><span class="ap-time--duration">--</span></div>
+						<div class="ap-time"><span class="ap-time--current">--</span><span>/</span><span
+								class="ap-time--duration">--</span></div>
 						<div class="ap-progress-container">
 							<div class="ap-progress">
 								<div class="ap-bar"></div>
@@ -92,11 +124,14 @@
 				<div class="ap-item ap--settings">
 					<div class="ap-controls ap-volume-container">
 						<button class="ap-volume-btn">
-							<svg fill="#ffffff" height="48" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg" class="ap--volume-on">
-								<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+							<svg fill="#ffffff" height="48" viewBox="0 0 24 24" width="24"
+								xmlns="http://www.w3.org/2000/svg" class="ap--volume-on">
+								<path
+									d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
 								<path d="M0 0h24v24H0z" fill="none" />
 							</svg>
-							<svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff" height="48" viewBox="0 0 24 24" width="24" class="ap--volume-off">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff" height="48" viewBox="0 0 24 24"
+								width="24" class="ap--volume-off">
 								<path d="M7 9v6h4l5 5V4l-5 5H7z" />
 								<path d="M0 0h24v24H0z" fill="none" />
 							</svg>
@@ -108,89 +143,77 @@
 						</div>
 					</div>
 					<button class="ap-controls ap-repeat-btn">
-						<svg fill="#ffffff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+						<svg fill="#ffffff" height="24" viewBox="0 0 24 24" width="24"
+							xmlns="http://www.w3.org/2000/svg">
 							<path d="M0 0h24v24H0z" fill="none" />
 							<path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
 						</svg>
 					</button>
-					<button class="ap-controls ap-playlist-btn">
-						<svg fill="#ffffff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-							<path d="M0 0h24v24H0z" fill="none" />
-							<path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
-						</svg>
+					<button class="ap-controls" onclick="random()">
+						<i class="fas fa-random"></i>
 					</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	
 
 
-	<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
-	<script src="js/jquery.js"></script>    
+	<script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
+	<script src="js/jquery.js"></script>
 	<script src="js/toast.js"></script>
 	<script>if (window.module) module = window.module;</script>
-	<script src="script.js"></script>
 	<script>
-	var app = new Vue({
-		el: '#app',
-		data: {
-			music: [],
-			showModal: false
-		},
-		created: function() {
-			axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=no copyright music&maxResults=50&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs")
-			.then(res => {
-				this.music = [];
-				res.data.items.forEach(v => {
-					if(v.id.kind == "youtube#video") {
-						this.music.push(v)
+		var app = new Vue({
+			el: '#app',
+			data: {
+				music: [],
+				showModal: false
+			},
+			created: function () {
+
+			},
+			methods: {
+				search() {
+					if(document.getElementsByClassName('pl-container')[0].classList.length == 1) AP.plToggle();
+					axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + document.getElementById("search").value + "&maxResults=50&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs")
+						.then(res => {
+							this.music = [];
+							res.data.items.forEach(v => {
+								if (v.id.kind == "youtube#video") {
+									this.music.push(v)
+								}
+							})
+						})
+						.catch(error => {
+
+						});
+				},
+				add() {
+					var id = 0;
+					if (db.get("music").value().length != undefined) {
+						id = db.get("music").value().length;
 					}
-				})
-			})
-			.catch(error => {
-				
-			});
-		},
-		methods: {
-			search() {
-				axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + document.getElementById("search").value + "&maxResults=50&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs")
-				.then(res => {
-					this.music = [];
-					res.data.items.forEach(v => {
-						if(v.id.kind == "youtube#video") {
-							this.music.push(v)
-						}
+					db.get("music").push({
+						id: id,
+						title: document.getElementById('title').value,
+						file: document.getElementById('link').value
+					}).write();
+					toastr.success(`${document.getElementById('title').value} added to playlist :3`);
+					refresh();
+				},
+				addPlaylist() {
+					axios.get(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${document.getElementById("ytplaylist").value}&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs`).then(r => {
+						r.data.items.forEach((m, ind) => {
+							setTimeout(() => {
+								youtube(m.snippet.resourceId.videoId, m.snippet.title, m.snippet.thumbnails.default.url)
+							}, 200 * ind)
+						})
 					})
-				})
-				.catch(error => {
-					
-				});
-			},
-			add() {
-				var id = 0;
-                if(db.get("music").value().length != undefined) {
-                    id = db.get("music").value().length;
-                }
-                db.get("music").push({
-                    id: id,
-                    title: document.getElementById('title').value,
-                    file: document.getElementById('link').value
-                }).write();
-                toastr.success(`${document.getElementById('title').value} added to playlist :3`);
-                refresh();
-			},
-			addPlaylist() {
-				axios.get(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${document.getElementById("ytplaylist").value}&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs`).then(r => {
-					r.data.items.forEach((m, ind) => {
-						setTimeout(() => {
-							youtube(m.snippet.resourceId.videoId, m.snippet.title, m.snippet.thumbnails.default.url)
-						}, 200*ind)
-					})
-				})
+				}
 			}
-		}
-	})
+		})
 	</script>
+	<script src="script.js"></script>
 </body>
+
 </html>

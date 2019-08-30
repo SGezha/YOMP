@@ -7,9 +7,9 @@ const iconPath = path.join(__dirname, 'icon.png');
 
 const rpc = new DiscordRPC.Client({transport: 'ipc'});
 
-
 function createWindow () {
-  mainWindow = new BrowserWindow({frame: false, width: 800, height: 630, minWidth: 300, minHeight: 100, icon: "icon.png"});
+  mainWindow = new BrowserWindow({frame: false, width: 
+    800, height: 630, minWidth: 300, minHeight: 100, icon: "icon.png"});
   mainWindow.loadFile('index.html');
   mainWindow.on('closed', function () {
     mainWindow = null;
@@ -118,17 +118,17 @@ function createActivity(data) {
       smallImageText: "Paused"
     };
   }
-  mainWindow.webContents.executeJavaScript(`console.log('${JSON.stringify(act)}')`);
+  mainWindow.webContents.executeJavaScript(``);
   return act;
 }
 
 rpc.login({clientId: "555381698192474133"}).catch(console.error);
 
 ipc.on("rpc", (event, data) => {
-  mainWindow.webContents.executeJavaScript(`console.log('${JSON.stringify(data)}')`);
+  mainWindow.webContents.executeJavaScript(``);
   let activity = createActivity(data);
   rpc.setActivity(activity).then((data) => {
-    mainWindow.webContents.executeJavaScript(`console.log('it worked')`);
+    mainWindow.webContents.executeJavaScript(``);
   }).catch((err) => {
     mainWindow.webContents.executeJavaScript(`console.log('${err}')`);
   });
