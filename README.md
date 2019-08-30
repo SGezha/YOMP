@@ -1,2 +1,2 @@
-![Image of Yaktocat](https://puu.sh/EbuLn.png)
+![Image of Yaktocat](https://puu.sh/EbuNK.png)
 owo project
