@@ -16,7 +16,6 @@ window.onload = function () {
         id++;
     });
    start();
-   refresh();
    fixmusic();
 };
 
@@ -47,12 +46,15 @@ function openFile() {
 
 function fixmusic() {
     var masMusic = db.get("music").value();
-    let ind = 1;
+    let ind = false;
     masMusic.forEach((m) => {
-        if(m.file.indexOf("googlevideo.com/videoplayback") == -1) return;
+        if(ind == true) {
+            refresh();
+            ind = false;
+        }
+        if(m.videoId == undefined) return;
         $.get("https://images"+~~(Math.random()*33)+"-focus-opensocial.googleusercontent.com/gadgets/proxy?container=none&url=https%3A%2F%2Fwww.youtube.com%2Fget_video_info%3Fvideo_id%3D" + m.videoId, function(data) {
             if(data.indexOf("errorcode=150") > -1) return toastr.error('Error: Copyright');
-            console.log(m.title);
             var data = parse_str(data),
                 streams = (data.url_encoded_fmt_stream_map + ',' + data.adaptive_fmts).split(',');
             $.each(streams, function(n, s) {
@@ -74,12 +76,13 @@ function fixmusic() {
                     db.get("music").find({videoId:  m.videoId}).assign({
                         file: stream.url
                     }).write();
-                    refresh();
+                    ind = true;
                 } 
             });
         });
     })
     document.getElementById('ap').style.opacity = "1";
+    refresh();
 }
 
 let fullscreen = 0;
@@ -133,10 +136,48 @@ function addMusicFolder() {
                         title: i.toLocaleLowerCase().split(".mp3"),
                         file: `${dir[0]}/${i}`
                     }).write();
-                    toastr.success(`${i.toLocaleLowerCase().split(".mp3")} added to playlist :3`);
+                    toastr.success(`${i.toLocaleLowerCase().split(".mp3")} ${ind}/${items.length} added to playlist :3`);
                     refresh();
                 }
             }, 1000*ind)
+        })
+    });
+}
+
+function addosu() {
+    let dir = remote.dialog.showOpenDialog({title: 'Select osu!/songs Folder', properties: ['openDirectory']});
+    fs.readdir(dir[0], function(err, items) {
+        items.forEach((i, ind) => {
+            if(i.indexOf(".") == -1) {
+                setTimeout(() => {
+                    fs.readdir(`${dir[0]}/${i}`, function(err, files) {
+                        let obj = {};
+                        files.forEach(f => {
+                            if(f.indexOf(".osu") > -1) {
+                                obj.title = f.split("[")[0];
+                            }
+                            if(f.indexOf(".mp3") > -1) {
+                                obj.file = `${dir[0]}/${i}/${f}`;
+                            }
+                        })
+                        if(obj.title != undefined && obj.file != undefined) {
+                            if(db.get("music").find({file: obj.file}).value() == undefined) {
+                                var id = 0;
+                                if (db.get("music").value().length != undefined) {
+                                    id = db.get("music").value().length;
+                                }
+                                db.get("music").push({
+                                    id: id,
+                                    title: obj.title,
+                                    file: `${obj.file}`
+                                }).write();
+                                toastr.success(`${obj.title} ${ind}/${items.length} added to playlist :3`);
+                                refresh();
+                            }
+                        }
+                    })
+                }, 1000*ind)
+            }
         })
     });
 }
@@ -603,6 +644,7 @@ function youtube(vid, title, icon) {
         if(data.indexOf("errorcode=150") > -1) return toastr.error('Error: Copyright');
         var data = parse_str(data),
             streams = (data.url_encoded_fmt_stream_map + ',' + data.adaptive_fmts).split(',');
+        if(data.url_encoded_fmt_stream_map == "") return toastr.error('Error: Copyright or NOT FOUND');
         $.each(streams, function(n, s) {
             var stream = parse_str(s),
             itag = stream.itag * 1,
@@ -639,7 +681,7 @@ function youtube(vid, title, icon) {
                 })
             } 
         });
-    });
+    })
 }
 
 function parse_str(str) {

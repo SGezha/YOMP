@@ -331,6 +331,9 @@ button {
   .ap-item > .ap-controls {
     flex: 1;
   }
+  .pl-container {
+    height: 68vh !important;
+  }
 }
 @media(max-width:950px) {
   .ap {
@@ -367,12 +370,13 @@ button {
   right: 0;
   color: white;
   left: 0;
-  height: 82vh;
+  height: 81vh;
   margin: auto;
   overflow: auto;
   font-size: 14px;
   background: #1B1B1B;
   z-index: 999;
+  padding-bottom: 5vh;
 }
 .pl-lead {
   font-size: 24px;
@@ -899,8 +903,8 @@ a:hover {color: white;}
 
 .menu>.links>ul>li>a>img {
   width: 25px;
-  margin-right: 25px;
-  margin-left: 10px;
+  margin-right: 30px;
+  margin-left: 0px;
   transition: all .4s;
 }
 
