@@ -846,7 +846,7 @@ function miniPlayer() {
     document.getElementsByClassName('ui-titlebar')[0].style.display = "none";
     document.getElementById('prog').style.background = "transparent";
     remote.BrowserWindow.getFocusedWindow().setSize(screen.availWidth, 180);
-    remote.BrowserWindow.getFocusedWindow().setPosition(1, screen.availHeight - 180);
+    remote.BrowserWindow.getFocusedWindow().setPosition(0, screen.availHeight - 180);
     remote.BrowserWindow.getFocusedWindow().setSkipTaskbar(true);
     mini = true;
     setTimeout(() => {
