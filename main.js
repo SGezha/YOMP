@@ -1,83 +1,113 @@
-const {app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc} = require('electron');
+const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc } = require('electron');
 var path = require('path');
 const DiscordRPC = require('discord-rpc');
 let mainWindow;
 let appIcon = null;
-const iconPath = path.join(__dirname, 'icon.png');
+const iconPath = path.join(__dirname, 'icons/icon.png');
 
-const rpc = new DiscordRPC.Client({transport: 'ipc'});
+const rpc = new DiscordRPC.Client({ transport: 'ipc' });
 
-function createWindow () {
-  mainWindow = new BrowserWindow({frame: false, width: 
-    800, height: 630, minWidth: 300, minHeight: 100, icon: "icon.png"});
+function createWindow() {
+  mainWindow = new BrowserWindow({
+    transparent: true, frame: false, width: 1000, height: 700, minWidth: 300, icon: "icon.png"
+  });
   mainWindow.loadFile('index.html');
   mainWindow.on('closed', function () {
     mainWindow = null;
   });
   mainWindow.on('minimize', function (event) {
-        mainWindow.minimize();
-    });
+    mainWindow.minimize();
+  });
 
-    appIcon = new Tray(iconPath);
-    var contextMenu = Menu.buildFromTemplate([
-      { 
-        label: 'Play/Pause',
-        click: function() {
-          mainWindow.webContents.executeJavaScript(`AP.playToggle(); AP.plToggle();`);
-        }
-      },
-      { 
-        label: 'Random',
-        click: function() {
-          mainWindow.webContents.executeJavaScript(`AP.random();`);
-        }
-      },
-      { 
-        label: 'Next track',
-        click: function() {
-          mainWindow.webContents.executeJavaScript(`AP.next();`);
-        }
-      },
-      { 
-        label: 'Prev track',
-        click: function() {
-          mainWindow.webContents.executeJavaScript(`AP.prev();`);
-        }
-      },
-      { 
-        label: 'Quit',
-        click: function() {
-            mainWindow.close();
-        }
+  appIcon = new Tray(iconPath);
+  var contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Play/Pause',
+      click: function () {
+        mainWindow.webContents.executeJavaScript(`AP.playToggle();`);
       }
-    ]);
-    appIcon.setToolTip('YT music player');
-    appIcon.on('click', () => {
-        mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
-    });
-    mainWindow.on('show', () => {
-        appIcon.setHighlightMode('always');
-    });
-    mainWindow.on('hide', () => {
-        appIcon.setHighlightMode('never');
-    });  
-    appIcon.setContextMenu(contextMenu);
+    },
+    {
+      label: 'Random',
+      click: function () {
+        mainWindow.webContents.executeJavaScript(`AP.random();`);
+      }
+    },
+    {
+      label: 'Next track',
+      click: function () {
+        mainWindow.webContents.executeJavaScript(`AP.next();`);
+      }
+    },
+    {
+      label: 'Prev track',
+      click: function () {
+        mainWindow.webContents.executeJavaScript(`AP.prev();`);
+      }
+    },
+    {
+      label: 'Quit',
+      click: function () {
+        mainWindow.close();
+      }
+    }
+  ]);
+  appIcon.setToolTip('YT music player');
+  appIcon.on('click', () => {
+    mainWindow.webContents.executeJavaScript("miniPlayerOff();");
+    mainWindow.show();
+  });
+  mainWindow.on('show', () => {
+    appIcon.setHighlightMode('always');
+  });
+  mainWindow.on('hide', () => {
+    appIcon.setHighlightMode('never');
+  });
+  appIcon.setContextMenu(contextMenu);
 
-    globalShortcut.register('CommandOrControl+Space', () => {
-      mainWindow.webContents.executeJavaScript(`AP.playToggle(); plActive();`);
-    });
+  globalShortcut.register('CommandOrControl+Space', () => {
+    mainWindow.webContents.executeJavaScript(`AP.playToggle();`);
+  });
 
-    globalShortcut.register('CommandOrControl+Right', () => {
-      mainWindow.webContents.executeJavaScript(`AP.next();`);
-    });
+  globalShortcut.register('CommandOrControl+Right', () => {
+    mainWindow.webContents.executeJavaScript(`AP.next();`);
+  });
 
-    globalShortcut.register('CommandOrControl+Up', () => {
-      mainWindow.webContents.executeJavaScript(`AP.random();`);
-    });
+  globalShortcut.register('CommandOrControl+-', () => {
+    mainWindow.show();
+    mainWindow.webContents.executeJavaScript(`AP.volumeDown()`);
+  });
 
-    globalShortcut.register('CommandOrControl+Left', () => {
-      mainWindow.webContents.executeJavaScript(`AP.prev();`);
-    });
+  globalShortcut.register('CommandOrControl+=', () => {
+    mainWindow.show();
+    mainWindow.webContents.executeJavaScript(`AP.volumeUp()`);
+  });
+
+  globalShortcut.register('CommandOrControl+r', () => {
+    mainWindow.webContents.executeJavaScript(`AP.random();`);
+  });
+
+  globalShortcut.register('CommandOrControl+0', () => {
+    mainWindow.webContents.executeJavaScript(`AP.mute();`);
+  });
+
+  globalShortcut.register('CommandOrControl+l', () => {
+    mainWindow.webContents.executeJavaScript(`lovethis();`);
+  });
+
+  globalShortcut.register('CommandOrControl+Left', () => {
+    mainWindow.webContents.executeJavaScript(`AP.prev();`);
+  });
+
+  globalShortcut.register('CommandOrControl+Down', () => {
+    mainWindow.show();
+    mainWindow.webContents.executeJavaScript('miniPlayer();');
+  });
+
+  globalShortcut.register('CommandOrControl+Up', () => {
+    mainWindow.show();
+    mainWindow.webContents.executeJavaScript(`miniPlayerOff();`);
+  });
 }
 app.on('ready', createWindow);
 
@@ -99,7 +129,7 @@ app.on('activate', function () {
 
 function createActivity(data) {
   let act = {};
-  if(data.status == "playing") {
+  if (data.status == "playing") {
     act = {
       details: "Listen music",
       state: data.title,
@@ -108,7 +138,7 @@ function createActivity(data) {
       smallImageKey: "play",
       smallImageText: "Playing"
     };
-  } else if(data.status == "paused") {
+  } else if (data.status == "paused") {
     act = {
       details: "Paused",
       state: data.title,
@@ -122,7 +152,7 @@ function createActivity(data) {
   return act;
 }
 
-rpc.login({clientId: "555381698192474133"}).catch(console.error);
+rpc.login({ clientId: "555381698192474133" }).catch(console.error);
 
 ipc.on("rpc", (event, data) => {
   mainWindow.webContents.executeJavaScript(``);

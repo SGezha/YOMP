@@ -1,4 +1,60 @@
-@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/1.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/2.woff2) format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/3.woff2) format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/4.woff2) format('woff2');
+  unicode-range: U+0370-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/5.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/6.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/7.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 *,
 *:before,
 *:after {
@@ -34,15 +90,16 @@ button {
   margin: auto;
   font-size: 14px;
   user-select: none;
+  opacity: 1;
   color: white;
   background: #2B2B2B;
   border-top: 1px solid #565656;
   z-index: 9999;
 }
 .ap-inner {
-  max-width: 1440px;
   margin: 0 auto;
   background: #2B2B2B;
+  max-width: 1400px;
 }
 .ap-panel {
   display: flex;
@@ -72,6 +129,7 @@ button {
   text-align: left;
   white-space: nowrap;
   text-overflow: ellipsis;
+  max-width: 90vw;
 }
 .ap-time {
   position: absolute;
@@ -85,37 +143,40 @@ button {
 }
 .ap-progress {
   position: relative;
-  height: 3px;
-  border-radius: 5px;
+  height: 6px;
+  border-radius: 15px;
+  box-shadow: 0px 0px 1px #3b3b3b;
   background: rgba(0,0,0,.2);
 }
 .ap-preload-bar,
 .ap-bar {
+  border-radius: 15px;
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
   width: 0;
-  border-radius: 5px 0 0 5px;
   background: rgba(0,0,0,.3);
   z-index: 999;
 }
 .ap-bar {
+	border-radius: 15px;
 	background: linear-gradient(270deg, #f907fe, #00d3d3);
 	z-index: 9999;
+	transition: 1.5s linear;
 }
 .ap-bar:after {
   position: absolute;
   top: 0;
-  right: -5px;
-  width: 12px;
-  height: 12px;
+  right: 0px;
+  width: 4px;
+  height: 15px;
   margin-top: -4px;
   content: '';
-  border-radius: 6px;
-  background: linear-gradient(270deg, #f907fe, #00d3d3);
+  border-radius: 15px;
+  background: white;
   opacity: 0;
-  transition: opacity .3s ease;
+  transition: opacity .1s ease;
 }
 .ap-progress-container:hover .ap-bar:after {
   opacity: 1;
@@ -171,6 +232,8 @@ button {
   border: 1px solid #565656;
   border-bottom: 0;
   z-index: 9999;
+  border-top-left-radius: 5px;
+  border-top-right-radius:  5px;
 }
 .ap-volume-btn {
   display: block;
@@ -195,8 +258,6 @@ button {
 .ap-volume-container:hover .ap-volume {
   height: 120px;
   visibility: visible;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
 }
 .ap-volume-progress {
   display: block;
@@ -289,6 +350,7 @@ button {
 	flex-grow: 1;
 }
 .ui-btn {
+  cursor: pointer;
 	margin: 0;
 	width: 48px;
 	height:32px;
@@ -313,18 +375,9 @@ button {
 }
 
 .ap-active {
-  background: rgba(0,0,0,.15);
   opacity: 1;
 }
 
-@keyframes blink {
-  from { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  to { transform: scale(1); }
-}
-.playing > .ap--pause {
-  animation: blink 1.5s linear infinite;
-}
 /* --------------------------- */
 
 @media(max-width:950px) {
@@ -332,10 +385,17 @@ button {
     flex: 1;
   }
   .pl-container {
-    height: 68vh !important;
   }
 }
 @media(max-width:950px) {
+  .pl-list {
+    max-width: 95% !important;
+  }
+
+  .pl-list > li {
+    width: 100% !important;
+  }
+
   .ap {
     min-width: 250px;
   }
@@ -358,7 +418,7 @@ button {
   }
 
   .pl-container {
-    padding-bottom: 5%;
+  padding-bottom: 30vh !important;
   }
 }
 /*--------------------
@@ -370,13 +430,14 @@ button {
   right: 0;
   color: white;
   left: 0;
-  height: 81vh;
   margin: auto;
+  height: fit-content;
   overflow: auto;
   font-size: 14px;
   background: #1B1B1B;
   z-index: 999;
-  padding-bottom: 5vh;
+  padding-bottom: 15%;
+  height: 100%;
 }
 .pl-lead {
   font-size: 24px;
@@ -386,14 +447,17 @@ button {
 }
 .pl-list {
   width: 100%;
-  max-width: 550px;
+  max-width: 85%;
   margin: 0 auto;
   padding: 5px 10px;
 }
 .pl-list > li {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  border-bottom: 1px solid #565656;
+  margin-bottom: 5px;
+  width: 49%;
+  margin-right: 5px;
+  height: 40px;
 }
 .pl-number,
 .pl-title,
@@ -402,11 +466,16 @@ button {
   padding: 10px 0;
 }
 .pl-number {
-  flex: 0 10%;
+  flex: 0 5%;
+  height: 40px;
+  position: absolute;
   text-align: center;
+  margin-left: 10px !important;
 }
+
 .pl-playing {
   display: none;
+  transform: translateY(5px);
 }
 .pl-current .pl-count {
   display: none;
@@ -420,6 +489,7 @@ button {
 
 .pl-title {
   overflow: hidden;
+  margin-left: 40px;
   cursor: pointer;
   text-align: left;
   white-space: nowrap;
@@ -428,18 +498,18 @@ button {
   color: #969696;
 }
 .pl-title:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 .pl-remove {
   opacity: 0;
   margin-right: 0;
+  transform: translateY(2px);
   cursor: pointer;
   text-align: center;
   color: white;
-  flex: 0 50px;
+  flex: 0 40px;
 }
 .pl-remove:hover {
-  background: #2B2B2B;
 }
 .pl-list > li:hover .pl-remove {
   opacity: 1;
@@ -451,7 +521,7 @@ button {
 
 .pl-empty {
   position: absolute;
-  top: 50%;
+  top: 40%;
   left: 50%;
   font-size: 2rem;
   transform: translate(-50%, -50%);
@@ -467,14 +537,14 @@ button {
 .eq {
   display: flex;
   width: 20px;
-  height: 20px;
+  height: 15px;
   margin: 0 auto;
   justify-content: space-between;
   align-items: flex-end;
 }
 .eq-bar {
   width: 4px;
-  background: linear-gradient(270deg, #f907fe, #00d3d3);
+  background: white;
 }
 .eq-bar:nth-child(1) {
   animation: eq .8s ease-in-out infinite 0s;
@@ -650,7 +720,7 @@ body {
 *::-webkit-scrollbar-track 
 {
     background-color: rgba(0,0,0,.2));
-	border-radius: 15px;
+    border-radius: 15px;
 }
  
 *::-webkit-scrollbar-thumb
@@ -1010,4 +1080,74 @@ i.fas.fa-random {
   width: 24px;
   height: 24px;
   margin-top: 3px;
+}
+
+
+li {
+  position: relative;
+  overflow: hidden;
+}
+
+li:hover .music-icon  {
+  opacity: 0.3;
+  transform: scale(1.05);
+}
+
+
+li:hover .music-id {
+  opacity: 0;
+}
+
+.music-icon {
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  opacity: 0.2;
+  left: 0;
+  border-radius: 10px;
+  top: 0;
+  transition: all 0.3s linear;
+}
+
+.music-id {
+  position: absolute;
+  right: 15px;
+  z-index: -1;
+  color: #969696;
+}
+
+div#now-bg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  filter: blur(3px);
+  overflow: hidden;
+  opacity: 0.3;
+  top: 5%;
+}
+
+li {
+	border-radius: 10px;
+}
+
+.no-anim {
+  transition: 0s linear !important;
+}
+
+li:hover .fav {
+  opacity: 1;
+}
+
+.fav {
+  position: absolute;
+  right: 45px;
+  cursor: pointer;
+  opacity: 0;
+  top: 14px;
+  transition: color 0.3s linear;
+}
+
+.fav:hover {
+  color: #e91e63 !important;
 }
