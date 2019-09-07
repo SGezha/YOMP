@@ -325,9 +325,10 @@ button {
 	display: flex;
 	width: 100vw;
 	height: 32px;
-	background: linear-gradient(270deg, #f907fe, #00d3d3);
-  cursor: default;
-  z-index: 99999;
+	cursor: default;
+	z-index: 999;
+	padding-bottom: 0px;
+	margin: 0px;
 } 
 .ui-titleicon {
 	flex-grow: 1;
@@ -338,10 +339,10 @@ button {
 	flex-grow: 2;
 	max-height: 32px;
 	width: auto;
-	font: 16px/32px "Segoe UI", Arial, sans-serif;
 	color: #fff;
 	text-indent: 10px;
 	display: inline-block;
+	padding-top: 2px;
 	-webkit-app-region: drag;
 }
 .ui-titlecontrols {
@@ -434,7 +435,6 @@ button {
   height: fit-content;
   overflow: auto;
   font-size: 14px;
-  background: #1B1B1B;
   z-index: 999;
   padding-bottom: 15%;
   height: 100%;
@@ -521,7 +521,7 @@ button {
 
 .pl-empty {
   position: absolute;
-  top: 40%;
+  top: 36%;
   left: 50%;
   font-size: 2rem;
   transform: translate(-50%, -50%);
@@ -630,8 +630,9 @@ button {
 
 body {
 	overflow: hidden;
-	background: #1B1B1B;
+	background: transparent;
 	font-family: 'Open Sans', sans-serif;
+	border-radius: 50px;
 }
 
 .video {
@@ -746,6 +747,7 @@ a:hover {color: white;}
   align-items: center;
   display: flex;
   -webkit-box-flex: 0;
+  border-top-left-radius: 5px;
   -ms-flex: 0 0 100%;
   flex: 0 0 100%;
   max-width: 100%;
@@ -762,11 +764,12 @@ a:hover {color: white;}
   display: flex;
   margin-top: 10px !important;
   padding: 0px 10px;
-  margin: 0px 15px;
+  margin: 0px 15px 0px 15px;
   background: #3e3e3e;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
   border-radius: 6px;
   transition: all .4s;
+  margin-top: 5px !important;
   margin-bottom: 5px;
 }
 
@@ -862,10 +865,11 @@ a:hover {color: white;}
 }
 .menu-left {
   position: absolute;
-  top: 32px;
   left: 0;
+  border-top-left-radius: 5px;
   width: 250px;
-  height: 100vh;
+  top: 0;
+  height: 100vh !important;
   visibility: hidden;
   transform: translate(-100%);
   transition: all .3s;
@@ -914,7 +918,6 @@ a:hover {color: white;}
 
 .menu>.links {
   width: 100%;
-  height: calc(100vh - 160px);
   overflow-y: scroll;
   transition: all .4s;
 }
@@ -1150,4 +1153,54 @@ li:hover .fav {
 
 .fav:hover {
   color: #e91e63 !important;
+}
+
+div#prog {
+    width: 100vw;
+    border-radius: 5px;
+    overflow: hidden;
+    background: #1b1b1b;
+    height: 100vh;
+}
+
+#loadmusic {
+  display: none;
+  width: 100%;
+  height: calc(100% - 36px);
+  position: absolute;
+  top: 36px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+#loadmusic>img {
+  width: 70%;
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+#loadmusic>.text {
+  font-size: 20px;
+  color: white;
+  width: 80%;
+  margin: 0px auto;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.text>span {
+  font-size: 16px;
+  position: absolute;
+  right: 10%;
+  top: 10%;
+  color: #969696;
+}
+
+.textload {
+  max-width: 80%;
+  height: 28px;
+  overflow: hidden;
 }

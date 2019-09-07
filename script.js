@@ -45,11 +45,6 @@ function winowClose() {
     window.close();
 }
 
-function openFile() {
-    var path = remote.dialog.showOpenDialog({ title: 'Select file', filters: [{ name: "MP3 files", extensions: ['mp3'], properties: ['openFile'] }] });
-    document.getElementById("link").value = path[0];
-}
-
 function fixmusic() {
     var masMusic = db.get("music").value();
     masMusic.forEach((m) => {
@@ -161,8 +156,10 @@ function searchbtn() {
 function addMusicFolder() {
     let dir = remote.dialog.showOpenDialog({ title: 'Select Music Folder', properties: ['openDirectory'] });
     fs.readdir(dir[0], function (err, items) {
+        loadMusic();
         items.forEach((i, ind) => {
             setTimeout(() => {
+                if(ind+1 == items.length) loadMusic();
                 if (i.toLocaleLowerCase().indexOf(".mp3") > -1) {
                     if (db.get("music").find({ file: `${dir[0]}/${i}` }).value() == undefined) {
                         var id = 0;
@@ -184,14 +181,10 @@ function addMusicFolder() {
                             file: `${dir[0]}/${i}`,
                             loved: false
                         }).write();
-                        toastr.clear();
-                        toastr.success(`${title} ${ind + 1}/${items.length} added to playlist :3`);
-                        refresh();
-                    } else {
-                        toastr.error(`${i.toLocaleLowerCase().split(".mp3")} ${ind + 1}/${items.length} alredy have in playlist :3`);
+                        document.getElementById("loadprogress").innerHTML = `<div class="textload">${title}</div> <span> ${ind + 1}/${items.length}</span>`;
                     }
                 }
-            }, 1000 * ind)
+            }, 500 * ind)
         })
     });
 }
@@ -200,9 +193,11 @@ function addMusicFolder() {
 function addosu() {
     let dir = remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
     fs.readdir(dir[0], function (err, items) {
+        loadMusic();
         items.forEach((i, ind) => {
             if (i.indexOf(".") == -1) {
                 setTimeout(() => {
+                    if(ind+1 == items.length) loadMusic();
                     fs.readdir(`${dir[0]}/${i}`, function (err, files) {
                         let obj = {};
                         obj.img = undefined;
@@ -219,6 +214,7 @@ function addosu() {
                             }
                         })
                         if (obj.title != undefined && obj.file != undefined) {
+                            document.getElementById("loadprogress").innerHTML = `<div class="textload">${obj.title}</div> <span> ${ind + 1}/${items.length}</span>`;
                             if (db.get("music").find({ file: obj.file }).value() == undefined) {
                                 var id = 0;
                                 if (db.get("music").value().length != undefined) {
@@ -231,9 +227,6 @@ function addosu() {
                                     icon: obj.img,
                                     loved: false
                                 }).write();
-                                toastr.clear();
-                                toastr.success(`${obj.title} ${ind + 1}/${items.length} added to playlist :3`);
-                                refresh();
                             }
                         }
                     })
@@ -849,9 +842,9 @@ function miniPlayer() {
     if (document.getElementById('ap').style.opacity == `0`) document.getElementById('ap').style.opacity = `1`;
     remote.BrowserWindow.getFocusedWindow().focus();
     document.getElementById('pl').style.display = "none";
-    document.getElementsByTagName('body')[0].style.background = "transparent";
     document.getElementById('app').style.display = "none";
     document.getElementsByClassName('ui-titlebar')[0].style.display = "none";
+    document.getElementById('prog').style.background = "transparent";
     remote.BrowserWindow.getFocusedWindow().setSize(screen.availWidth, 180);
     remote.BrowserWindow.getFocusedWindow().setPosition(1, screen.availHeight - 180);
     remote.BrowserWindow.getFocusedWindow().setSkipTaskbar(true);
@@ -874,10 +867,10 @@ function miniPlayerOff() {
         if (document.getElementById('ap').style.opacity == `0`) document.getElementById('ap').style.opacity = `1`;
         remote.BrowserWindow.getFocusedWindow().focus();
         document.getElementById('pl').style.display = "flex";
-        document.getElementsByTagName('body')[0].style.background = "#1B1B1B";
+        document.getElementById('prog').style.background = "#1B1B1B";
         document.getElementById('app').style.display = "block";
         document.getElementsByClassName('ui-titlebar')[0].style.display = "flex";
-        remote.BrowserWindow.getFocusedWindow().maximize();
+        remote.BrowserWindow.getFocusedWindow().setSize(1000, 700);
         remote.BrowserWindow.getFocusedWindow().center();
         remote.BrowserWindow.getFocusedWindow().setSkipTaskbar(false);
         mini = false;
@@ -912,6 +905,31 @@ function isElementInView(element, fullyInView) {
     }
 }
 
+function loadMusic() {
+    if(document.getElementById('loadmusic').style.display == "" || document.getElementById('loadmusic').style.display == "none") {
+        document.getElementsByClassName('menu-left')[0].classList.remove('act-menu');
+        document.getElementsByClassName('shadow')[0].style.display = "none";
+        document.getElementById('pl').style.display = "none";
+        document.getElementById('app').style.display = "none";
+        document.getElementById('ap').style.display = "none";
+        document.getElementById('loadmusic').style.display = "block";
+        document.getElementsByClassName('maximize')[0].style.opacity = "0";
+        document.getElementsByClassName('minimize')[0].style.opacity = "0";
+        remote.BrowserWindow.getFocusedWindow().setSize(500, 70);
+        remote.BrowserWindow.getFocusedWindow().center();
+    } else {
+        refresh();
+        document.getElementById('pl').style.display = "flex";
+        document.getElementById('app').style.display = "block";
+        document.getElementById('ap').style.display = "block";
+        document.getElementById('loadmusic').style.display = "none";
+        document.getElementsByClassName('maximize')[0].style.opacity = "1";
+        document.getElementsByClassName('minimize')[0].style.opacity = "1";
+        remote.BrowserWindow.getFocusedWindow().setSize(1000, 700);
+        remote.BrowserWindow.getFocusedWindow().center();
+        document.getElementById('pl').classList.remove("hide");
+    }
+}
 
 function openloved() {
     ilLoved = true;

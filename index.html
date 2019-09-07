@@ -15,6 +15,10 @@
 </head>
 
 <body>
+	<div id="prog">
+	<div id="loadmusic">
+		<div class="text" id="loadprogress">Artist - title <span>11/1000</span></div>
+	</div>
 	<div class="ui-titlebar">
 		<div class="ui-titletext"><i style="font-size: 24px !important; transform: translateY(3px);"
 				class="fab fa-youtube"></i> Music Player</div>
@@ -42,7 +46,7 @@
 					<li><a onclick="searchbtn()" href="#"><i class="fab fa-youtube"></i><span>YouTube</span></a></li>
 					<li class="cat"></li>
 					<li><a onclick="addosu()" href="#"><img style="width: 24px; hegiht: 24px; transform: scale(1.5);" src="icons/osu.svg"><span style="font-size: 15px;">Import osu! songs</span></a></li>
-					<li><a onclick="openAdd()" href="#"><i class="far fa-plus-square"></i><span>Import music</span></a></li>
+					<li><a onclick="addMusicFolder()" href="#"><i class="far fa-plus-square"></i><span>Import Folder</span></a></li>
 				</ul>
 			</div>
 		</div>
@@ -67,8 +71,6 @@
 		<div style="display: none;" v-if="showModal" id="local">
 			<h3>Add file to playlist</h3>
 			<i @click="showModal = false" class="fas fa-times"></i>
-			<input placeholder="Title" type="text" id="title">
-			<input placeholder="Link" type="text" id="link"><i onclick="openFile()" class="fas fa-file-upload"></i>
 			<button @click="add" class="btn">SEND</button>
 			<input placeholder="Youtube playlist id" type="text" id="ytplaylist">
 			<button @click="addPlaylist" class="btn">ADD</button>
@@ -157,6 +159,7 @@
 			</div>
 		</div>
 	</div>
+</div>
 
 
 	<script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
