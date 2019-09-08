@@ -214,31 +214,34 @@ function addMusicFolder() {
     fs.readdir(dir[0], function (err, items) {
         loadMusic();
         items.forEach((i, ind) => {
-            setTimeout(() => {
+            setTimeout( async() => {
                 if (ind + 1 == items.length) loadMusic();
                 if (i.toLocaleLowerCase().indexOf(".mp3") > -1) {
-                    if (db.get("music").find({ file: `${dir[0]}/${i}` }).value() == undefined) {
+                    const audioPath = path.join(dir[0], i);
+                    if (db.get("music").find({ file: `${audioPath}` }).value() == undefined) {
                         var id = 0;
-                        let metadata = NodeID3.read(`${dir[0]}/${i}`);
+                        const metadata = await musicMetdata.parseFile(audioPath);
+                        const common = metadata.common;
                         let img = undefined;
                         let title = i.toLocaleLowerCase().split(".mp3");
-                        if (metadata.title != undefined && metadata.artist != undefined) title = `${metadata.artist} - ${metadata.title}`;
+                        if (common.title && common.artist) title = `${common.artist} - ${common.title}`;
                         if (db.get("music").value().length != undefined) {
-                            id = db.get("music").value().length;
+                          id = db.get("music").value().length;
                         }
-                        if (metadata.image != undefined && metadata.image.imageBuffer != undefined) {
-                            fs.writeFileSync(`cache/${title}.jpg`, metadata.image.imageBuffer, 'binary');
+                        if (common.picture && common.picture.length > 0) {
+                          // ToDo: check common.picture[0].format, it may be 'image/png'
+                          fs.writeFileSync(`cache/${title}.jpg`, common.picture[0].data, 'binary');
                             img = encodeURI(`${basepath}/cache/${title}.jpg`);
                         }
                         db.get("music").push({
                             id: id,
                             title: title,
                             icon: img,
-                            file: `${dir[0]}/${i}`,
+                            file: audioPath,
                             loved: false
                         }).write();
                         document.getElementById("loadprogress").innerHTML = `<div class="textload">${title}</div> <span> ${ind + 1}/${items.length}</span>`;
-                    }
+                   }
                 }
             }, 500 * ind)
         })

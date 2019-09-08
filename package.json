@@ -32,7 +32,7 @@
     "electron-drag": "^1.2.2",
     "jimp": "^0.8.1",
     "lowdb": "^1.0.0",
-    "node-id3": "^0.1.11",
+    "music-metadata": "^4.5.3",
     "register-scheme": "0.0.2"
   }
 }
