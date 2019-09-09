@@ -115,12 +115,48 @@ document.getElementById('search').oninput = function () {
             playList: result
         });
         loaded = 0;
+
+        document.getElementById("pl").onscroll = function () {
+            if (isLoaded == true) return;
+            if (loaded == 0) loaded = 80;
+            var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
+    
+            if (isElViu) {
+                isLoaded = true;
+                for (let i = loaded; i < loaded + 50; i++) {
+                    document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
+                }
+                setTimeout(() => {
+                    isLoaded = false
+                }, 500);
+                loaded = loaded + 50;
+            }
+        };
+
         document.getElementById('pl').classList.remove("hide");
     } else {
         document.getElementById('pl').parentNode.removeChild(document.getElementById('pl'));
         AP.init({
             playList: base
         });
+
+        document.getElementById("pl").onscroll = function () {
+            if (isLoaded == true) return;
+            if (loaded == 0) loaded = 80;
+            var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
+    
+            if (isElViu) {
+                isLoaded = true;
+                for (let i = loaded; i < loaded + 50; i++) {
+                    document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
+                }
+                setTimeout(() => {
+                    isLoaded = false
+                }, 500);
+                loaded = loaded + 50;
+            }
+        };
+
         loaded = 0;
         document.getElementById('pl').classList.remove("hide");
     }
@@ -169,7 +205,7 @@ function addMusicFolder() {
                         if (db.get("music").value().length != undefined) {
                             id = db.get("music").value().length;
                         }
-                        if (metadata.image.imageBuffer != undefined) {
+                        if (metadata.image != undefined && metadata.image.imageBuffer != undefined) {
                             fs.writeFileSync(`cache/${title}.jpg`, metadata.image.imageBuffer, 'binary');
                             img = encodeURI(`${basepath}/cache/${title}.jpg`);
                         }
@@ -312,7 +348,7 @@ function start() {
 
         function renderPL() {
             var html = [];
-            var tpl = `<li class="music-el" {hide} data-track="{count}"> <div class="music-id">{id}</div> <div class="music-icon" style="background: url('{icon}'); background-size: cover; background-position: center;"></div> ` + '<div class="pl-number">' + '<div class="pl-count">' + '{type}' + '</div>' + '<div class="pl-playing">' + '<div class="eq">' + '<div class="eq-bar"></div>' + '<div class="eq-bar"></div>' + '<div class="eq-bar"></div>' + '</div>' + '</div>' + '</div>' + '<div class="pl-title">{title}</div>' + '{fav}' + '<button class="pl-remove">' + '<svg class="pl-del" style="cursor:pointer;" fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>' + '<path d="M0 0h24v24H0z" fill="none"/>' + '</svg>' + '</button>' + '</li>';
+            var tpl = `<li class="music-el" {hide} real-id="{real-id}" data-track="{count}"> <div class="music-id">{id}</div> <div class="music-icon" style="background: url('{icon}'); background-size: cover; background-position: center;"></div> ` + '<div class="pl-number">' + '<div class="pl-count">' + '{type}' + '</div>' + '<div class="pl-playing">' + '<div class="eq">' + '<div class="eq-bar"></div>' + '<div class="eq-bar"></div>' + '<div class="eq-bar"></div>' + '</div>' + '</div>' + '</div>' + '<div class="pl-title">{title}</div>' + '{fav}' + '<button class="pl-remove">' + '<svg class="pl-del" style="cursor:pointer;" fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>' + '<path d="M0 0h24v24H0z" fill="none"/>' + '</svg>' + '</button>' + '</li>';
             playList.forEach(function (item, i) {
                 let fav = `<i onclick="love('${item.title}', this);" style="color: white;" class="fas fa-heart fav"></i>`;
                 if (db.get("music").find({ title: item.title }).value().loved == true) fav = `<i onclick="love('${item.title}', this);" style="color: #e91e63;" class="fas fa-heart fav"></i>`;
@@ -320,9 +356,9 @@ function start() {
                 if (item.file.indexOf("osu") > -1) type = `<img style="width: 20px; hegiht: 20px; transform: scale(1.2);" src="icons/osu.svg">`;
                 if (item.videoId != undefined) type = `<i style="transform: scale(1.2);" class="fab fa-youtube"></i>`;
                 if (i < 80) {
-                    html.push(tpl.replace('{fav}', fav).replace('{count}', i).replace('{id}', `${i + 1}/${playList.length}`).replace('{type}', type).replace('{icon}', item.icon).replace('{hide}', '').replace('{title}', item.title).replace('{icon}', item.icon));
+                    html.push(tpl.replace('{real-id}', item.id).replace('{fav}', fav).replace('{count}', i).replace('{id}', `${i + 1}/${playList.length}`).replace('{type}', type).replace('{icon}', item.icon).replace('{hide}', '').replace('{title}', item.title).replace('{icon}', item.icon));
                 } else {
-                    html.push(tpl.replace('{fav}', fav).replace('{count}', i).replace('{id}', `${i + 1}/${playList.length}`).replace('{type}', type).replace('{title}', item.title).replace('{hide}', 'style="display: none;"').replace('{icon}', item.icon).replace('{icon}', item.icon));
+                    html.push(tpl.replace('{real-id}', item.id).replace('{fav}', fav).replace('{count}', i).replace('{id}', `${i + 1}/${playList.length}`).replace('{type}', type).replace('{title}', item.title).replace('{hide}', 'style="display: none;"').replace('{icon}', item.icon).replace('{icon}', item.icon));
                 }
             });
             pl = create('div', {
@@ -353,7 +389,7 @@ function start() {
                         var id = 0;
                         var isDel = parseInt(target.parentNode.getAttribute('data-track'), 10);
                         playList.splice(isDel, 1);
-                        db.get("music").remove({ id: isDel }).write();
+                        db.get("music").remove({ id: parseInt(target.parentNode.getAttribute('real-id'), 10) }).write();
                         target.parentNode.parentNode.removeChild(target.parentNode);
                         plLi = pl.querySelectorAll('li');
                         [].forEach.call(plLi, function (el, i) {
