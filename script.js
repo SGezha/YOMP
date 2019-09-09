@@ -148,13 +148,6 @@ function random() {
     document.getElementById('pl').classList.remove("hide");
 }
 
-function openAdd() {
-    app.showModal = true;
-    setTimeout(() => {
-        document.getElementById('local').style.display = "flex";
-    }, 100)
-}
-
 function searchbtn() {
     app.search();
 }
@@ -415,9 +408,7 @@ function start() {
             audio.src = playList[index].file;
             audio.preload = 'auto';
             document.title = trackTitle.innerHTML = playList[index].title;
-            document.getElementById('now-bg').style.background = `url('${playList[index].icon}')`;
-            document.getElementById('now-bg').style.backgroundSize = `cover`;
-            document.getElementById('now-bg').style.backgroundPosition = `center`;
+            document.getElementById('now-bg').style.background = `url('${playList[index].icon}') center center / cover no-repeat`;
             audio.play();
             playBtn.classList.add('playing');
             plActive();
@@ -762,7 +753,7 @@ function refresh() {
             loaded = loaded + 50;
         }
     };
-
+    
     loaded = 0;
     ilLoved = false;
     if (document.getElementsByClassName("pl-container")[1] != undefined) {
@@ -851,6 +842,7 @@ function miniPlayer() {
     document.getElementById('app').style.display = "none";
     document.getElementsByClassName('ui-titlebar')[0].style.display = "none";
     document.getElementById('prog').style.background = "transparent";
+    document.getElementsByClassName('pl-container')[0].style.background = "transparent";
     remote.BrowserWindow.getFocusedWindow().setSize(screen.availWidth, 180);
     remote.BrowserWindow.getFocusedWindow().setPosition(0, screen.availHeight - 180);
     remote.BrowserWindow.getFocusedWindow().setSkipTaskbar(true);
@@ -878,18 +870,17 @@ setInterval(() => {
 }, 1000)
 
 function miniPlayerOff() {
-    if (mini == true) {
-        if (document.getElementById('ap').style.transform == "translateY(180px)") document.getElementById('ap').style.transform = `translateY(0px)`;
-        remote.BrowserWindow.getFocusedWindow().focus();
-        document.getElementById('pl').style.display = "flex";
-        document.getElementById('prog').style.background = "#1B1B1B";
-        document.getElementById('app').style.display = "block";
-        document.getElementsByClassName('ui-titlebar')[0].style.display = "flex";
-        remote.BrowserWindow.getFocusedWindow().setSize(1000, 700);
-        remote.BrowserWindow.getFocusedWindow().center();
-        remote.BrowserWindow.getFocusedWindow().setSkipTaskbar(false);
-        mini = false;
-    }
+    if (document.getElementById('ap').style.transform == "translateY(180px)") document.getElementById('ap').style.transform = `translateY(0px)`;
+    remote.BrowserWindow.getFocusedWindow().focus();
+    document.getElementById('pl').style.display = "flex";
+    document.getElementById('prog').style.background = "#1B1B1B";
+    document.getElementsByClassName('pl-container')[0].style.background = "#1B1B1B";
+    document.getElementById('app').style.display = "block";
+    document.getElementsByClassName('ui-titlebar')[0].style.display = "flex";
+    remote.BrowserWindow.getFocusedWindow().setSize(1000, 700);
+    remote.BrowserWindow.getFocusedWindow().center();
+    remote.BrowserWindow.getFocusedWindow().setSkipTaskbar(false);
+    mini = false;
 }
 
 function love(i, el) {
