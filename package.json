@@ -1,6 +1,6 @@
 {
   "name": "osu-youtube-music-player",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Enjoi listen music from osu! and youtube :3",
   "main": "main.js",
   "build": {
