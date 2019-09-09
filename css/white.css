@@ -55,6 +55,21 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* WHITE THEME */
+:root {
+  --bg: rgb(230, 230, 230);
+  --opacity-1: rgba(255,255,255,0.7);
+  --opacity-2: rgba(255,255,255,0.7);
+  --block: rgb(226, 226, 226);
+  --block-hover: rgb(190, 190, 190);
+  --line: #565656;
+  --btn: rgb(219, 219, 219);
+  --btn-hover: rgb(230, 230, 230);
+  --text: #000;
+  --ap-acive: rgba(0,0,0,.1);
+  --pl-lead: #fff;
+}
+
 *,
 *:before,
 *:after {
@@ -83,6 +98,7 @@ button {
 /* Player and control panel */
 .ap {
   position: fixed;
+  background: var(--opacity-2) !important;
   right: 0;
   bottom: 0;
   left: 0;
@@ -91,15 +107,13 @@ button {
   font-size: 14px;
   user-select: none;
   opacity: 1;
-  color: white;
-  background: #2B2B2B;
-  border-top: 1px solid #565656;
+  color: var(--text);
+  border-top: 1px solid var(--line);
   z-index: 9999;
   transition: 0.3s linear;
 }
 .ap-inner {
   margin: 0 auto;
-  background: #2B2B2B;
 }
 .ap-panel {
   display: flex;
@@ -137,7 +151,7 @@ button {
   position: absolute;
   top: 5px;
   right: 0;
-  color: white;
+  color: var(--text);
   opacity: 0.7;
 }
 .ap-progress-container {
@@ -148,7 +162,7 @@ button {
   position: relative;
   height: 6px;
   border-radius: 15px;
-  box-shadow: 0px 0px 1px #3b3b3b;
+  box-shadow: 0px 0px 1px var(--block-hover);
   background: rgba(0,0,0,.2);
 }
 .ap-preload-bar,
@@ -177,7 +191,7 @@ button {
   margin-top: -4px;
   content: '';
   border-radius: 15px;
-  background: white;
+  background: var(--text);
   opacity: 0;
   transition: opacity .1s ease;
 }
@@ -194,7 +208,7 @@ button {
   cursor: pointer;
   transition: background .2s ease;
   text-align: center;
-  color: #fff;
+  color: var(--text);
   border: 0;
   outline: 0;
   background: none;
@@ -203,7 +217,7 @@ button {
   /* fill: #333; */
 }
 .ap-controls:hover svg {
-  fill: white;
+  fill: var(--text);
 }
 .ap-controls:active {
   background: rgba(0,0,0,.1);
@@ -231,8 +245,8 @@ button {
   height: 0;
   visibility: hidden;
   transition: all .2s cubic-bezier(0.17, 0.72, 0.26, 1.23);
-  background: #2B2B2B;
-  border: 1px solid #565656;
+  background: var(--block);
+  border: 1px solid --line;
   border-bottom: 0;
   z-index: 9999;
   border-top-left-radius: 5px;
@@ -251,11 +265,11 @@ button {
   display: inline;
 }
 .ap-volume-container:hover {
-  background: #2B2B2B;
+  background: var(--block);
 }
 
 .ap-volume-container:hover {
-  background: #2B2B2B;
+  background: var(--block);
 }
 
 .ap-volume-container:hover .ap-volume {
@@ -284,7 +298,7 @@ button {
 #local {
 	width: 40vw;
 	height: 350px;
-	background: #1B1B1B;
+	background: var(--bg);
 	position: absolute;
 	position: absolute;
 	top: 50%;
@@ -297,12 +311,12 @@ button {
 	transform: translate(-50%, -50%);
 	z-index: 999999;
 	border-radius: 10px;
-	border: 1px solid #565656;
+	border: 1px solid var(--line);
 }
 
 #local h3{
 	text-align: center;
-	background: white;
+	background: var(--text);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	font-size: 26px;
@@ -310,27 +324,27 @@ button {
 
 .btn {
 	padding: 5px 20px;
-	background: rgb(190, 190, 190);
-	color: white;
+	background: var(--btn);
+	color: var(-text);
 	border-radius: 30px;
 	cursor: pointer;
 	font-size: 22px;
 	margin-top: 10px;
 	display: inline-block;
-	background: #2B2B2B;
+	background: var(--block);
 	transition: 0.5s;
 	font-weight: 700;
 }
 
-.btn:hover {background: #3e3e3e;}
+.btn:hover {background: var(--btn-hover);}
 
 .ui-titlebar {
 	display: flex;
 	width: 100vw;
-	height: 32px;
+	height: 36px;
 	cursor: default;
 	z-index: 999;
-	padding-bottom: 0px;
+	background: var(--opacity-1);
 	margin: 0px;
 } 
 .ui-titleicon {
@@ -340,27 +354,25 @@ button {
 }
 .ui-titletext {
 	flex-grow: 2;
-	max-height: 32px;
 	width: auto;
-	color: #fff;
+	color: var(--text);
 	text-indent: 10px;
 	display: inline-block;
-	padding-top: 2px;
 	-webkit-app-region: drag;
 }
 .ui-titlecontrols {
 	max-width: 144px;
-	max-height: 32px;
 	flex-grow: 1;
+	height: 100%;
 }
 .ui-btn {
   cursor: pointer;
-	margin: 0;
-	width: 48px;
-	height:32px;
-	border: 0;
-	outline: 0;
-	background: transparent;
+  margin: 0;
+  width: 48px;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
 }
 .ui-btn:hover {
 	background: rgba(255,255,255,.1);
@@ -371,11 +383,12 @@ button {
 .ui-btn svg path, 
 .ui-btn svg rect, 
 .ui-btn svg polygon {
-	fill: #fff;
+	fill: var(--text);
 }
 .ui-btn svg {
   width: 10px;
   height: 10px;
+  fill: var(--text) !important;
 }
 
 .ap-active {
@@ -398,8 +411,10 @@ button {
 
 @media(max-width:950px) {
   .pl-container {
-    height: calc(100% - 45px - 50px - 107px) !important;
+    height: calc(100% - 45px - 50px - 113px) !important;
   }
+
+  div#app {max-height: calc(100vh - 141px) !important;}
 
   .ap {
     min-width: 250px;
@@ -427,23 +442,23 @@ button {
 --------------------*/
 .pl-container {
   position: fixed;
-  top: 97px;
+  top: 102px;
   right: 0;
-  color: white;
+  color: var(--text);
   left: 0;
-  background: #1b1b1b;
+  background: var(--bg);
   margin: auto;
   height: fit-content;
   overflow: auto;
   font-size: 14px;
   z-index: 999;
-  height: calc(100% - 45px - 50px - 52px);
+  height: calc(100% - 45px - 50px - 57px);
 }
 .pl-lead {
   font-size: 24px;
   font-weight: 400;
   text-align: center;
-  color: #333;
+  color: var(--pl-lead);
 }
 .pl-list {
   width: 100%;
@@ -458,6 +473,7 @@ button {
   width: 49%;
   margin-right: 5px;
   height: 40px;
+  background: rgba(0,0,0,.6);
 }
 .pl-number,
 .pl-title,
@@ -508,7 +524,7 @@ button {
   transform: translateY(2px);
   cursor: pointer;
   text-align: center;
-  color: white;
+  color: var(--text);
   flex: 0 40px;
   position: absolute;
   right: 10px;
@@ -530,7 +546,8 @@ button {
   font-size: 2rem;
   transform: translate(-50%, -50%);
   letter-spacing: 2px;
-  color: #ccc;
+  color: var(--text);
+  opacity: 0.8;
 }
 
 @keyframes eq {
@@ -548,7 +565,7 @@ button {
 }
 .eq-bar {
   width: 4px;
-  background: white;
+  background: var(--text);
 }
 .eq-bar:nth-child(1) {
   animation: eq .8s ease-in-out infinite 0s;
@@ -582,16 +599,14 @@ button {
 }
 
 .fa-search {
-	background: white;
 	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
 	/* font-size: 27px; */
 	cursor: pointer;
 	transition: 1s ease;
 }
 
 .fa-file-upload {
-  background: #1b1b1b;
+  background: var(--bg);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 27px;
@@ -603,7 +618,7 @@ button {
 }
 
 .fa-times {
-	background: white;
+	background: var(--text);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	font-size: 27px;
@@ -654,7 +669,7 @@ body {
 .video-pl {
 	overflow-y: scroll !important;
 	padding-bottom: 1vh;
-	height: 81vh;
+	height: calc(100vh - 153px) !important;
 }
 
 .video img {
@@ -669,7 +684,7 @@ body {
 	position: absolute;
 	z-index: 3;
 	bottom: 0px;
-	color: white;
+	color: var(--text);
 	opacity: 0.6;
 	margin: 3px;
 	text-align: center;
@@ -744,7 +759,7 @@ a {
   transition: all .4s;
   text-decoration: none;
 }
-a:hover {color: white;}
+a:hover {color: var(--text);}
 
 .menu {
   justify-content: center;
@@ -769,7 +784,7 @@ a:hover {color: white;}
   margin-top: 10px !important;
   padding: 0px 10px;
   margin: 0px 15px 0px 15px;
-  background: #3e3e3e;
+  background: var(--block-hover);
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
   border-radius: 6px;
   transition: all .4s;
@@ -811,7 +826,7 @@ a:hover {color: white;}
   font-size: 20px;
   margin-left: 5px;
   margin-bottom: 15px;
-  color: white;
+  color: var(--text) !important;
 }
 
 .wow>input {
@@ -821,11 +836,11 @@ a:hover {color: white;}
   text-transform: capitalize;
   text-align: center;
   font-size: 20px;
-  color: white;
+  color: var(--text);
   padding-top: 10px !important;
   border-radius: 100px;
   transition: all .4s;
-  background: #3e3e3e;
+  background:  var(--block-hover);
 }
 
 #local>input {
@@ -837,7 +852,7 @@ a:hover {color: white;}
   height: 40px !important;
   text-align: center;
   width: 73%;
-  color: white;
+  color: var(--text);
   border-radius: 100px;
   transition: all .4s;
 }
@@ -850,7 +865,7 @@ a:hover {color: white;}
 
 .wow>input:focus {
   outline: 0px;
-  background: #363636;
+  background: var(--block);
   text-decoration: none;
 }
 
@@ -883,7 +898,7 @@ a:hover {color: white;}
 .menu {
   position: relative;
   height: inherit;
-  background: #2B2B2B;
+  background: var(--block);
   overflow: hidden;
 }
 
@@ -900,7 +915,7 @@ a:hover {color: white;}
   align-items: flex-end;
   display: flex;
   flex-wrap: wrap;
-  color: white;
+  color: var(--text);
   width: 100%;
   height: 100%;
   z-index: 1;
@@ -932,7 +947,7 @@ a:hover {color: white;}
   right: 10px;
 }
 
-.menu>.profile>.full>.float-icons>.button>i {padding: 10px;background: white;box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);border-radius: 6px;}
+.menu>.profile>.full>.float-icons>.button>i {padding: 10px;background: var(--text);box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);border-radius: 6px;}
 
 .menu>.profile>.full>.float-icons>.button {
   margin: 0 4px;
@@ -964,8 +979,8 @@ a:hover {color: white;}
   display: flex;
   padding: 12px 10px;
   margin: 10px 0;
-  background: #2B2B2B;
-  box-shadow: 0 2px 5px #2B2B2B;
+  background: var(--block);
+  box-shadow: 0 2px 5px var(--block);
   border-radius: 6px;
   transition: all .4s;
 }
@@ -974,7 +989,7 @@ a:hover {color: white;}
   font-size: 22px;
   width: 25px;
   margin-right: 30px;
-  color: #ffffff;
+  color: var(--text);
   transition: all .4s;
 }
 
@@ -1000,23 +1015,23 @@ a:hover {color: white;}
 }
 .menu>.links>ul>li>a {
   width: 100%;
-  color: #ffffff;
+  color: var(--text);
   display: flex;
   align-items: center;
 }
 
 .menu>.links>ul>li:hover i {
-  color: white !important;
+  color: var(--text) !important;
 }
 .menu>.links>ul>li:hover a {
-  color: white !important;
+  color: var(--text) !important;
 }
 .menu>.links>ul>li.cat {
   font-size: 16px;
   color: #adadad;
   width: 100%;
   height: 1px;
-  background: #3e3e3e !important;
+  background: var(--line) !important;
   box-shadow: none !important;
   padding: 0;
   margin: 4px 0;
@@ -1024,7 +1039,7 @@ a:hover {color: white;}
 }
 .menu>.lang>.flag>.change>ul {
   font-size: 24px;
-  background: #2B2B2B;
+  background: var(--block);
   padding: 20px 30px;
   border-radius: 20px;
 }
@@ -1071,11 +1086,11 @@ a:hover {color: white;}
 }
 
 .wow>.menu-icon>i {
-  color: white;
+  color: var(--text);
 }
 
 .menu>.lang>.flag>i {
-  color: white;
+  color: var(--text);
 }
 
 .btn-menu {
@@ -1096,7 +1111,7 @@ li {
 }
 
 li:hover .music-icon  {
-  opacity: 0.5;
+  opacity: 1;
   transform: scale(1.1);
 }
 
@@ -1110,7 +1125,7 @@ li:hover .music-id {
   width: 100%;
   height: 100%;
   position: absolute;
-  opacity: 0.2;
+  opacity: 0.6;
   left: 0;
   border-radius: 10px;
   top: 0;
@@ -1130,7 +1145,7 @@ div#now-bg {
   height: 100%;
   position: absolute;
   overflow: hidden;
-  opacity: 0.4;
+  opacity: 0.6;
   transition: 0.3s linear;
 }
 
@@ -1163,7 +1178,6 @@ div#prog {
     width: 100vw;
     border-radius: 5px;
     overflow: hidden;
-    background: #1b1b1b;
     height: 100vh;
 }
 
@@ -1187,7 +1201,7 @@ div#prog {
 
 #loadmusic>.text {
   font-size: 20px;
-  color: white;
+  color: var(--text);
   width: 80%;
   margin: 0px auto;
   display: flex;
@@ -1200,7 +1214,8 @@ div#prog {
   position: absolute;
   right: 10%;
   top: 10%;
-  color: #969696;
+  color: var(--text);
+  opacity: 0.8;
 }
 
 .textload {
@@ -1208,3 +1223,5 @@ div#prog {
   height: 28px;
   overflow: hidden;
 }
+
+div#app {background: var(--bg);padding-top: 5px;max-height: calc(100vh - 86px);}
