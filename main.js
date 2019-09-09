@@ -134,7 +134,7 @@ function createActivity(data) {
       details: "Listen music",
       state: data.title,
       largeImageKey: "icon",
-      largeImageText: "YTMusicPlayer",
+      largeImageText: "YOMP",
       smallImageKey: "play",
       smallImageText: "Playing"
     };
@@ -143,7 +143,7 @@ function createActivity(data) {
       details: "Paused",
       state: data.title,
       largeImageKey: "icon",
-      largeImageText: "YTMusicPlayer",
+      largeImageText: "YOMP",
       smallImageKey: "stop",
       smallImageText: "Paused"
     };

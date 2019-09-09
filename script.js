@@ -456,16 +456,19 @@ function start() {
 
         function prev() {
             index = index - 1;
+            if(mini == true && ping > 1) ping = 5;
             play();
         }
 
         function next() {
             index = index + 1;
+            if(mini == true && ping > 1) ping = 5;
             play();
         }
 
         function random() {
             index = getRandomInt(0, db.get("music").value().length);
+            if(mini == true && ping > 1) ping = 5;
             play();
         }
 
@@ -889,7 +892,6 @@ function miniPlayer() {
 
 setInterval(() => {
     if (ping != false) {
-        console.log(ping);
         if(ping == 1 && mini == true) {
             if (!$('#ap').is(':hover') && document.getElementById('ap').style.transform != "translateY(180px)") {
                 document.getElementsByClassName('ap-volume')[0].style.height = null;
