@@ -1,11 +1,11 @@
 {
-  "name": "youtube-music-player",
+  "name": "osu-youtube-music-player",
   "version": "1.4.0",
-  "description": "Best music youtube player",
+  "description": "Enjoi listen music from osu! and youtube :3",
   "main": "main.js",
   "build": {
-    "productName": "YouTube Music Player",
-    "appId": "YouTube Music Player",
+    "productName": "YOMP",
+    "appId": "YOMP",
     "win": {
       "target": [
         "NSIS"

@@ -11,7 +11,12 @@ const { remote, ipcRenderer: ipc } = require('electron'),
 let musicSelectedId = 0,
     isLoaded = false,
     loaded = 0,
-    basepath = remote.app.getAppPath().split("\\").join("/").split("/reso")[0];
+    basepath = remote.app.getAppPath().split("\\").join("/").split("/reso")[0],
+    mini = false,
+    fullscreen = 0,
+    base = db.get("music").value(),
+    ilLoved = false,
+    ping = false;
 
 
 window.onload = function () {
@@ -76,11 +81,9 @@ function fixmusic() {
             });
         });
     })
-    document.getElementById('ap').style.opacity = "1";
+    document.getElementById('ap').style.transform = "translateY(0px)";
     refresh();
 }
-
-let fullscreen = 0;
 
 function maxsize() {
     if (fullscreen == 0) {
@@ -94,7 +97,6 @@ function maxsize() {
     }
 }
 
-let base = db.get("music").value();
 document.getElementById('search').oninput = function () {
     if (base.length == 0) return;
     if (document.getElementById("pl").classList.length == 2) return;
@@ -112,19 +114,21 @@ document.getElementById('search').oninput = function () {
         AP.init({
             playList: result
         });
+        loaded = 0;
         document.getElementById('pl').classList.remove("hide");
     } else {
         document.getElementById('pl').parentNode.removeChild(document.getElementById('pl'));
         AP.init({
             playList: base
         });
+        loaded = 0;
         document.getElementById('pl').classList.remove("hide");
     }
 }
 
 
 function random() {
-    var mas = shuffle(db.get("music").value());
+    var mas = shuffle(base);
     let result = [];
     db.set('music', []).write();
     mas.forEach((m, ind) => {
@@ -138,7 +142,9 @@ function random() {
         result.push(m);
     });
     db.set('music', result).write();
+    loaded = 0;
     refresh();
+    
     document.getElementById('pl').classList.remove("hide");
 }
 
@@ -320,7 +326,7 @@ function start() {
                 let type = '<svg fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M0 0h24v24H0z" fill="none"/>' + '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>' + '</svg>';
                 if (item.file.indexOf("osu") > -1) type = `<img style="width: 20px; hegiht: 20px; transform: scale(1.2);" src="icons/osu.svg">`;
                 if (item.videoId != undefined) type = `<i style="transform: scale(1.2);" class="fab fa-youtube"></i>`;
-                if (i < 50) {
+                if (i < 80) {
                     html.push(tpl.replace('{fav}', fav).replace('{count}', i).replace('{id}', `${i + 1}/${playList.length}`).replace('{type}', type).replace('{icon}', item.icon).replace('{hide}', '').replace('{title}', item.title).replace('{icon}', item.icon));
                 } else {
                     html.push(tpl.replace('{fav}', fav).replace('{count}', i).replace('{id}', `${i + 1}/${playList.length}`).replace('{type}', type).replace('{title}', item.title).replace('{hide}', 'style="display: none;"').replace('{icon}', item.icon).replace('{icon}', item.icon));
@@ -561,19 +567,20 @@ function start() {
         }
 
         function volumeUp(value) {
-            if (document.getElementById('ap').style.opacity == `0`) {
+            if (mini == true) {
                 miniPlayer();
-                setTimeout(() => {
-                    document.getElementsByClassName('ap-volume')[0].style.height = "120px";
-                    document.getElementsByClassName('ap-volume')[0].style.visibility = "visible";
-                }, 510)
+                document.getElementsByClassName('ap-volume')[0].style.height = "120px";
+                document.getElementsByClassName('ap-volume')[0].style.visibility = "visible";
+                document.getElementsByClassName('ap-volume-container')[0].style.background = '#2b2b2b';
             } else {
                 document.getElementsByClassName('ap-volume')[0].style.height = "120px";
                 document.getElementsByClassName('ap-volume')[0].style.visibility = "visible";
+                document.getElementsByClassName('ap-volume-container')[0].style.background = '#2b2b2b';
                 setTimeout(() => {
                     if (document.getElementsByClassName('ap-volume')[0].style.height == "120px") {
                         document.getElementsByClassName('ap-volume')[0].style.height = null;
                         document.getElementsByClassName('ap-volume')[0].style.visibility = null;
+                        document.getElementsByClassName('ap-volume-container')[0].style.background = null;
                     }
                 }, 3000)
             }
@@ -585,17 +592,20 @@ function start() {
         }
 
         function volumeDown(value) {
-            if (document.getElementById('ap').style.opacity == `0`) {
+            if (mini == true) {
                 miniPlayer();
                 document.getElementsByClassName('ap-volume')[0].style.height = "120px";
                 document.getElementsByClassName('ap-volume')[0].style.visibility = "visible";
+                document.getElementsByClassName('ap-volume-container')[0].style.background = '#2b2b2b';
             } else {
                 document.getElementsByClassName('ap-volume')[0].style.height = "120px";
                 document.getElementsByClassName('ap-volume')[0].style.visibility = "visible";
+                document.getElementsByClassName('ap-volume-container')[0].style.background = '#2b2b2b';
                 setTimeout(() => {
                     if (document.getElementsByClassName('ap-volume')[0].style.height == "120px") {
                         document.getElementsByClassName('ap-volume')[0].style.height = null;
                         document.getElementsByClassName('ap-volume')[0].style.visibility = null;
+                        document.getElementsByClassName('ap-volume-container')[0].style.background = null;
                     }
                 }, 3000)
             }
@@ -736,27 +746,25 @@ function refresh() {
         playList: db.get("music").value()
     });
 
-    loaded = 0;
-    ilLoved = false;
     document.getElementById("pl").onscroll = function () {
         if (isLoaded == true) return;
-        if (loaded == 0) loaded = 45;
-        var isElViu = isElementInView($(`[data-track="${loaded - 10}"]`), false);
+        if (loaded == 0) loaded = 80;
+        var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
 
         if (isElViu) {
             isLoaded = true;
-            for (let i = loaded + 5; i < loaded + 100; i++) {
-                setTimeout(() => {
-                    document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
-                }, 50 * i);
+            for (let i = loaded; i < loaded + 50; i++) {
+                document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
             }
             setTimeout(() => {
                 isLoaded = false
-            }, 50 * 100);
-            loaded = loaded + 100;
+            }, 500);
+            loaded = loaded + 50;
         }
     };
 
+    loaded = 0;
+    ilLoved = false;
     if (document.getElementsByClassName("pl-container")[1] != undefined) {
         document.getElementsByClassName("pl-container")[1].parentNode.removeChild(document.getElementsByClassName("pl-container")[1]);
     }
@@ -837,10 +845,8 @@ function shuffle(arr) {
     return arr;
 }
 
-let mini = false;
 function miniPlayer() {
-    if (document.getElementById('ap').style.opacity == `0`) document.getElementById('ap').style.opacity = `1`;
-    remote.BrowserWindow.getFocusedWindow().focus();
+    if (document.getElementById('ap').style.transform == "translateY(180px)") document.getElementById('ap').style.transform = "translateY(0px)";
     document.getElementById('pl').style.display = "none";
     document.getElementById('app').style.display = "none";
     document.getElementsByClassName('ui-titlebar')[0].style.display = "none";
@@ -848,23 +854,32 @@ function miniPlayer() {
     remote.BrowserWindow.getFocusedWindow().setSize(screen.availWidth, 180);
     remote.BrowserWindow.getFocusedWindow().setPosition(0, screen.availHeight - 180);
     remote.BrowserWindow.getFocusedWindow().setSkipTaskbar(true);
+    remote.BrowserWindow.getFocusedWindow().focus();
     mini = true;
-    setTimeout(() => {
-        if (mini == false) return;
-        if (!$('#ap').is(':hover') && document.getElementById('ap').style.opacity != `0`) {
-            document.getElementsByClassName('ap-volume')[0].style.height = null;
-            document.getElementsByClassName('ap-volume')[0].style.visibility = null;
-            setTimeout(() => {
-                document.getElementById('ap').style.opacity = `0`;
-                setTimeout(() => { remote.BrowserWindow.getFocusedWindow().hide(); }, 510);
-            }, 310)
-        } else { miniPlayer(); }
-    }, 5000)
+    ping = 5;
 }
+
+setInterval(() => {
+    if (ping != false) {
+        console.log(ping);
+        if(ping == 1 && mini == true) {
+            if (!$('#ap').is(':hover') && document.getElementById('ap').style.transform != "translateY(180px)") {
+                document.getElementsByClassName('ap-volume')[0].style.height = null;
+                document.getElementsByClassName('ap-volume')[0].style.visibility = null;
+                document.getElementsByClassName('ap-volume-container')[0].style.background = null;
+                setTimeout(() => {
+                    document.getElementById('ap').style.transform = `translateY(180px)`;
+                    setTimeout(() => { remote.BrowserWindow.getFocusedWindow().hide(); }, 310);
+                }, 310)
+                ping = false;
+            } else { miniPlayer(); }
+        } else {if(mini == true) { ping--; }}
+    };
+}, 1000)
 
 function miniPlayerOff() {
     if (mini == true) {
-        if (document.getElementById('ap').style.opacity == `0`) document.getElementById('ap').style.opacity = `1`;
+        if (document.getElementById('ap').style.transform == "translateY(180px)") document.getElementById('ap').style.transform = `translateY(0px)`;
         remote.BrowserWindow.getFocusedWindow().focus();
         document.getElementById('pl').style.display = "flex";
         document.getElementById('prog').style.background = "#1B1B1B";
@@ -876,8 +891,6 @@ function miniPlayerOff() {
         mini = false;
     }
 }
-
-let ilLoved = false;
 
 function love(i, el) {
     if (db.get("music").find({ title: i }).value().loved == true) {
@@ -948,20 +961,18 @@ function openloved() {
 
     document.getElementById("pl").onscroll = function () {
         if (isLoaded == true) return;
-        if (loaded == 0) loaded = 45;
-        var isElViu = isElementInView($(`[data-track="${loaded - 10}"]`), false);
+        if (loaded == 0) loaded = 80;
+        var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
 
         if (isElViu) {
             isLoaded = true;
-            for (let i = loaded + 5; i < loaded + 100; i++) {
-                setTimeout(() => {
-                    document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
-                }, 50 * i);
+            for (let i = loaded; i < loaded + 50; i++) {
+                document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
             }
             setTimeout(() => {
                 isLoaded = false
-            }, 50 * 100);
-            loaded = loaded + 100;
+            }, 500);
+            loaded = loaded + 50;
         }
     };
 

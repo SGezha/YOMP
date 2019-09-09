@@ -95,14 +95,16 @@ button {
   background: #2B2B2B;
   border-top: 1px solid #565656;
   z-index: 9999;
+  transition: 0.3s linear;
 }
 .ap-inner {
   margin: 0 auto;
   background: #2B2B2B;
-  max-width: 1400px;
 }
 .ap-panel {
   display: flex;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 .ap-item {
   display: flex;
@@ -381,20 +383,21 @@ button {
 
 /* --------------------------- */
 
-@media(max-width:950px) {
-  .ap-item > .ap-controls {
-    flex: 1;
-  }
-  .pl-container {
+@media(min-width:1200px) {
+  .pl-list > li {
+    width: 32% !important;
   }
 }
-@media(max-width:950px) {
-  .pl-list {
-    max-width: 95% !important;
-  }
 
+@media(max-width: 700px) {
   .pl-list > li {
     width: 100% !important;
+  }
+}
+
+@media(max-width:950px) {
+  .pl-container {
+    height: calc(100% - 45px - 50px - 107px) !important;
   }
 
   .ap {
@@ -417,10 +420,6 @@ button {
     flex: 1 1 50%;
     order: 2;
   }
-
-  .pl-container {
-  padding-bottom: 30vh !important;
-  }
 }
 /*--------------------
   PlayList
@@ -436,8 +435,7 @@ button {
   overflow: auto;
   font-size: 14px;
   z-index: 999;
-  padding-bottom: 15%;
-  height: 100%;
+  height: calc(100% - 45px - 50px - 52px);
 }
 .pl-lead {
   font-size: 24px;
@@ -447,7 +445,7 @@ button {
 }
 .pl-list {
   width: 100%;
-  max-width: 85%;
+  max-width: 95%;
   margin: 0 auto;
   padding: 5px 10px;
 }
@@ -496,6 +494,7 @@ button {
   text-overflow: ellipsis;
   flex: 1;
   color: #969696;
+  max-width: 70%;
 }
 .pl-title:hover {
   text-decoration: none;
@@ -508,6 +507,8 @@ button {
   text-align: center;
   color: white;
   flex: 0 40px;
+  position: absolute;
+  right: 10px;
 }
 .pl-remove:hover {
 }
@@ -521,7 +522,7 @@ button {
 
 .pl-empty {
   position: absolute;
-  top: 36%;
+  top: 45%;
   left: 50%;
   font-size: 2rem;
   transform: translate(-50%, -50%);
@@ -1092,8 +1093,8 @@ li {
 }
 
 li:hover .music-icon  {
-  opacity: 0.3;
-  transform: scale(1.05);
+  opacity: 0.5;
+  transform: scale(1.1);
 }
 
 
