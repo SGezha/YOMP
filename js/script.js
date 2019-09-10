@@ -371,8 +371,8 @@ function start() {
             var html = [];
             var tpl = `<li class="music-el" {hide} real-id="{real-id}" data-track="{count}"> <div class="music-id">{id}</div> <div class="music-icon" style="background: url('{icon}'); background-size: cover; background-position: center;"></div> ` + '<div class="pl-number">' + '<div class="pl-count">' + '{type}' + '</div>' + '<div class="pl-playing">' + '<div class="eq">' + '<div class="eq-bar"></div>' + '<div class="eq-bar"></div>' + '<div class="eq-bar"></div>' + '</div>' + '</div>' + '</div>' + '<div class="pl-title">{title}</div>' + '{fav}' + '<button class="pl-remove">' + '<svg class="pl-del" style="cursor:pointer;" fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>' + '<path d="M0 0h24v24H0z" fill="none"/>' + '</svg>' + '</button>' + '</li>';
             playList.forEach(function (item, i) {
-                let fav = `<i onclick="love('${item.title}', this);" style="color: white;" class="fas fa-heart fav"></i>`;
-                if (db.get("music").find({ title: item.title }).value().loved == true) fav = `<i onclick="love('${item.title}', this);" style="color: #e91e63;" class="fas fa-heart fav"></i>`;
+                let fav = `<i onclick="love(${item.id}, this);" style="color: white;" class="fas fa-heart fav"></i>`;
+                if (db.get("music").find({ title: item.title }).value().loved == true) fav = `<i onclick="love(${item.id}, this);" style="color: #e91e63;" class="fas fa-heart fav"></i>`;
                 let type = '<svg fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M0 0h24v24H0z" fill="none"/>' + '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>' + '</svg>';
                 if (item.file.indexOf("osu") > -1) type = `<img style="width: 20px; hegiht: 20px; transform: scale(1.2);" src="icons/osu.svg">`;
                 if (item.videoId != undefined) type = `<i style="transform: scale(1.2);" class="fab fa-youtube"></i>`;
@@ -880,7 +880,7 @@ function parse_str(str) {
 }
 
 function lovethis() {
-    love(document.getElementsByClassName('pl-current')[0].innerHTML.split(`<div class="pl-title">`)[1].split(`<`)[0], document.getElementsByClassName('fav')[document.getElementsByClassName('pl-current')[0].getAttribute('data-track')]);
+    love(parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('real-id'), 10), document.getElementsByClassName('fav')[document.getElementsByClassName('pl-current')[0].getAttribute('data-track')]);
 }
 
 function getRandomInt(min, max) { return Math.round(Math.random() * (max - min)) + min; };
@@ -940,16 +940,17 @@ function miniPlayerOff() {
     mini = false;
 }
 
-function love(i, el) {
-    if (db.get("music").find({ title: i }).value().loved == true) {
-        db.get("music").find({ title: i }).assign({ loved: false }).write();
-        el.style.color = "var(--text)";
-        toastr.error(`${i} remove from loved :c`);
+function love(id, el) {
+    let track = db.get("music").find({ id: id }).value();
+    if (track.loved == true) {
+        db.get("music").find({ id: id }).assign({ loved: false }).write();
+        el.style.color = "white";
+        toastr.error(`${track.title} remove from loved :c`);
         if (ilLoved == true) openloved();
     } else {
-        toastr.success(`${i} added to loved :3`);
+        toastr.success(`${track.title} added to loved :3`);
         el.style.color = "#e91e63";
-        db.get("music").find({ title: i }).assign({ loved: true }).write();
+        db.get("music").find({ id: id }).assign({ loved: true }).write();
     }
 }
 
