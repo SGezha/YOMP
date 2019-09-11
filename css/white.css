@@ -58,8 +58,8 @@
 /* WHITE THEME */
 :root {
   --bg: rgb(230, 230, 230);
-  --opacity-1: rgba(255,255,255,0.7);
-  --opacity-2: rgba(255,255,255,0.7);
+  --opacity-1: rgba(255,255,255,0.9);
+  --opacity-2: rgba(255,255,255,0.9);
   --block: rgb(226, 226, 226);
   --block-hover: rgb(190, 190, 190);
   --line: #565656;
@@ -162,8 +162,8 @@ button {
   position: relative;
   height: 6px;
   border-radius: 15px;
-  box-shadow: 0px 0px 1px var(--block-hover);
-  background: rgba(0,0,0,.2);
+  box-shadow: 0px 0px 1px var(--text);
+  background: rgba(255,255,255,.2);
 }
 .ap-preload-bar,
 .ap-bar {
@@ -473,7 +473,7 @@ button {
   width: 49%;
   margin-right: 5px;
   height: 40px;
-  background: rgba(0,0,0,.6);
+  background: rgba(0,0,0,.4);
 }
 .pl-number,
 .pl-title,
@@ -498,9 +498,9 @@ button {
 }
 .pl-current .pl-playing {
   display: block;
-}
-.pl-current .pl-title {
-  font-weight: 700;
+  position: absolute;
+  left: -5px;
+  top: 1px;
 }
 
 .pl-title {
@@ -528,8 +528,6 @@ button {
   flex: 0 40px;
   position: absolute;
   right: 10px;
-}
-.pl-remove:hover {
 }
 .pl-list > li:hover .pl-remove {
   opacity: 1;
@@ -1145,7 +1143,7 @@ div#now-bg {
   height: 100%;
   position: absolute;
   overflow: hidden;
-  opacity: 0.6;
+  opacity: 0.8;
   transition: 0.3s linear;
 }
 
@@ -1222,6 +1220,26 @@ div#prog {
   max-width: 80%;
   height: 28px;
   overflow: hidden;
+}
+
+.pl-current .music-icon {
+  opacity: 1;
+}
+
+.pl-current .pl-title {
+  opacity: 1;
+}
+
+.pl-current .fav {
+  opacity: 1;
+}
+
+.pl-current .music-id {
+  opacity: 0;
+}
+
+.pl-current .pl-remove {
+  opacity: 1;
 }
 
 div#app {background: var(--bg);padding-top: 5px;max-height: calc(100vh - 86px);}
