@@ -10,14 +10,14 @@ let musicSelectedId = 0,
 
 window.onload = function () {
     if (db.get("settings").value()[0].theme == "dark") {
-		document.getElementsByClassName('osu')[0].src = `icons/osu.svg`;
-		document.getElementsByClassName('osu')[1].src = `icons/osu.svg`;
-		document.getElementsByClassName('random')[0].src = `icons/random.png`;
-	} else {
-		document.getElementsByClassName('osu')[0].src = `icons/osu(dark).svg`;
-		document.getElementsByClassName('osu')[1].src = `icons/osu(dark).svg`;
-		document.getElementsByClassName('random')[0].src = `icons/random(dark).png`;
-	}
+        document.getElementsByClassName('osu')[0].src = `icons/osu.svg`;
+        document.getElementsByClassName('osu')[1].src = `icons/osu.svg`;
+        document.getElementsByClassName('random')[0].src = `icons/random.png`;
+    } else {
+        document.getElementsByClassName('osu')[0].src = `icons/osu(dark).svg`;
+        document.getElementsByClassName('osu')[1].src = `icons/osu(dark).svg`;
+        document.getElementsByClassName('random')[0].src = `icons/random(dark).png`;
+    }
     start();
     fixmusic();
     AP.plToggle();
@@ -27,13 +27,13 @@ window.onload = function () {
 function changeTheme() {
     document.getElementById('change-theme').style.opacity = "1";
     document.getElementById('change-theme').style.display = "block";
-    if(db.get("settings").value()[0].theme == "dark") {
-        db.get("settings").find({theme: "dark"}).assign({theme: "white"}).write();
+    if (db.get("settings").value()[0].theme == "dark") {
+        db.get("settings").find({ theme: "dark" }).assign({ theme: "white" }).write();
         document.getElementsByClassName('osu')[0].src = `icons/osu(dark).svg`;
         document.getElementsByClassName('osu')[1].src = `icons/osu(dark).svg`;
         document.getElementsByClassName('random')[0].src = `icons/random(dark).png`;
     } else {
-        db.get("settings").find({theme: "white"}).assign({theme: "dark"}).write();
+        db.get("settings").find({ theme: "white" }).assign({ theme: "dark" }).write();
         document.getElementsByClassName('osu')[0].src = `icons/osu.svg`;
         document.getElementsByClassName('osu')[1].src = `icons/osu.svg`;
         document.getElementsByClassName('random')[0].src = `icons/random.png`;
@@ -44,7 +44,7 @@ function changeTheme() {
         setTimeout(() => {
             document.getElementById('change-theme').style.display = "none";
         }, 1050)
-    }, 300)	
+    }, 300)
 }
 
 function openMenu() {
@@ -58,7 +58,7 @@ function openMenu() {
 }
 
 function hidetray() {
-    remote.BrowserWindow.getFocusedWindow().minimize();
+    remote.getCurrentWindow().minimize();
 }
 
 document.onkeydown = function (e) {
@@ -108,11 +108,11 @@ function fixmusic() {
 
 function maxsize() {
     if (fullscreen == 0) {
-        remote.BrowserWindow.getFocusedWindow().maximize();
+        remote.getCurrentWindow().maximize();
         fullscreen++;
         document.getElementsByClassName("maximize")[0].innerHTML = `<i style="color: var(--text);" class="fas fa-square"></i>`;
     } else {
-        remote.BrowserWindow.getFocusedWindow().unmaximize();
+        remote.getCurrentWindow().unmaximize();
         fullscreen = 0;
         document.getElementsByClassName("maximize")[0].innerHTML = `<i style="color: var(--text);" class="far fa-square"></i>`;
     }
@@ -141,7 +141,7 @@ document.getElementById('search').oninput = function () {
             if (isLoaded == true) return;
             if (loaded == 0) loaded = 80;
             var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
-    
+
             if (isElViu) {
                 isLoaded = true;
                 for (let i = loaded; i < loaded + 50; i++) {
@@ -165,7 +165,7 @@ document.getElementById('search').oninput = function () {
             if (isLoaded == true) return;
             if (loaded == 0) loaded = 80;
             var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
-    
+
             if (isElViu) {
                 isLoaded = true;
                 for (let i = loaded; i < loaded + 50; i++) {
@@ -201,7 +201,7 @@ function random() {
     db.set('music', result).write();
     loaded = 0;
     refresh();
-    
+
     document.getElementById('pl').classList.remove("hide");
 }
 
@@ -215,7 +215,7 @@ function addMusicFolder() {
         loadMusic();
         items.forEach((i, ind) => {
             setTimeout(() => {
-                if(ind+1 == items.length) loadMusic();
+                if (ind + 1 == items.length) loadMusic();
                 if (i.toLocaleLowerCase().indexOf(".mp3") > -1) {
                     if (db.get("music").find({ file: `${dir[0]}/${i}` }).value() == undefined) {
                         var id = 0;
@@ -250,46 +250,60 @@ function addosu() {
     let dir = remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
     fs.readdir(dir[0], function (err, items) {
         loadMusic();
-        items.forEach((i, ind) => {
-            if (i.indexOf(".") == -1) {
-                setTimeout(() => {
-                    if(ind+1 == items.length) loadMusic();
-                    fs.readdir(`${dir[0]}/${i}`, function (err, files) {
-                        let obj = {};
-                        obj.img = undefined;
-                        files.forEach(f => {
-                            if (f.indexOf(".osu") > -1) {
-                                obj.title = f.split("[")[0];
-                                if (obj.title.indexOf("(") > -1) obj.title = obj.title.substring(0, obj.title.indexOf("("));
+        checkDir(0, items, dir)
+    });
+}
+
+function checkDir(ind, mas, dir) {
+    let i = mas[ind];
+    if (ind + 1 == mas.length) return loadMusic();
+    if (i.indexOf(".") == -1) {
+        fs.readdir(`${dir[0]}/${i}`, function (err, files) {
+            let obj = {};
+            obj.img = undefined;
+            files.forEach(f => {
+                if (f.indexOf(".osu") > -1) {
+                    obj.title = f.split("[")[0];
+                    if (obj.title.indexOf("(") > -1) obj.title = obj.title.substring(0, obj.title.indexOf("("));
+                }
+                if (f.indexOf(".mp3") > -1) {
+                    obj.file = `${dir[0]}/${i}/${f}`;
+                }
+                if (f.indexOf(".jpg") > -1 || f.indexOf(".png") > -1) {
+                    obj.img = `${dir[0]}/${i}/${f}`;
+                }
+            })
+            if (obj.title != undefined && obj.file != undefined && obj.img != undefined) {
+                Jimp.read(obj.img)
+                    .then(lenna => {
+                        document.getElementById("loadprogress").innerHTML = `<div class="textload">${obj.title}</div> <span> ${ind + 1}/${mas.length}</span>`;
+                        if (db.get("music").find({ file: obj.file }).value() == undefined) {
+                            var id = 0;
+                            if (db.get("music").value().length != undefined) {
+                                id = db.get("music").value().length;
                             }
-                            if (f.indexOf(".mp3") > -1) {
-                                obj.file = `${dir[0]}/${i}/${f}`;
-                            }
-                            if (f.indexOf(".jpg") > -1 || f.indexOf(".png") > -1) {
-                                obj.img = encodeURI(`${dir[0]}/${i}/${f}`.split("\\").join("/"));
-                            }
-                        })
-                        if (obj.title != undefined && obj.file != undefined) {
-                            document.getElementById("loadprogress").innerHTML = `<div class="textload">${obj.title}</div> <span> ${ind + 1}/${items.length}</span>`;
-                            if (db.get("music").find({ file: obj.file }).value() == undefined) {
-                                var id = 0;
-                                if (db.get("music").value().length != undefined) {
-                                    id = db.get("music").value().length;
-                                }
-                                db.get("music").push({
-                                    id: id,
-                                    title: obj.title,
-                                    file: `${obj.file}`,
-                                    icon: obj.img,
-                                    loved: false
-                                }).write();
-                            }
+                            db.get("music").push({
+                                id: id,
+                                title: obj.title,
+                                file: `${obj.file}`,
+                                icon: `${basepath}/cache/${obj.title}.jpg`,
+                                loved: false
+                            }).write();
+                            checkDir(ind + 1, mas, dir);
+                            return lenna
+                                .quality(80)
+                                .cover(500, 60, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE)
+                                .write(`${basepath}/cache/${obj.title}.jpg`);
                         }
                     })
-                }, 300 * ind)
+                    .catch(err => {
+                        console.error(err);
+                    });
+            } else {
+                checkDir(ind + 1, mas, dir);
             }
         })
-    });
+    }
 }
 
 function start() {
@@ -465,7 +479,6 @@ function start() {
             audio.src = playList[index].file;
             audio.preload = 'auto';
             document.title = trackTitle.innerHTML = playList[index].title;
-            document.getElementById('now-bg').style.background = `url('${playList[index].icon}') center center / cover no-repeat`;
             audio.play();
             playBtn.classList.add('playing');
             plActive();
@@ -477,19 +490,19 @@ function start() {
 
         function prev() {
             index = index - 1;
-            if(mini == true && ping > 1) ping = 5;
+            if (mini == true && ping > 1) ping = 5;
             play();
         }
 
         function next() {
             index = index + 1;
-            if(mini == true && ping > 1) ping = 5;
+            if (mini == true && ping > 1) ping = 5;
             play();
         }
 
         function random() {
             index = getRandomInt(0, db.get("music").value().length);
-            if(mini == true && ping > 1) ping = 5;
+            if (mini == true && ping > 1) ping = 5;
             play();
         }
 
@@ -813,7 +826,7 @@ function refresh() {
             loaded = loaded + 50;
         }
     };
-    
+
     loaded = 0;
     ilLoved = false;
     if (document.getElementsByClassName("pl-container")[1] != undefined) {
@@ -902,41 +915,41 @@ function miniPlayer() {
     document.getElementById('app').style.display = "none";
     document.getElementsByClassName('ui-titlebar')[0].style.display = "none";
     document.getElementsByClassName('pl-container')[0].style.background = "transparent";
-    remote.BrowserWindow.getFocusedWindow().setSize(screen.availWidth, 180);
-    remote.BrowserWindow.getFocusedWindow().setPosition(0, screen.availHeight - 180);
-    remote.BrowserWindow.getFocusedWindow().setSkipTaskbar(true);
-    remote.BrowserWindow.getFocusedWindow().focus();
+    remote.getCurrentWindow().setSize(screen.availWidth, 180);
+    remote.getCurrentWindow().setPosition(0, screen.availHeight - 180);
+    remote.getCurrentWindow().setSkipTaskbar(true);
+    remote.getCurrentWindow().focus();
     mini = true;
     ping = 5;
 }
 
 setInterval(() => {
     if (ping != false) {
-        if(ping == 1 && mini == true) {
+        if (ping == 1 && mini == true) {
             if (!$('#ap').is(':hover') && document.getElementById('ap').style.transform != "translateY(180px)") {
                 document.getElementsByClassName('ap-volume')[0].style.height = null;
                 document.getElementsByClassName('ap-volume')[0].style.visibility = null;
                 document.getElementsByClassName('ap-volume-container')[0].style.background = null;
                 setTimeout(() => {
                     document.getElementById('ap').style.transform = `translateY(180px)`;
-                    setTimeout(() => { remote.BrowserWindow.getFocusedWindow().hide(); }, 310);
+                    setTimeout(() => { remote.getCurrentWindow().hide(); }, 310);
                 }, 310)
                 ping = false;
             } else { miniPlayer(); }
-        } else {if(mini == true) { ping--; }}
+        } else { if (mini == true) { ping--; } }
     };
 }, 1000)
 
 function miniPlayerOff() {
     if (document.getElementById('ap').style.transform == "translateY(180px)") document.getElementById('ap').style.transform = `translateY(0px)`;
-    remote.BrowserWindow.getFocusedWindow().focus();
+    remote.getCurrentWindow().focus();
     document.getElementById('pl').style.display = "flex";
     document.getElementsByClassName('pl-container')[0].style.background = "var(--bg)";
     document.getElementById('app').style.display = "block";
     document.getElementsByClassName('ui-titlebar')[0].style.display = "flex";
-    remote.BrowserWindow.getFocusedWindow().setSize(1000, 700);
-    remote.BrowserWindow.getFocusedWindow().center();
-    remote.BrowserWindow.getFocusedWindow().setSkipTaskbar(false);
+    remote.getCurrentWindow().setSize(1000, 700);
+    remote.getCurrentWindow().center();
+    remote.getCurrentWindow().setSkipTaskbar(false);
     mini = false;
 }
 
@@ -968,27 +981,30 @@ function isElementInView(element, fullyInView) {
 }
 
 function loadMusic() {
-    if(document.getElementById('loadmusic').style.display == "" || document.getElementById('loadmusic').style.display == "none") {
+    if (document.getElementById('loadmusic').style.display == "" || document.getElementById('loadmusic').style.display == "none") {
         document.getElementsByClassName('menu-left')[0].classList.remove('act-menu');
         document.getElementsByClassName('shadow')[0].style.display = "none";
         document.getElementById('pl').style.display = "none";
         document.getElementById('app').style.display = "none";
         document.getElementById('ap').style.display = "none";
         document.getElementById('loadmusic').style.display = "block";
+        document.getElementById('prog').style.background = "var(--bg)";
         document.getElementsByClassName('maximize')[0].style.opacity = "0";
         document.getElementsByClassName('minimize')[0].style.opacity = "0";
-        remote.BrowserWindow.getFocusedWindow().setSize(500, 70);
-        remote.BrowserWindow.getFocusedWindow().center();
+        remote.getCurrentWindow().setSize(500, 70);
+        remote.getCurrentWindow().center();
     } else {
         refresh();
+        remote.getCurrentWindow().focus();
         document.getElementById('pl').style.display = "flex";
         document.getElementById('app').style.display = "block";
         document.getElementById('ap').style.display = "block";
         document.getElementById('loadmusic').style.display = "none";
+        document.getElementById('prog').style.background = "transparent";
         document.getElementsByClassName('maximize')[0].style.opacity = "1";
         document.getElementsByClassName('minimize')[0].style.opacity = "1";
-        remote.BrowserWindow.getFocusedWindow().setSize(1000, 700);
-        remote.BrowserWindow.getFocusedWindow().center();
+        remote.getCurrentWindow().setSize(1000, 700);
+        remote.getCurrentWindow().center();
         document.getElementById('pl').classList.remove("hide");
     }
 }

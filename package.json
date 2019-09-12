@@ -1,6 +1,6 @@
 {
   "name": "osu-youtube-music-player",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Enjoi listen music from osu! and youtube :3",
   "main": "main.js",
   "build": {
@@ -20,8 +20,8 @@
   },
   "author": "4FuN",
   "repository": {
-      "type": "git",
-      "url": "https://github.com/SGezha/osu-youtube-music-player.git"
+    "type": "git",
+    "url": "https://github.com/SGezha/osu-youtube-music-player.git"
   },
   "devDependencies": {
     "electron": "^4.2.10",
@@ -30,6 +30,7 @@
   "dependencies": {
     "discord-rpc": "^3.0.2",
     "electron-drag": "^1.2.2",
+    "jimp": "^0.8.1",
     "lowdb": "^1.0.0",
     "node-id3": "^0.1.11",
     "register-scheme": "0.0.2"
