@@ -300,6 +300,7 @@ function checkDir(ind, mas, dir) {
                     })
                     .catch(err => {
                         console.error(err);
+                        checkDir(ind + 1, mas, dir);
                     });
             } else {
                 checkDir(ind + 1, mas, dir);
