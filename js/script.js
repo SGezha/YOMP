@@ -294,6 +294,8 @@ function checkDir(ind, mas, dir) {
                                 .quality(80)
                                 .cover(500, 60, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE)
                                 .write(`${basepath}/cache/${obj.title}.jpg`);
+                        } else {
+                            checkDir(ind + 1, mas, dir);
                         }
                     })
                     .catch(err => {
