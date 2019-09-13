@@ -874,7 +874,6 @@ function youtube(vid, title, icon) {
                     videoId: vid,
                     loved: false
                 }).write();
-                toastr.clear();
                 toastr.success(`${title} added to playlist :3`);
                 refresh();
                 axios.get(stream.url).catch(er => {
