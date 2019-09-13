@@ -171,10 +171,12 @@ function fixmusic() {
 
 function maxsize() {
     if (fullscreen == 0) {
+        document.getElementById('prog').style.borderRadius = "0";
         remote.getCurrentWindow().maximize();
         fullscreen++;
         document.getElementsByClassName("maximize")[0].innerHTML = `<i style="color: var(--text);" class="fas fa-square"></i>`;
     } else {
+        document.getElementById('prog').style.borderRadius = "5px";
         remote.getCurrentWindow().unmaximize();
         fullscreen = 0;
         document.getElementsByClassName("maximize")[0].innerHTML = `<i style="color: var(--text);" class="far fa-square"></i>`;
@@ -393,7 +395,7 @@ function start() {
                 if (db.get("music").find({ title: item.title }).value().loved == true) fav = `<i onclick="love(${item.id}, this);" style="color: #e91e63;" class="fas fa-heart fav"></i>`;
                 let type = '<svg fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M0 0h24v24H0z" fill="none"/>' + '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>' + '</svg>';
                 if (item.file.indexOf("osu") > -1) type = `<img style="width: 20px; hegiht: 20px; transform: scale(1.2);" src="icons/osu.svg">`;
-                if (item.videoId != undefined) type = `<i style="transform: scale(1.2);" class="fab fa-youtube"></i>`;
+                if (item.videoId != undefined) type = `<i style="color: white; transform: scale(1.2);" class="fab fa-youtube"></i>`;
                 if (i < 80) {
                     html.push(tpl.replace('{real-id}', item.id).replace('{fav}', fav).replace('{count}', i).replace('{id}', `${i + 1}/${playList.length}`).replace('{type}', type).replace('{icon}', item.icon).replace('{hide}', '').replace('{title}', item.title).replace('{icon}', item.icon));
                 } else {
@@ -874,11 +876,9 @@ function youtube(vid, title, icon) {
                     loved: false
                 }).write();
                 toastr.success(`${title} added to playlist :3`);
-                refresh();
                 axios.get(stream.url).catch(er => {
                     toastr.error(`${title} cant find mp3 file :c`);
                     db.get("music").remove({ id: id }).write();
-                    refresh();
                 })
             }
         });

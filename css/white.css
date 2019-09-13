@@ -58,8 +58,6 @@
 /* WHITE THEME */
 :root {
   --bg: rgb(230, 230, 230);
-  --opacity-1: rgba(255,255,255,0.9);
-  --opacity-2: rgba(255,255,255,0.9);
   --block: rgb(226, 226, 226);
   --block-hover: rgb(190, 190, 190);
   --line: #565656;
@@ -98,7 +96,7 @@ button {
 /* Player and control panel */
 .ap {
   position: fixed;
-  background: var(--opacity-2) !important;
+  background: var(--block) !important;
   right: 0;
   bottom: 0;
   left: 0;
@@ -344,7 +342,7 @@ button {
 	height: 36px;
 	cursor: default;
 	z-index: 999;
-	background: var(--opacity-1);
+	background: var(--block);
 	margin: 0px;
 } 
 .ui-titleicon {
@@ -884,7 +882,7 @@ a:hover {color: var(--text);}
   position: absolute;
   left: 0;
   border-top-left-radius: 5px;
-  width: 250px;
+  width: 230px;
   top: 0;
   height: 100vh !important;
   visibility: hidden;
@@ -931,7 +929,7 @@ a:hover {color: var(--text);}
   height: 100%;
 }
 
-.shadow {content: '';position: absolute;top: 0;left: 250px;width: 100vw;display: none;height: 100vh;background: linear-gradient(45deg, rgba(0, 0, 0, 0.5), transparent);opacity: 0;visibility: hidden;transition: all .4s;z-index: -1;}
+.shadow {content: '';position: absolute;top: 0;left: 230px;width: 100vw;display: none;height: 100vh;background: linear-gradient(45deg, rgba(0, 0, 0, 0.5), transparent);opacity: 0;visibility: hidden;transition: all .4s;z-index: -1;}
 
 .menu>.links {
   width: 100%;
@@ -986,14 +984,14 @@ a:hover {color: var(--text);}
 .menu>.links>ul>li>a>i {
   font-size: 22px;
   width: 25px;
-  margin-right: 30px;
+  margin-right: 15px;
   color: var(--text);
   transition: all .4s;
 }
 
 .menu>.links>ul>li>a>img {
   width: 25px;
-  margin-right: 30px;
+  margin-right: 15px;
   margin-left: 0px;
   transition: all .4s;
 }
@@ -1092,7 +1090,7 @@ a:hover {color: var(--text);}
 }
 
 .btn-menu {
-  margin-right: 30px;
+  margin-right: 15px;
 }
 
 i.fas.fa-random {
@@ -1134,8 +1132,8 @@ li:hover .music-id {
   position: absolute;
   right: 15px;
   z-index: -1;
-  color: white;
-  opacity: 0.6;
+  color: black;
+  opacity: 0.9;
 }
 
 div#now-bg {
