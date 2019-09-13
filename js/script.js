@@ -208,17 +208,17 @@ function searchbtn() {
     app.search();
 }
 
-function addMusicFolder() {
-    let dir = remote.dialog.showOpenDialog({ title: 'Select Music Folder', properties: ['openDirectory'] });
-    fs.readdir(dir[0], function (err, items) {
+async function addMusicFolder() {
+    let dir = await remote.dialog.showOpenDialog({ title: 'Select Music Folder', properties: ['openDirectory'] });
+    fs.readdir(dir.filePaths[0], function (err, items) {
         loadMusic();
         items.forEach((i, ind) => {
             setTimeout(() => {
                 if (ind + 1 == items.length) loadMusic();
                 if (i.toLocaleLowerCase().indexOf(".mp3") > -1) {
-                    if (db.get("music").find({ file: `${dir[0]}/${i}` }).value() == undefined) {
+                    if (db.get("music").find({ file: `${dir.filePaths[0]}/${i}` }).value() == undefined) {
                         var id = 0;
-                        let metadata = NodeID3.read(`${dir[0]}/${i}`);
+                        let metadata = NodeID3.read(`${dir.filePaths[0]}/${i}`);
                         let img = undefined;
                         let title = i.toLocaleLowerCase().split(".mp3");
                         if (metadata.title != undefined && metadata.artist != undefined) title = `${metadata.artist} - ${metadata.title}`;
@@ -226,14 +226,14 @@ function addMusicFolder() {
                             id = db.get("music").value().length;
                         }
                         if (metadata.image != undefined && metadata.image.imageBuffer != undefined) {
-                            fs.writeFileSync(`cache/${title}.jpg`, metadata.image.imageBuffer, 'binary');
+                            fs.writeFileSync(`${root}/cache/${title}.jpg`, metadata.image.imageBuffer, 'binary');
                             img = encodeURI(`${root}/cache/${title}.jpg`);
                         }
                         db.get("music").push({
                             id: id,
                             title: title,
                             icon: img,
-                            file: `${dir[0]}/${i}`,
+                            file: `${dir.filePaths[0]}/${i}`,
                             loved: false
                         }).write();
                         document.getElementById("loadprogress").innerHTML = `<div class="textload">${title}</div> <span> ${ind + 1}/${items.length}</span>`;
@@ -244,22 +244,22 @@ function addMusicFolder() {
     });
 }
 
-
-function addosu() {
-    let dir = remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
-    fs.readdir(dir[0], function (err, items) {
+async function addosu() {
+    let dir = await remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
+    console.log(dir.filePaths[0])
+    fs.readdir(dir.filePaths[0], function (err, items) {
         loadMusic();
-        checkDir(0, items, dir)
+        checkDir(0, items, dir.filePaths[0])
     });
 }
 
 function checkDir(ind, mas, dir) {
     let i = mas[ind];
     if (ind + 1 == mas.length) return loadMusic();
-    if(cache.get("data").find({id: `${dir[0]}/${i}`}).value() == undefined) {
-        cache.get("data").push({id: `${dir[0]}/${i}`}).write();
+    if(cache.get("data").find({id: `${dir}/${i}`}).value() == undefined) {
+        cache.get("data").push({id: `${dir}/${i}`}).write();
         if (i.indexOf(".") == -1) {
-            fs.readdir(`${dir[0]}/${i}`, function (err, files) {
+            fs.readdir(`${dir}/${i}`, function (err, files) {
                 let obj = {};
                 obj.img = undefined;
                 files.forEach(f => {
@@ -268,10 +268,10 @@ function checkDir(ind, mas, dir) {
                         if (obj.title.indexOf("(") > -1) obj.title = obj.title.substring(0, obj.title.indexOf("("));
                     }
                     if (f.indexOf(".mp3") > -1) {
-                        obj.file = `${dir[0]}/${i}/${f}`;
+                        obj.file = `${dir}/${i}/${f}`;
                     }
                     if (f.indexOf(".jpg") > -1 || f.indexOf(".png") > -1) {
-                        obj.img = `${dir[0]}/${i}/${f}`;
+                        obj.img = `${dir}/${i}/${f}`;
                     }
                 })
                 if (obj.title != undefined && obj.file != undefined && obj.img != undefined) {
@@ -287,7 +287,7 @@ function checkDir(ind, mas, dir) {
                                     id: id,
                                     title: obj.title,
                                     file: `${obj.file}`,
-                                    icon: `${RTCPeerConnection}/cache/${obj.title}.jpg`,
+                                    icon: `${root}/cache/${obj.title}.jpg`,
                                     loved: false
                                 }).write();
                                 checkDir(ind + 1, mas, dir);
