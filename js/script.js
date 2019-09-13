@@ -60,9 +60,73 @@ function hidetray() {
     remote.getCurrentWindow().minimize();
 }
 
-document.onkeydown = function (e) {
-    if (e.which === 13) {
+document.getElementById("search").onchange = function (e) {
+    if (document.getElementById('pl').classList.length == 2) {
         app.search();
+    } else {
+        if (base.length == 0) return;
+        if (document.getElementById("pl").classList.length == 2) return;
+        let result = [];
+        let input = document.getElementById('search'); 
+        var l = input.value.length;
+        if (l > 0) {
+            for (var i = 0; i < base.length; i++) {
+                let title = base[i].title;
+                if (base[i].title[0].length > 1) title = base[i].title[0];
+                if (title.toLowerCase().match(input.value.toLowerCase())) {
+                    result.push(base[i]);
+                }
+            }
+            document.getElementById('pl').parentNode.removeChild(document.getElementById('pl'));
+            AP.init({
+                playList: result
+            });
+            loaded = 0;
+
+            document.getElementById("pl").onscroll = function () {
+                if (isLoaded == true) return;
+                if (loaded == 0) loaded = 80;
+                var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
+
+                if (isElViu) {
+                    isLoaded = true;
+                    for (let i = loaded; i < loaded + 50; i++) {
+                        document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
+                    }
+                    setTimeout(() => {
+                        isLoaded = false
+                    }, 500);
+                    loaded = loaded + 50;
+                }
+            };
+
+            document.getElementById('pl').classList.remove("hide");
+        } else {
+            document.getElementById('pl').parentNode.removeChild(document.getElementById('pl'));
+            AP.init({
+                playList: base
+            });
+
+            document.getElementById("pl").onscroll = function () {
+                if (isLoaded == true) return;
+                if (loaded == 0) loaded = 80;
+                var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
+
+                if (isElViu) {
+                    isLoaded = true;
+                    for (let i = loaded; i < loaded + 50; i++) {
+                        document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
+                    }
+                    setTimeout(() => {
+                        isLoaded = false
+                    }, 500);
+                    loaded = loaded + 50;
+                }
+            };
+
+            loaded = 0;
+            document.getElementById('pl').classList.remove("hide");
+        }
     }
 };
 
@@ -114,71 +178,6 @@ function maxsize() {
         remote.getCurrentWindow().unmaximize();
         fullscreen = 0;
         document.getElementsByClassName("maximize")[0].innerHTML = `<i style="color: var(--text);" class="far fa-square"></i>`;
-    }
-}
-
-document.getElementById('search').oninput = function () {
-    if (base.length == 0) return;
-    if (document.getElementById("pl").classList.length == 2) return;
-    let result = [];
-    var l = this.value.length;
-    if (l > 0) {
-        for (var i = 0; i < base.length; i++) {
-            let title = base[i].title;
-            if (base[i].title[0].length > 1) title = base[i].title[0];
-            if (title.toLowerCase().match(this.value.toLowerCase())) {
-                result.push(base[i]);
-            }
-        }
-        document.getElementById('pl').parentNode.removeChild(document.getElementById('pl'));
-        AP.init({
-            playList: result
-        });
-        loaded = 0;
-
-        document.getElementById("pl").onscroll = function () {
-            if (isLoaded == true) return;
-            if (loaded == 0) loaded = 80;
-            var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
-
-            if (isElViu) {
-                isLoaded = true;
-                for (let i = loaded; i < loaded + 50; i++) {
-                    document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
-                }
-                setTimeout(() => {
-                    isLoaded = false
-                }, 500);
-                loaded = loaded + 50;
-            }
-        };
-
-        document.getElementById('pl').classList.remove("hide");
-    } else {
-        document.getElementById('pl').parentNode.removeChild(document.getElementById('pl'));
-        AP.init({
-            playList: base
-        });
-
-        document.getElementById("pl").onscroll = function () {
-            if (isLoaded == true) return;
-            if (loaded == 0) loaded = 80;
-            var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
-
-            if (isElViu) {
-                isLoaded = true;
-                for (let i = loaded; i < loaded + 50; i++) {
-                    document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
-                }
-                setTimeout(() => {
-                    isLoaded = false
-                }, 500);
-                loaded = loaded + 50;
-            }
-        };
-
-        loaded = 0;
-        document.getElementById('pl').classList.remove("hide");
     }
 }
 
