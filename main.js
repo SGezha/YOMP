@@ -4,7 +4,25 @@ const DiscordRPC = require('discord-rpc');
 let mainWindow;
 let appIcon = null;
 const iconPath = path.join(__dirname, 'icons/icon.png');
+const fs = require('fs');
+let s = {
+  theme: "dark",
+  key: {
+    play: `CommandOrControl+Space`,
+    random: `CommandOrControl+r`,
+    love: `CommandOrControl+l`,
+    next: `CommandOrControl+Right`,
+    prev: `CommandOrControl+Left`,
+    focus: `CommandOrControl+Up`,
+    mini: `CommandOrControl+Down`,
+    volumeup: `CommandOrControl+=`,
+    volumedown: `CommandOrControl+-`,
+    mute: `CommandOrControl+-`
+  }
+};
+if (fs.existsSync("database.json")) s = JSON.parse(fs.readFileSync("./database.json").toString()).settings[0];
 
+console.log(s)
 const rpc = new DiscordRPC.Client({ transport: 'ipc' });
 
 function createWindow() {
@@ -65,46 +83,46 @@ function createWindow() {
   });
   appIcon.setContextMenu(contextMenu);
 
-  globalShortcut.register('CommandOrControl+Space', () => {
+  globalShortcut.register(s.key.play, () => {
     mainWindow.webContents.executeJavaScript(`AP.playToggle();`);
   });
 
-  globalShortcut.register('CommandOrControl+Right', () => {
+  globalShortcut.register(s.key.next, () => {
     mainWindow.webContents.executeJavaScript(`AP.next();`);
   });
 
-  globalShortcut.register('CommandOrControl+-', () => {
+  globalShortcut.register(s.key.volumedown, () => {
     mainWindow.show();
     mainWindow.webContents.executeJavaScript(`AP.volumeDown()`);
   });
 
-  globalShortcut.register('CommandOrControl+=', () => {
+  globalShortcut.register(s.key.volumeup, () => {
     mainWindow.show();
     mainWindow.webContents.executeJavaScript(`AP.volumeUp()`);
   });
 
-  globalShortcut.register('CommandOrControl+r', () => {
+  globalShortcut.register(s.key.random, () => {
     mainWindow.webContents.executeJavaScript(`AP.random();`);
   });
 
-  globalShortcut.register('CommandOrControl+0', () => {
+  globalShortcut.register(s.key.mute, () => {
     mainWindow.webContents.executeJavaScript(`AP.mute();`);
   });
 
-  globalShortcut.register('CommandOrControl+l', () => {
+  globalShortcut.register(s.key.love, () => {
     mainWindow.webContents.executeJavaScript(`lovethis();`);
   });
 
-  globalShortcut.register('CommandOrControl+Left', () => {
+  globalShortcut.register(s.key.prev, () => {
     mainWindow.webContents.executeJavaScript(`AP.prev();`);
   });
 
-  globalShortcut.register('CommandOrControl+Down', () => {
+  globalShortcut.register(s.key.mini, () => {
     mainWindow.show();
     mainWindow.webContents.executeJavaScript('miniPlayer();');
   });
 
-  globalShortcut.register('CommandOrControl+Up', () => {
+  globalShortcut.register(s.key.focus, () => {
     mainWindow.show();
     mainWindow.webContents.executeJavaScript(`miniPlayerOff();`);
   });

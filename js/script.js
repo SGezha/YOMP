@@ -257,56 +257,59 @@ function addosu() {
 function checkDir(ind, mas, dir) {
     let i = mas[ind];
     if (ind + 1 == mas.length) return loadMusic();
-    if (i.indexOf(".") == -1) {
-        fs.readdir(`${dir[0]}/${i}`, function (err, files) {
-            let obj = {};
-            obj.img = undefined;
-            files.forEach(f => {
-                if (f.indexOf(".osu") > -1) {
-                    obj.title = f.split("[")[0];
-                    if (obj.title.indexOf("(") > -1) obj.title = obj.title.substring(0, obj.title.indexOf("("));
-                }
-                if (f.indexOf(".mp3") > -1) {
-                    obj.file = `${dir[0]}/${i}/${f}`;
-                }
-                if (f.indexOf(".jpg") > -1 || f.indexOf(".png") > -1) {
-                    obj.img = `${dir[0]}/${i}/${f}`;
+    if(cache.get("data").find({id: `${dir[0]}/${i}`}).value() == undefined) {
+        cache.get("data").push({id: `${dir[0]}/${i}`}).write();
+        if (i.indexOf(".") == -1) {
+            fs.readdir(`${dir[0]}/${i}`, function (err, files) {
+                let obj = {};
+                obj.img = undefined;
+                files.forEach(f => {
+                    if (f.indexOf(".osu") > -1) {
+                        obj.title = f.split("[")[0];
+                        if (obj.title.indexOf("(") > -1) obj.title = obj.title.substring(0, obj.title.indexOf("("));
+                    }
+                    if (f.indexOf(".mp3") > -1) {
+                        obj.file = `${dir[0]}/${i}/${f}`;
+                    }
+                    if (f.indexOf(".jpg") > -1 || f.indexOf(".png") > -1) {
+                        obj.img = `${dir[0]}/${i}/${f}`;
+                    }
+                })
+                if (obj.title != undefined && obj.file != undefined && obj.img != undefined) {
+                    Jimp.read(obj.img)
+                        .then(lenna => {
+                            document.getElementById("loadprogress").innerHTML = `<div class="textload">${obj.title}</div> <span> ${ind + 1}/${mas.length}</span>`;
+                            if (db.get("music").find({ file: obj.file }).value() == undefined) {
+                                var id = 0;
+                                if (db.get("music").value().length != undefined) {
+                                    id = db.get("music").value().length;
+                                }
+                                db.get("music").push({
+                                    id: id,
+                                    title: obj.title,
+                                    file: `${obj.file}`,
+                                    icon: `${basepath}/cache/${obj.title}.jpg`,
+                                    loved: false
+                                }).write();
+                                checkDir(ind + 1, mas, dir);
+                                return lenna
+                                    .quality(80)
+                                    .cover(500, 60, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE)
+                                    .write(`${basepath}/cache/${obj.title}.jpg`);
+                            } else {
+                                checkDir(ind + 1, mas, dir);
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            checkDir(ind + 1, mas, dir);
+                        });
+                } else {
+                    checkDir(ind + 1, mas, dir);
                 }
             })
-            if (obj.title != undefined && obj.file != undefined && obj.img != undefined) {
-                Jimp.read(obj.img)
-                    .then(lenna => {
-                        document.getElementById("loadprogress").innerHTML = `<div class="textload">${obj.title}</div> <span> ${ind + 1}/${mas.length}</span>`;
-                        if (db.get("music").find({ file: obj.file }).value() == undefined) {
-                            var id = 0;
-                            if (db.get("music").value().length != undefined) {
-                                id = db.get("music").value().length;
-                            }
-                            db.get("music").push({
-                                id: id,
-                                title: obj.title,
-                                file: `${obj.file}`,
-                                icon: `${basepath}/cache/${obj.title}.jpg`,
-                                loved: false
-                            }).write();
-                            checkDir(ind + 1, mas, dir);
-                            return lenna
-                                .quality(80)
-                                .cover(500, 60, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE)
-                                .write(`${basepath}/cache/${obj.title}.jpg`);
-                        } else {
-                            checkDir(ind + 1, mas, dir);
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        checkDir(ind + 1, mas, dir);
-                    });
-            } else {
-                checkDir(ind + 1, mas, dir);
-            }
-        })
-    }
+        }
+    } else {checkDir(ind + 1, mas, dir);}
 }
 
 function start() {
