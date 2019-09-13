@@ -26,7 +26,7 @@ const rpc = new DiscordRPC.Client({ transport: 'ipc' });
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    frame: false, width: 1000, height: 700, minWidth: 300, icon: "icon.png", webPreferences: {nodeIntegration: true}
+    transparent: true, frame: false, width: 1000, height: 700, minWidth: 300, icon: "icon.png", webPreferences: {nodeIntegration: true}
   });
   mainWindow.loadFile('index.html');
   mainWindow.on('closed', function () {
