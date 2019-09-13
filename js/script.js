@@ -1,7 +1,6 @@
 let musicSelectedId = 0,
     isLoaded = false,
     loaded = 0,
-    basepath = remote.app.getAppPath().split("\\").join("/").split("/reso")[0],
     mini = false,
     fullscreen = 0,
     base = db.get("music").value(),
@@ -228,7 +227,7 @@ function addMusicFolder() {
                         }
                         if (metadata.image != undefined && metadata.image.imageBuffer != undefined) {
                             fs.writeFileSync(`cache/${title}.jpg`, metadata.image.imageBuffer, 'binary');
-                            img = encodeURI(`${basepath}/cache/${title}.jpg`);
+                            img = encodeURI(`${root}/cache/${title}.jpg`);
                         }
                         db.get("music").push({
                             id: id,
@@ -288,14 +287,14 @@ function checkDir(ind, mas, dir) {
                                     id: id,
                                     title: obj.title,
                                     file: `${obj.file}`,
-                                    icon: `${basepath}/cache/${obj.title}.jpg`,
+                                    icon: `${RTCPeerConnection}/cache/${obj.title}.jpg`,
                                     loved: false
                                 }).write();
                                 checkDir(ind + 1, mas, dir);
                                 return lenna
                                     .quality(80)
                                     .cover(500, 60, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE)
-                                    .write(`${basepath}/cache/${obj.title}.jpg`);
+                                    .write(`${root}/cache/${obj.title}.jpg`);
                             } else {
                                 checkDir(ind + 1, mas, dir);
                             }

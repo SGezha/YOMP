@@ -1,5 +1,6 @@
 const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc } = require('electron');
 var path = require('path');
+let root = app.getPath('userData');
 const DiscordRPC = require('discord-rpc');
 let mainWindow;
 let appIcon = null;
@@ -20,14 +21,12 @@ let s = {
     mute: `CommandOrControl+-`
   }
 };
-if (fs.existsSync("database.json")) s = JSON.parse(fs.readFileSync("./database.json").toString()).settings[0];
-
-console.log(s)
+if (fs.existsSync("database.json")) s = JSON.parse(fs.readFileSync(`${root}/database.json`).toString()).settings[0];
 const rpc = new DiscordRPC.Client({ transport: 'ipc' });
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    transparent: true, frame: false, width: 1000, height: 700, minWidth: 300, icon: "icon.png"
+    transparent: true, frame: false, width: 1000, height: 700, minWidth: 300, icon: "icon.png", webPreferences: {nodeIntegration: true}
   });
   mainWindow.loadFile('index.html');
   mainWindow.on('closed', function () {
