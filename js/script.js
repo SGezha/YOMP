@@ -139,7 +139,7 @@ function fixmusic() {
     masMusic.forEach((m) => {
         if (m.videoId == undefined) return;
         $.get("https://images" + ~~(Math.random() * 33) + "-focus-opensocial.googleusercontent.com/gadgets/proxy?container=none&url=https%3A%2F%2Fwww.youtube.com%2Fget_video_info%3Fvideo_id%3D" + m.videoId, function (data) {
-            if (data.indexOf("errorcode=150") > -1) return new Notification('Error', {silent: true, silent: true,  body: `Copyright`, icon: "icons/icon.png" })
+            if (data.indexOf("errorcode=150") > -1) return new Notification('Error', {silent: true,  body: `Copyright`, icon: "icons/icon.png" })
             var data = parse_str(data),
                 streams = (data.url_encoded_fmt_stream_map + ',' + data.adaptive_fmts).split(',');
             $.each(streams, function (n, s) {
@@ -496,19 +496,37 @@ function start() {
 
         function prev() {
             index = index - 1;
-            if (mini == true && ping > 1) ping = 5;
+            if (mini == true && ping > 1) { 
+                ping = 5; 
+            } else {
+                let title = document.getElementsByClassName('pl-title')[index].innerHTML;
+                new Notification(`Now playing`, {silent: true,  body: title, icon: "icons/icon.png" });
+
+            }
             play();
         }
 
         function next() {
             index = index + 1;
-            if (mini == true && ping > 1) ping = 5;
+            if (mini == true && ping > 1) { 
+                ping = 5; 
+            } else {
+                let title = document.getElementsByClassName('pl-title')[index].innerHTML;
+                new Notification(`Now playing`, {silent: true,  body: title, icon: "icons/icon.png" });
+
+            }
             play();
         }
 
         function random() {
             index = getRandomInt(0, db.get("music").value().length);
-            if (mini == true && ping > 1) ping = 5;
+            if (mini == true && ping > 1) { 
+                ping = 5; 
+            } else {
+                let title = document.getElementsByClassName('pl-title')[index].innerHTML;
+                new Notification(`Now playing`, {silent: true,  body: title, icon: "icons/icon.png" });
+
+            }
             play();
         }
 
