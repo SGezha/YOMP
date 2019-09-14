@@ -5,8 +5,8 @@ let musicSelectedId = 0,
     fullscreen = 0,
     base = db.get("music").value(),
     ilLoved = false,
-    ping = false;      
-
+    ping = false;   
+     
 window.onload = function () {
     if (db.get("settings").value()[0].theme == "dark") {
         document.getElementsByClassName('osu')[0].src = `icons/osu.svg`;
@@ -389,17 +389,16 @@ function start() {
 
         function renderPL() {
             var html = [];
-            var tpl = `<li class="music-el" {hide} real-id="{real-id}" data-track="{count}"> <div class="music-id">{id}</div> <div class="music-icon" style="background: url('{icon}'); background-size: cover; background-position: center;"></div> ` + '<div class="pl-number">' + '<div class="pl-count">' + '{type}' + '</div>' + '<div class="pl-playing">' + '<svg xmlns="http://www.w3.org/2000/svg" fill="var(--text)" height="30" viewBox="0 0 24 24" width="30"> <path d="M8 5v14l11-7z" /> <path d="M0 0h24v24H0z" fill="none" /> </svg>' + '</div>' + '</div>' + '<div class="pl-title">{title}</div>' + '{fav}' + '<button class="pl-remove">' + '<svg class="pl-del" style="cursor:pointer;" fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>' + '<path d="M0 0h24v24H0z" fill="none"/>' + '</svg>' + '</button>' + '</li>';
             playList.forEach(function (item, i) {
                 let fav = `<i onclick="love(${item.id}, this);" style="color: white;" class="fas fa-heart fav"></i>`;
-                if (db.get("music").find({ title: item.title }).value().loved == true) fav = `<i onclick="love(${item.id}, this);" style="color: #e91e63;" class="fas fa-heart fav"></i>`;
+                if (db.get("music").find({ title: item.title }).value().loved == true) fav = `<i onclick="love(${item.id}, this);" style="color: #e91e63; text-shadow: 0 0 10px #E91E63, 0 0 10px #E91E63, 0 0 10px black, 0 0 10px black;" class="fas fa-heart fav"></i>`;
                 let type = '<svg fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M0 0h24v24H0z" fill="none"/>' + '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>' + '</svg>';
                 if (item.file.indexOf("osu") > -1) type = `<img style="width: 20px; hegiht: 20px; transform: scale(1.2);" src="icons/osu.svg">`;
                 if (item.videoId != undefined) type = `<i style="color: white; transform: scale(1.2);" class="fab fa-youtube"></i>`;
                 if (i < 80) {
-                    html.push(tpl.replace('{real-id}', item.id).replace('{fav}', fav).replace('{count}', i).replace('{id}', `${i + 1}/${playList.length}`).replace('{type}', type).replace('{icon}', item.icon).replace('{hide}', '').replace('{title}', item.title).replace('{icon}', item.icon));
+                    html.push(`<li class="music-el" real-id="${item.id}" data-track="${i}"> <div class="music-id">${i + 1}/${playList.length}</div> <div class="music-icon" style="background: url('${item.icon}'); background-size: cover; background-position: center;"></div> <div class="pl-number"> <div class="pl-count"> ${type} </div> <div class="pl-playing"> <svg xmlns="http://www.w3.org/2000/svg" fill="var(--text)" height="30" viewBox="0 0 24 24" width="30"> <path d="M8 5v14l11-7z" /> <path d="M0 0h24v24H0z" fill="none" /> </svg> </div> </div> <div class="pl-title">${item.title}</div> ${fav} <button class="pl-remove"> <svg class="pl-del" style="cursor:pointer;" fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"> <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/> <path d="M0 0h24v24H0z" fill="none"/> </svg> </button> </li>`)
                 } else {
-                    html.push(tpl.replace('{real-id}', item.id).replace('{fav}', fav).replace('{count}', i).replace('{id}', `${i + 1}/${playList.length}`).replace('{type}', type).replace('{title}', item.title).replace('{hide}', 'style="display: none;"').replace('{icon}', item.icon).replace('{icon}', item.icon));
+                    html.push(`<li style="display: none;" class="music-el" real-id="${item.id}" data-track="${i}"> <div class="music-id">${i + 1}/${playList.length}</div> <div class="music-icon" style="background: url('${item.icon}'); background-size: cover; background-position: center;"></div> <div class="pl-number"> <div class="pl-count"> ${type} </div> <div class="pl-playing"> <svg xmlns="http://www.w3.org/2000/svg" fill="var(--text)" height="30" viewBox="0 0 24 24" width="30"> <path d="M8 5v14l11-7z" /> <path d="M0 0h24v24H0z" fill="none" /> </svg> </div> </div> <div class="pl-title">${item.title}</div> ${fav} <button class="pl-remove"> <svg class="pl-del" style="cursor:pointer;" fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"> <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/> <path d="M0 0h24v24H0z" fill="none"/> </svg> </button> </li>`)
                 }
             });
             pl = create('div', {
@@ -498,10 +497,6 @@ function start() {
             index = index - 1;
             if (mini == true && ping > 1) { 
                 ping = 5; 
-            } else {
-                let title = document.getElementsByClassName('pl-title')[index].innerHTML;
-                new Notification(`Now playing`, {silent: true,  body: title, icon: "icons/icon.png" });
-
             }
             play();
         }
@@ -510,10 +505,6 @@ function start() {
             index = index + 1;
             if (mini == true && ping > 1) { 
                 ping = 5; 
-            } else {
-                let title = document.getElementsByClassName('pl-title')[index].innerHTML;
-                new Notification(`Now playing`, {silent: true,  body: title, icon: "icons/icon.png" });
-
             }
             play();
         }
@@ -522,10 +513,6 @@ function start() {
             index = getRandomInt(0, db.get("music").value().length);
             if (mini == true && ping > 1) { 
                 ping = 5; 
-            } else {
-                let title = document.getElementsByClassName('pl-title')[index].innerHTML;
-                new Notification(`Now playing`, {silent: true,  body: title, icon: "icons/icon.png" });
-
             }
             play();
         }
@@ -987,11 +974,13 @@ function love(id, el) {
     if (track.loved == true) {
         db.get("music").find({ id: id }).assign({ loved: false }).write();
         el.style.color = "white";
+        el.style.textShadow = "";
         new Notification('Remove', {silent: true,  body: `${track.title} remove from loved :c`, icon: "icons/icon.png" })
         if (ilLoved == true) openloved();
     } else {
         new Notification('Success', {silent: true,  body: `${track.title} added to loved :3`, icon: "icons/icon.png" })
         el.style.color = "#e91e63";
+        el.style.textShadow = "0 0 10px #E91E63, 0 0 10px #E91E63, 0 0 10px black, 0 0 10px black";
         db.get("music").find({ id: id }).assign({ loved: true }).write();
     }
 }

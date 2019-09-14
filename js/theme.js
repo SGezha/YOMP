@@ -5,7 +5,7 @@ if (!fs.existsSync(`${root}/cache`)) {
 	fs.mkdirSync(`${root}/cache`);
 	fs.writeFileSync(`${root}/cache/cache.json`, '{"data":[]}');
 }
-const { remote, ipcRenderer: ipc } = require('electron'),
+const { remote, ipcRenderer: ipc, screen } = require('electron'),
 	lowdb = require('lowdb'),
 	FileSync = require('lowdb/adapters/FileSync'),
 	db = lowdb(new FileSync(`${root}/database.json`)),

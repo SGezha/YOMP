@@ -1,58 +1,56 @@
-/* cyrillic-ext */
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/1.woff2) format('woff2');
-  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+@font-face{
+  font-family:Torus;
+  font-weight:100;
+  src:url(../fonts/torus/39F3E3_0_0.eot);
+  src:url(../fonts/torus/39F3E3_0_0.eot?#iefix) format("embedded-opentype"),
+      url(../fonts/torus/39F3E3_0_0.woff2) format("woff2"),
+      url(../fonts/torus/39F3E3_0_0.woff) format("woff"),
+      url(../fonts/torus/39F3E3_0_0.ttf) format("truetype");
 }
-/* cyrillic */
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/2.woff2) format('woff2');
-  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+@font-face{
+  font-family:Torus;
+  font-weight:600;
+  src:url(../fonts/torus/39F3E3_1_0.eot);
+  src:url(../fonts/torus/39F3E3_1_0.eot?#iefix) format("embedded-opentype"),
+      url(../fonts/torus/39F3E3_1_0.woff2) format("woff2"),
+      url(../fonts/torus/39F3E3_1_0.woff) format("woff"),
+      url(../fonts/torus/39F3E3_1_0.ttf) format("truetype");
 }
-/* greek-ext */
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/3.woff2) format('woff2');
-  unicode-range: U+1F00-1FFF;
+@font-face{
+  font-family:Torus;
+  font-weight:400;
+  src:url(../fonts/torus/39F3E3_2_0.eot);
+  src:url(../fonts/torus/39F3E3_2_0.eot?#iefix) format("embedded-opentype"),
+      url(../fonts/torus/39F3E3_2_0.woff2) format("woff2"),
+      url(../fonts/torus/39F3E3_2_0.woff) format("woff"),
+      url(../fonts/torus/39F3E3_2_0.ttf) format("truetype");
 }
-/* greek */
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/4.woff2) format('woff2');
-  unicode-range: U+0370-03FF;
+@font-face{
+  font-family:Torus;
+  font-weight:300;
+  src:url(../fonts/torus/39F3E3_3_0.eot);
+  src:url(../fonts/torus/39F3E3_3_0.eot?#iefix) format("embedded-opentype"),
+      url(../fonts/torus/39F3E3_3_0.woff2) format("woff2"),
+      url(../fonts/torus/39F3E3_3_0.woff) format("woff"),
+      url(../fonts/torus/39F3E3_3_0.ttf) format("truetype");
 }
-/* vietnamese */
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/5.woff2) format('woff2');
-  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+@font-face{
+  font-family:Torus;
+  font-weight:900;
+  src:url(../fonts/torus/39F3E3_4_0.eot);
+  src:url(../fonts/torus/39F3E3_4_0.eot?#iefix) format("embedded-opentype"),
+      url(../fonts/torus/39F3E3_4_0.woff2) format("woff2"),
+      url(../fonts/torus/39F3E3_4_0.woff) format("woff"),
+      url(../fonts/torus/39F3E3_4_0.ttf) format("truetype");
 }
-/* latin-ext */
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/6.woff2) format('woff2');
-  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Open Sans Regular'), local('OpenSans-Regular'), url(../fonts/7.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+@font-face{
+  font-family:Torus;
+  font-weight:700;
+  src:url(../fonts/torus/39F3E3_5_0.eot);
+  src:url(../fonts/torus/39F3E3_5_0.eot?#iefix) format("embedded-opentype"),
+      url(../fonts/torus/39F3E3_5_0.woff2) format("woff2"),
+      url(../fonts/torus/39F3E3_5_0.woff) format("woff"),
+      url(../fonts/torus/39F3E3_5_0.ttf) format("truetype");
 }
 
 /* DARK THEME */
@@ -409,10 +407,10 @@ button {
 
 @media(max-width:950px) {
   .pl-container {
-    height: calc(100% - 45px - 50px - 113px) !important;
+    height: calc(100% - 45px - 45px - 113px) !important;
   }
 
-  div#app {max-height: calc(100vh - 141px) !important;}
+  div#app {max-height: calc(100vh - 138px) !important;}
 
   .ap {
     min-width: 250px;
@@ -510,6 +508,7 @@ button {
   color: var(--text);
   max-width: 70%;
   opacity: 0.6;
+  font-size: 16px;
 }
 .pl-title:hover {
   text-decoration: none;
@@ -644,7 +643,7 @@ button {
 body {
 	overflow: hidden;
 	background: transparent;
-	font-family: 'Open Sans', sans-serif !important;
+  font-family: 'Torus', sans-serif !important;
 	border-radius: 50px;
 }
 
@@ -663,7 +662,7 @@ body {
 .video-pl {
 	overflow-y: scroll !important;
 	padding-bottom: 1vh;
-	height: calc(100vh - 153px) !important;
+	height: calc(100vh - 151px) !important;
 }
 
 .video img {
@@ -798,6 +797,7 @@ a:hover {color: var(--text);}
 }
 
 .wow>input {
+  font-family: 'Torus', sans-serif !important;
   -webkit-box-flex: 0;
   -ms-flex: 0 0 calc(100% - 50px);
   flex: 0 0 calc(100% - 50px);
@@ -827,7 +827,6 @@ a:hover {color: var(--text);}
   margin: 0px 0px;
   text-decoration: none;
   border: 0px;
-  text-transform: capitalize;
   text-align: center;
   font-size: 20px;
   color: var(--text);
@@ -932,7 +931,7 @@ a:hover {color: var(--text);}
 .menu>.links {
   width: 100%;
   overflow-y: scroll;
-  transition: all .4s;
+  transition: all .2s;
 }
 
 .menu>.profile>.full>.float-icons {
@@ -1107,6 +1106,7 @@ li {
 li:hover .music-icon  {
   opacity: 0.5;
   transform: scale(1.1);
+  transition: all .2s;
 }
 
 
@@ -1123,7 +1123,7 @@ li:hover .music-id {
   left: 0;
   border-radius: 10px;
   top: 0;
-  transition: all 0.3s linear;
+  transition: all .2s;
 }
 
 .music-id {
@@ -1161,11 +1161,12 @@ li:hover .fav {
   cursor: pointer;
   opacity: 0;
   top: 14px;
-  transition: color 0.3s linear;
+  transition: all .2s;
 }
 
 .fav:hover {
   color: #e91e63 !important;
+  text-shadow: 0 0 10px #E91E63, 0 0 10px #E91E63, 0 0 10px black, 0 0 10px black
 }
 
 div#prog {
@@ -1218,7 +1219,7 @@ div#prog {
   overflow: hidden;
 }
 
-div#app {background: var(--bg);padding-top: 5px;max-height: calc(100vh - 86px);}
+div#app {background: var(--bg);padding-top: 5px;max-height: calc(100vh - 84px);}
 
 .pl-current .music-icon {
   opacity: 0.5;
@@ -1238,4 +1239,12 @@ div#app {background: var(--bg);padding-top: 5px;max-height: calc(100vh - 86px);}
 
 .pl-current .pl-remove {
   opacity: 1;
+}
+
+#loader {
+  position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%);
+}
+
+#change-theme {
+  background: var(--bg); width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 9999999999999999; display: none; transition: 1s linear; opacity: 0;
 }
