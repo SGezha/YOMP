@@ -5,7 +5,7 @@ let musicSelectedId = 0,
     fullscreen = 0,
     base = db.get("music").value(),
     ilLoved = false,
-    ping = false;
+    ping = false;      
 
 window.onload = function () {
     if (db.get("settings").value()[0].theme == "dark") {
@@ -139,7 +139,7 @@ function fixmusic() {
     masMusic.forEach((m) => {
         if (m.videoId == undefined) return;
         $.get("https://images" + ~~(Math.random() * 33) + "-focus-opensocial.googleusercontent.com/gadgets/proxy?container=none&url=https%3A%2F%2Fwww.youtube.com%2Fget_video_info%3Fvideo_id%3D" + m.videoId, function (data) {
-            if (data.indexOf("errorcode=150") > -1) return toastr.error('Error: Copyright');
+            if (data.indexOf("errorcode=150") > -1) return new Notification('Error', {silent: true, silent: true,  body: `Copyright`, icon: "icons/icon.png" })
             var data = parse_str(data),
                 streams = (data.url_encoded_fmt_stream_map + ',' + data.adaptive_fmts).split(',');
             $.each(streams, function (n, s) {
@@ -616,6 +616,8 @@ function start() {
                 }
             } else {
                 index = (index === playList.length - 1) ? 0 : index + 1;
+                let title = document.getElementsByClassName('pl-title')[index].innerHTML;
+                new Notification(`Now playing`, {silent: true,  body: title, icon: "icons/icon.png" });
                 play();
             }
         }
@@ -841,12 +843,12 @@ function refresh() {
 }
 
 function youtube(vid, title, icon) {
-    if (db.get("music").find({ videoId: vid }).value() != undefined) return toastr.error('Song already in playlist :3');
+    if (db.get("music").find({ videoId: vid }).value() != undefined) return new Notification('Error', {silent: true,  body: 'Song already in playlist :3', icon: "icons/icon.png" });
     $.get("https://images" + ~~(Math.random() * 33) + "-focus-opensocial.googleusercontent.com/gadgets/proxy?container=none&url=https%3A%2F%2Fwww.youtube.com%2Fget_video_info%3Fvideo_id%3D" + vid, function (data) {
-        if (data.indexOf("errorcode=150") > -1) return toastr.error('Error: Copyright');
+        if (data.indexOf("errorcode=150") > -1) return new Notification('Error', {silent: true,  body: 'Copyright', icon: "icons/icon.png" });
         var data = parse_str(data),
             streams = (data.url_encoded_fmt_stream_map + ',' + data.adaptive_fmts).split(',');
-        if (data.url_encoded_fmt_stream_map == "") return toastr.error('Error: Copyright or NOT FOUND');
+        if (data.url_encoded_fmt_stream_map == "") return new Notification('Error', {silent: true,  body: 'Copyright or NOT FOUND', icon: "icons/icon.png" });
         $.each(streams, function (n, s) {
             var stream = parse_str(s),
                 itag = stream.itag * 1,
@@ -875,9 +877,15 @@ function youtube(vid, title, icon) {
                     videoId: vid,
                     loved: false
                 }).write();
-                toastr.success(`${title} added to playlist :3`);
+                new Notification('Success', {
+                   silent: true,  body: `${title} added to playlist :3`,
+                    icon: "icons/icon.png"
+                })
                 axios.get(stream.url).catch(er => {
-                    toastr.error(`${title} cant find mp3 file :c`);
+                    new Notification('Eror', {
+                       silent: true,  body: `${title} cant find mp3 file :c`,
+                        icon: "icons/icon.png"
+                    })
                     db.get("music").remove({ id: id }).write();
                 })
             }
@@ -961,10 +969,10 @@ function love(id, el) {
     if (track.loved == true) {
         db.get("music").find({ id: id }).assign({ loved: false }).write();
         el.style.color = "white";
-        toastr.error(`${track.title} remove from loved :c`);
+        new Notification('Remove', {silent: true,  body: `${track.title} remove from loved :c`, icon: "icons/icon.png" })
         if (ilLoved == true) openloved();
     } else {
-        toastr.success(`${track.title} added to loved :3`);
+        new Notification('Success', {silent: true,  body: `${track.title} added to loved :3`, icon: "icons/icon.png" })
         el.style.color = "#e91e63";
         db.get("music").find({ id: id }).assign({ loved: true }).write();
     }

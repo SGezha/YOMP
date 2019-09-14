@@ -21,7 +21,7 @@ let s = {
     mute: `CommandOrControl+-`
   }
 };
-if (fs.existsSync("database.json")) s = JSON.parse(fs.readFileSync(`${root}/database.json`).toString()).settings[0];
+if (fs.existsSync(`${root}/database.json`)) s = JSON.parse(fs.readFileSync(`${root}/database.json`).toString()).settings[0];
 const rpc = new DiscordRPC.Client({ transport: 'ipc' });
 
 function createWindow() {
