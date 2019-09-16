@@ -1,21 +1,32 @@
-const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc } = require('electron'),
-      path = require('path'),
-      root = app.getPath('userData'),
-      DiscordRPC = require('discord-rpc'),
-      iconPath = path.join(__dirname, 'icons/icon.png'),
-      fs = require('fs'),
-      rpc = new DiscordRPC.Client({ transport: 'ipc' });
-
-let mainWindow,
-    appIcon = null,
-    s = { theme: "dark", key: { play: `CommandOrControl+Space`, random: `CommandOrControl+r`, love: `CommandOrControl+l`, next: `CommandOrControl+Right`, prev: `CommandOrControl+Left`, focus: `CommandOrControl+Up`, mini: `CommandOrControl+Down`, volumeup: `CommandOrControl+=`, volumedown: `CommandOrControl+-`, mute: `CommandOrControl+-` }};
-
+const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc } = require('electron');
+var path = require('path');
+let root = app.getPath('userData');
+const DiscordRPC = require('discord-rpc');
+let mainWindow;
+let appIcon = null;
+const iconPath = path.join(__dirname, 'assets/icons/icon.png');
+const fs = require('fs');
+let s = {
+  theme: "dark",
+  key: {
+    play: `CommandOrControl+Space`,
+    random: `CommandOrControl+r`,
+    love: `CommandOrControl+l`,
+    next: `CommandOrControl+Right`,
+    prev: `CommandOrControl+Left`,
+    focus: `CommandOrControl+Up`,
+    mini: `CommandOrControl+Down`,
+    volumeup: `CommandOrControl+=`,
+    volumedown: `CommandOrControl+-`,
+    mute: `CommandOrControl+-`
+  }
+};
 if (fs.existsSync(`${root}/database.json`)) s = JSON.parse(fs.readFileSync(`${root}/database.json`).toString()).settings[0];
+const rpc = new DiscordRPC.Client({ transport: 'ipc' });
 
-app.setAppUserModelId("YOMP");  
 function createWindow() {
   mainWindow = new BrowserWindow({
-    transparent: true, frame: false, width: 1000, height: 700, minWidth: 500, icon: "icon.png", webPreferences: {nodeIntegration: true}
+    transparent: true, frame: false, width: 1000, height: 700, minWidth: 300, icon: "icon.png", webPreferences: {nodeIntegration: true}
   });
   mainWindow.loadFile('index.html');
   mainWindow.on('closed', function () {

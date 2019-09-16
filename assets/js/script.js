@@ -5,17 +5,15 @@ let musicSelectedId = 0,
     fullscreen = 0,
     base = db.get("music").value(),
     ilLoved = false,
-    ping = false;   
-     
+    ping = false;      
+
 window.onload = function () {
     if (db.get("settings").value()[0].theme == "dark") {
-        document.getElementsByClassName('osu')[0].src = `icons/osu.svg`;
-        document.getElementsByClassName('osu')[1].src = `icons/osu.svg`;
-        document.getElementsByClassName('random')[0].src = `icons/random.png`;
+        document.getElementsByClassName('osu-icon')[0].src = `assets/icons/osu.svg`;
+        document.getElementsByClassName('osu')[0].src = `assets/icons/osu.svg`;
     } else {
-        document.getElementsByClassName('osu')[0].src = `icons/osu(dark).svg`;
-        document.getElementsByClassName('osu')[1].src = `icons/osu(dark).svg`;
-        document.getElementsByClassName('random')[0].src = `icons/random(dark).png`;
+        document.getElementsByClassName('osu-icon')[0].src = `assets/icons/osu(dark).svg`;
+        document.getElementsByClassName('osu')[0].src = `assets/icons/osu(dark).svg`;
     }
     start();
     fixmusic();
@@ -28,16 +26,16 @@ function changeTheme() {
     document.getElementById('change-theme').style.display = "block";
     if (db.get("settings").value()[0].theme == "dark") {
         db.get("settings").find({ theme: "dark" }).assign({ theme: "white" }).write();
-        document.getElementsByClassName('osu')[0].src = `icons/osu(dark).svg`;
-        document.getElementsByClassName('osu')[1].src = `icons/osu(dark).svg`;
-        document.getElementsByClassName('random')[0].src = `icons/random(dark).png`;
+        document.getElementsByClassName('osu')[0].src = `assets/icons/osu(dark).svg`;
+        document.getElementsByClassName('osu')[1].src = `assets/icons/osu(dark).svg`;
+        document.getElementsByClassName('random')[0].src = `assets/icons/random(dark).png`;
     } else {
         db.get("settings").find({ theme: "white" }).assign({ theme: "dark" }).write();
-        document.getElementsByClassName('osu')[0].src = `icons/osu.svg`;
-        document.getElementsByClassName('osu')[1].src = `icons/osu.svg`;
-        document.getElementsByClassName('random')[0].src = `icons/random.png`;
+        document.getElementsByClassName('osu')[0].src = `assets/icons/osu.svg`;
+        document.getElementsByClassName('osu')[1].src = `assets/icons/osu.svg`;
+        document.getElementsByClassName('random')[0].src = `assets/icons/random.png`;
     }
-    document.getElementById("theme").href = `css/${db.get("settings").value()[0].theme}.css`;
+    document.getElementById("theme").href = `assets/css/${db.get("settings").value()[0].theme}.css`;
     setTimeout(() => {
         document.getElementById('change-theme').style.opacity = "0";
         setTimeout(() => {
@@ -72,7 +70,7 @@ document.getElementById("search").onchange = function (e) {
         if (l > 0) {
             for (var i = 0; i < base.length; i++) {
                 let title = base[i].title;
-                if (base[i].title[0].length > 1) title = base[i].title[0];
+                //if (base[i].title[0].length > 1) title = base[i].title[0];
                 if (title.toLowerCase().match(input.value.toLowerCase())) {
                     result.push(base[i]);
                 }
@@ -83,15 +81,15 @@ document.getElementById("search").onchange = function (e) {
             });
             loaded = 0;
 
-            document.getElementById("pl").onscroll = function () {
+            document.getElementsByClassName("container")[0].onscroll = function () {
                 if (isLoaded == true) return;
                 if (loaded == 0) loaded = 80;
-                var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
+                var isElViu = isElementInView($(`li[data-track="${loaded - 5}"]`), false);
 
                 if (isElViu) {
                     isLoaded = true;
                     for (let i = loaded; i < loaded + 50; i++) {
-                        document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
+                        document.getElementsByClassName('music-el')[i].style.display = "inline-block";
                     }
                     setTimeout(() => {
                         isLoaded = false
@@ -107,15 +105,15 @@ document.getElementById("search").onchange = function (e) {
                 playList: base
             });
 
-            document.getElementById("pl").onscroll = function () {
+            document.getElementsByClassName("container")[0].onscroll = function () {
                 if (isLoaded == true) return;
                 if (loaded == 0) loaded = 80;
-                var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
+                var isElViu = isElementInView($(`li[data-track="${loaded - 5}"]`), false);
 
                 if (isElViu) {
                     isLoaded = true;
                     for (let i = loaded; i < loaded + 50; i++) {
-                        document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
+                        document.getElementsByClassName('music-el')[i].style.display = "inline-block";
                     }
                     setTimeout(() => {
                         isLoaded = false
@@ -139,7 +137,7 @@ function fixmusic() {
     masMusic.forEach((m) => {
         if (m.videoId == undefined) return;
         $.get("https://images" + ~~(Math.random() * 33) + "-focus-opensocial.googleusercontent.com/gadgets/proxy?container=none&url=https%3A%2F%2Fwww.youtube.com%2Fget_video_info%3Fvideo_id%3D" + m.videoId, function (data) {
-            if (data.indexOf("errorcode=150") > -1) return new Notification('Error', {silent: true,  body: `Copyright`, icon: "icons/icon.png" })
+            if (data.indexOf("errorcode=150") > -1) return new Notification('Error', {silent: true, silent: true,  body: `Copyright`, icon: "assets/icons/icon.png" })
             var data = parse_str(data),
                 streams = (data.url_encoded_fmt_stream_map + ',' + data.adaptive_fmts).split(',');
             $.each(streams, function (n, s) {
@@ -171,12 +169,12 @@ function fixmusic() {
 
 function maxsize() {
     if (fullscreen == 0) {
-        document.getElementById('prog').style.borderRadius = "0";
+        document.getElementById('yomp').style.borderRadius = "0";
         remote.getCurrentWindow().maximize();
         fullscreen++;
         document.getElementsByClassName("maximize")[0].innerHTML = `<i style="color: var(--text);" class="fas fa-square"></i>`;
     } else {
-        document.getElementById('prog').style.borderRadius = "5px";
+        document.getElementById('yomp').style.borderRadius = "5px";
         remote.getCurrentWindow().unmaximize();
         fullscreen = 0;
         document.getElementsByClassName("maximize")[0].innerHTML = `<i style="color: var(--text);" class="far fa-square"></i>`;
@@ -227,8 +225,8 @@ async function addMusicFolder() {
                             id = db.get("music").value().length;
                         }
                         if (metadata.image != undefined && metadata.image.imageBuffer != undefined) {
-                            fs.writeFileSync(`${root}/cache/${title}.jpg`, metadata.image.imageBuffer, 'binary');
-                            img = encodeURI(`${root}/cache/${title}.jpg`);
+                            fs.writeFileSync(`${root}/images/${title}.jpg`, metadata.image.imageBuffer, 'binary');
+                            img = encodeURI(`${root}/images/${title}.jpg`);
                         }
                         db.get("music").push({
                             id: id,
@@ -237,7 +235,7 @@ async function addMusicFolder() {
                             file: `${dir.filePaths[0]}/${i}`,
                             loved: false
                         }).write();
-                        document.getElementById("loadprogress").innerHTML = `<div class="textload">${title}</div> <span> ${ind + 1}/${items.length}</span>`;
+                        document.getElementById("load-progress").innerHTML = `<div class="textload">${title}</div> <span> ${ind + 1}/${items.length}</span>`;
                     }
                 }
             }, 500 * ind)
@@ -278,7 +276,7 @@ function checkDir(ind, mas, dir) {
                 if (obj.title != undefined && obj.file != undefined && obj.img != undefined) {
                     Jimp.read(obj.img)
                         .then(lenna => {
-                            document.getElementById("loadprogress").innerHTML = `<div class="textload">${obj.title}</div> <span> ${ind + 1}/${mas.length}</span>`;
+                            document.getElementById("load-progress").innerHTML = `<div class="textload">${obj.title}</div> <span> ${ind + 1}/${mas.length}</span>`;
                             if (db.get("music").find({ file: obj.file }).value() == undefined) {
                                 var id = 0;
                                 if (db.get("music").value().length != undefined) {
@@ -288,14 +286,14 @@ function checkDir(ind, mas, dir) {
                                     id: id,
                                     title: obj.title,
                                     file: `${obj.file}`,
-                                    icon: `${root}/cache/${obj.title}.jpg`,
+                                    icon: `${root}/images/${obj.title}.jpg`,
                                     loved: false
                                 }).write();
                                 checkDir(ind + 1, mas, dir);
                                 return lenna
                                     .quality(80)
                                     .cover(500, 60, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE)
-                                    .write(`${root}/cache/${obj.title}.jpg`);
+                                    .write(`${root}/images/${obj.title}.jpg`);
                             } else {
                                 checkDir(ind + 1, mas, dir);
                             }
@@ -390,32 +388,34 @@ function start() {
         function renderPL() {
             var html = [];
             playList.forEach(function (item, i) {
-                let fav = `<i onclick="love(${item.id}, this);" style="color: white;" class="fas fa-heart fav"></i>`;
-                if (db.get("music").find({ title: item.title }).value().loved == true) fav = `<i onclick="love(${item.id}, this);" style="color: #e91e63; text-shadow: 0 0 10px #E91E63, 0 0 10px #E91E63, 0 0 10px black, 0 0 10px black;" class="fas fa-heart fav"></i>`;
-                let type = '<svg fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M0 0h24v24H0z" fill="none"/>' + '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>' + '</svg>';
-                if (item.file.indexOf("osu") > -1) type = `<img style="width: 20px; hegiht: 20px; transform: scale(1.2);" src="icons/osu.svg">`;
-                if (item.videoId != undefined) type = `<i style="color: white; transform: scale(1.2);" class="fab fa-youtube"></i>`;
+                let fav = `<i onclick="love(${item.id}, this);" class="fas fa-heart"></i>`;
+                if (db.get("music").find({ title: item.title }).value().loved == true) fav = `<i onclick="love(${item.id}, this);" class="fas fa-heart fav"></i>`;
+                let type = '<svg fill="#fff" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M0 0h24v24H0z" fill="none"/>' + '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>' + '</svg>';
+                if (item.file.indexOf("osu") > -1) type = `<img class="pl-img" src="assets/icons/osu.svg">`;
+                if (item.videoId != undefined) type = `<i class="fab fa-youtube"></i>`;
                 if (i < 80) {
-                    html.push(`<li class="music-el" real-id="${item.id}" data-track="${i}"> <div class="music-id">${i + 1}/${playList.length}</div> <div class="music-icon" style="background: url('${item.icon}'); background-size: cover; background-position: center;"></div> <div class="pl-number"> <div class="pl-count"> ${type} </div> <div class="pl-playing"> <svg xmlns="http://www.w3.org/2000/svg" fill="var(--text)" height="30" viewBox="0 0 24 24" width="30"> <path d="M8 5v14l11-7z" /> <path d="M0 0h24v24H0z" fill="none" /> </svg> </div> </div> <div class="pl-title">${item.title}</div> ${fav} <button class="pl-remove"> <svg class="pl-del" style="cursor:pointer;" fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"> <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/> <path d="M0 0h24v24H0z" fill="none"/> </svg> </button> </li>`)
+                    html.push(`<li class="music-el" real-id="${item.id}" data-track="${i}"><div class="pog"><div class="left"><div class="pl-number"><div class="pl-count">${type}</div><div class="pl-playing"><i class="fas fa-play"></i></div></div></div><div class="center" real-id="${item.id}" data-track="${i}"><div class="pl-title">${item.title}</div></div><div class="right" real-id="${item.id}" data-track="${i}"><div class="music-id">${i + 1}/${playList.length}</div>${fav}<i class="far fa-trash-alt pl-remove pl-del"></i></div><div class="music-background" style="background: url('${item.icon}');"></div></div></li>`);
                 } else {
-                    html.push(`<li style="display: none;" class="music-el" real-id="${item.id}" data-track="${i}"> <div class="music-id">${i + 1}/${playList.length}</div> <div class="music-icon" style="background: url('${item.icon}'); background-size: cover; background-position: center;"></div> <div class="pl-number"> <div class="pl-count"> ${type} </div> <div class="pl-playing"> <svg xmlns="http://www.w3.org/2000/svg" fill="var(--text)" height="30" viewBox="0 0 24 24" width="30"> <path d="M8 5v14l11-7z" /> <path d="M0 0h24v24H0z" fill="none" /> </svg> </div> </div> <div class="pl-title">${item.title}</div> ${fav} <button class="pl-remove"> <svg class="pl-del" style="cursor:pointer;" fill="#000000" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"> <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/> <path d="M0 0h24v24H0z" fill="none"/> </svg> </button> </li>`)
+                    html.push(`<li class="music-el" style="display: none" real-id="${item.id}" data-track="${i}"><div class="pog"><div class="left"><div class="pl-number"><div class="pl-count">${type}</div><div class="pl-playing"><i class="fas fa-play"></i></div></div></div><div class="center" real-id="${item.id}" data-track="${i}"><div class="pl-title">${item.title}</div></div><div class="right" real-id="${item.id}" data-track="${i}"><div class="music-id">${i + 1}/${playList.length}</div>${fav}<i class="far fa-trash-alt pl-remove pl-del"></i></div><div class="music-background" style="background: url('${item.icon}');"></div></div></li>`);
                 }
             });
             pl = create('div', {
                 'className': 'pl-container hide',
                 'id': 'pl',
-                'innerHTML': !isEmptyList() ? '<ul class="pl-list">' + html.join('') + '</ul>' : '<div class="pl-empty">PlayList is empty</div>'
+                'innerHTML': !isEmptyList() ? '<ul class="pl-list">' + html.join('') + '</ul>' : '<div class="pl-empty"><img src="https://image.flaticon.com/icons/svg/1679/1679882.svg" class="emss" /><span>PlayList is empty</span></div>'
             });
-            player.parentNode.insertBefore(pl, player.nextSibling);
+            document.getElementById('app').parentNode.insertBefore(pl, document.getElementById('app').nextSibling);
             plLi = pl.querySelectorAll('li');
             pl.addEventListener('click', listHandler, false);
         }
 
         function listHandler(evt) {
             evt.preventDefault();
-            if (evt.target.className === 'pl-title') {
+            var aw = evt.target.className;
+            if (aw == 'pl-title') {
                 var current = parseInt(evt.target.parentNode.getAttribute('data-track'), 10);
                 index = current;
+                console.log(index)
                 audio.readyState = 0;
                 plActive();
                 play();
@@ -424,8 +424,9 @@ function start() {
                 }, 300)
             } else {
                 var target = evt.target;
+                if(target.className === 'fas fa-heart' || target.className === 'fas fa-heart fav') return;
                 while (target.className !== pl.className) {
-                    if (target.className === 'pl-remove' || target.className === 'pl-del') {
+                    if (target.className === 'pl-remove' || target.className === 'pl-del' || target.className === 'right') {
                         var id = 0;
                         var isDel = parseInt(target.parentNode.getAttribute('data-track'), 10);
                         playList.splice(isDel, 1);
@@ -495,25 +496,19 @@ function start() {
 
         function prev() {
             index = index - 1;
-            if (mini == true && ping > 1) { 
-                ping = 5; 
-            }
+            if (mini == true && ping > 1) ping = 5;
             play();
         }
 
         function next() {
             index = index + 1;
-            if (mini == true && ping > 1) { 
-                ping = 5; 
-            }
+            if (mini == true && ping > 1) ping = 5;
             play();
         }
 
         function random() {
             index = getRandomInt(0, db.get("music").value().length);
-            if (mini == true && ping > 1) { 
-                ping = 5; 
-            }
+            if (mini == true && ping > 1) ping = 5;
             play();
         }
 
@@ -622,7 +617,7 @@ function start() {
             } else {
                 index = (index === playList.length - 1) ? 0 : index + 1;
                 let title = document.getElementsByClassName('pl-title')[index].innerHTML;
-                new Notification(`Now playing`, {silent: true,  body: title, icon: "icons/icon.png" });
+                new Notification(`Now playing`, {silent: true,  body: title, icon: "assets/icons/icon.png" });
                 play();
             }
         }
@@ -811,7 +806,7 @@ function start() {
             plActive: plActive,
             mute: volumeToggle,
             volumeUp: volumeUp,
-            volumeDown: volumeDown
+            volumeDown: volumeDown,
         };
     })();
 
@@ -823,15 +818,15 @@ function refresh() {
         playList: db.get("music").value()
     });
 
-    document.getElementById("pl").onscroll = function () {
+    document.getElementsByClassName("container")[0].onscroll = function () {
         if (isLoaded == true) return;
         if (loaded == 0) loaded = 80;
-        var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
+        var isElViu = isElementInView($(`li[data-track="${loaded - 5}"]`), false);
 
         if (isElViu) {
             isLoaded = true;
             for (let i = loaded; i < loaded + 50; i++) {
-                document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
+                document.getElementsByClassName('music-el')[i].style.display = "inline-block";
             }
             setTimeout(() => {
                 isLoaded = false
@@ -848,12 +843,12 @@ function refresh() {
 }
 
 function youtube(vid, title, icon) {
-    if (db.get("music").find({ videoId: vid }).value() != undefined) return new Notification('Error', {silent: true,  body: 'Song already in playlist :3', icon: "icons/icon.png" });
+    if (db.get("music").find({ videoId: vid }).value() != undefined) return new Notification('Error', {silent: true,  body: 'Song already in playlist :3', icon: "assets/icons/icon.png" });
     $.get("https://images" + ~~(Math.random() * 33) + "-focus-opensocial.googleusercontent.com/gadgets/proxy?container=none&url=https%3A%2F%2Fwww.youtube.com%2Fget_video_info%3Fvideo_id%3D" + vid, function (data) {
-        if (data.indexOf("errorcode=150") > -1) return new Notification('Error', {silent: true,  body: 'Copyright', icon: "icons/icon.png" });
+        if (data.indexOf("errorcode=150") > -1) return new Notification('Error', {silent: true,  body: 'Copyright', icon: "assets/icons/icon.png" });
         var data = parse_str(data),
             streams = (data.url_encoded_fmt_stream_map + ',' + data.adaptive_fmts).split(',');
-        if (data.url_encoded_fmt_stream_map == "") return new Notification('Error', {silent: true,  body: 'Copyright or NOT FOUND', icon: "icons/icon.png" });
+        if (data.url_encoded_fmt_stream_map == "") return new Notification('Error', {silent: true,  body: 'Copyright or NOT FOUND', icon: "assets/icons/icon.png" });
         $.each(streams, function (n, s) {
             var stream = parse_str(s),
                 itag = stream.itag * 1,
@@ -884,12 +879,12 @@ function youtube(vid, title, icon) {
                 }).write();
                 new Notification('Success', {
                    silent: true,  body: `${title} added to playlist :3`,
-                    icon: "icons/icon.png"
+                    icon: "assets/icons/icon.png"
                 })
                 axios.get(stream.url).catch(er => {
                     new Notification('Eror', {
                        silent: true,  body: `${title} cant find mp3 file :c`,
-                        icon: "icons/icon.png"
+                        icon: "assets/icons/icon.png"
                     })
                     db.get("music").remove({ id: id }).write();
                 })
@@ -928,11 +923,13 @@ function shuffle(arr) {
 function miniPlayer() {
     if (document.getElementById('ap').style.transform == "translateY(180px)") document.getElementById('ap').style.transform = "translateY(0px)";
     document.getElementById('pl').style.display = "none";
-    document.getElementById('app').style.display = "none";
-    document.getElementsByClassName('ui-titlebar')[0].style.display = "none";
-    document.getElementsByClassName('pl-container')[0].style.background = "transparent";
-    remote.getCurrentWindow().setSize(screen.availWidth, 180);
-    remote.getCurrentWindow().setPosition(0, screen.availHeight - 180);
+    document.getElementsByClassName('center')[0].style.display = "none";
+    document.getElementsByClassName('top')[0].style.display = "none";
+    document.getElementsByClassName('main')[0].style.background = "transparent";
+    document.getElementsByClassName('bottom')[0].style.position = "absolute";
+    document.getElementsByClassName('bottom')[0].style.bottom = "0";
+    remote.getCurrentWindow().setSize(screen.availWidth, 170);
+    remote.getCurrentWindow().setPosition(0, screen.availHeight - 170);
     remote.getCurrentWindow().setSkipTaskbar(true);
     remote.getCurrentWindow().focus();
     mini = true;
@@ -959,10 +956,12 @@ setInterval(() => {
 function miniPlayerOff() {
     if (document.getElementById('ap').style.transform == "translateY(180px)") document.getElementById('ap').style.transform = `translateY(0px)`;
     remote.getCurrentWindow().focus();
-    document.getElementById('pl').style.display = "flex";
-    document.getElementsByClassName('pl-container')[0].style.background = "var(--bg)";
-    document.getElementById('app').style.display = "block";
-    document.getElementsByClassName('ui-titlebar')[0].style.display = "flex";
+    document.getElementById('pl').style.display = "block";
+    document.getElementsByClassName('center')[0].style.display = null;
+    document.getElementsByClassName('top')[0].style.display = "flex";
+    document.getElementsByClassName('main')[0].style.background = "var(--bg)";
+    document.getElementsByClassName('bottom')[0].style.position = null;
+    document.getElementsByClassName('bottom')[0].style.bottom = null;
     remote.getCurrentWindow().setSize(1000, 700);
     remote.getCurrentWindow().center();
     remote.getCurrentWindow().setSkipTaskbar(false);
@@ -973,14 +972,12 @@ function love(id, el) {
     let track = db.get("music").find({ id: id }).value();
     if (track.loved == true) {
         db.get("music").find({ id: id }).assign({ loved: false }).write();
-        el.style.color = "white";
-        el.style.textShadow = "";
-        new Notification('Remove', {silent: true,  body: `${track.title} remove from loved :c`, icon: "icons/icon.png" })
+        el.classList.remove("fav");
+        new Notification('Removed from loved :c', {silent: true,  body: `${track.title}`, icon: "assets/icons/icon.png" })
         if (ilLoved == true) openloved();
     } else {
-        new Notification('Success', {silent: true,  body: `${track.title} added to loved :3`, icon: "icons/icon.png" })
-        el.style.color = "#e91e63";
-        el.style.textShadow = "0 0 10px #E91E63, 0 0 10px #E91E63, 0 0 10px black, 0 0 10px black";
+        new Notification('Added to loved :3', {silent: true,  body: `${track.title}`, icon: "assets/icons/icon.png" })
+        el.classList.add("fav");
         db.get("music").find({ id: id }).assign({ loved: true }).write();
     }
 }
@@ -999,14 +996,14 @@ function isElementInView(element, fullyInView) {
 }
 
 function loadMusic() {
-    if (document.getElementById('loadmusic').style.display == "" || document.getElementById('loadmusic').style.display == "none") {
+    if (document.getElementById('load-music').style.display == "" || document.getElementById('load-music').style.display == "none") {
         document.getElementsByClassName('menu-left')[0].classList.remove('act-menu');
         document.getElementsByClassName('shadow')[0].style.display = "none";
         document.getElementById('pl').style.display = "none";
         document.getElementById('app').style.display = "none";
         document.getElementById('ap').style.display = "none";
-        document.getElementById('loadmusic').style.display = "block";
-        document.getElementById('prog').style.background = "var(--bg)";
+        document.getElementById('load-music').style.display = "block";
+        document.getElementById('yomp').style.background = "var(--bg)";
         document.getElementsByClassName('maximize')[0].style.opacity = "0";
         document.getElementsByClassName('minimize')[0].style.opacity = "0";
         remote.getCurrentWindow().setSize(500, 70);
@@ -1017,8 +1014,8 @@ function loadMusic() {
         document.getElementById('pl').style.display = "flex";
         document.getElementById('app').style.display = "block";
         document.getElementById('ap').style.display = "block";
-        document.getElementById('loadmusic').style.display = "none";
-        document.getElementById('prog').style.background = "transparent";
+        document.getElementById('load-music').style.display = "none";
+        document.getElementById('yomp').style.background = "transparent";
         document.getElementsByClassName('maximize')[0].style.opacity = "1";
         document.getElementsByClassName('minimize')[0].style.opacity = "1";
         remote.getCurrentWindow().setSize(1000, 700);
@@ -1042,15 +1039,15 @@ function openloved() {
     loaded = 0;
     document.getElementById('pl').classList.remove("hide");
 
-    document.getElementById("pl").onscroll = function () {
+    document.getElementsByClassName("container")[0].onscroll = function () {
         if (isLoaded == true) return;
         if (loaded == 0) loaded = 80;
-        var isElViu = isElementInView($(`[data-track="${loaded - 5}"]`), false);
+        var isElViu = isElementInView($(`li[data-track="${loaded - 5}"]`), false);
 
         if (isElViu) {
             isLoaded = true;
             for (let i = loaded; i < loaded + 50; i++) {
-                document.getElementsByClassName('music-el')[i].style.display = "inline-flex";
+                document.getElementsByClassName('music-el')[i].style.display = "inline-block";
             }
             setTimeout(() => {
                 isLoaded = false
