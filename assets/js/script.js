@@ -70,7 +70,7 @@ document.getElementById("search").onchange = function (e) {
         if (l > 0) {
             for (var i = 0; i < base.length; i++) {
                 let title = base[i].title;
-                //if (base[i].title[0].length > 1) title = base[i].title[0];
+                if (base[i].title[0].length > 1) title = base[i].title[0];
                 if (title.toLowerCase().match(input.value.toLowerCase())) {
                     result.push(base[i]);
                 }
@@ -81,48 +81,9 @@ document.getElementById("search").onchange = function (e) {
             });
             loaded = 0;
 
-            document.getElementsByClassName("container")[0].onscroll = function () {
-                if (isLoaded == true) return;
-                if (loaded == 0) loaded = 80;
-                var isElViu = isElementInView($(`li[data-track="${loaded - 5}"]`), false);
-
-                if (isElViu) {
-                    isLoaded = true;
-                    for (let i = loaded; i < loaded + 50; i++) {
-                        document.getElementsByClassName('music-el')[i].style.display = "inline-block";
-                    }
-                    setTimeout(() => {
-                        isLoaded = false
-                    }, 500);
-                    loaded = loaded + 50;
-                }
-            };
-
             document.getElementById('pl').classList.remove("hide");
         } else {
-            document.getElementById('pl').parentNode.removeChild(document.getElementById('pl'));
-            AP.init({
-                playList: base
-            });
-
-            document.getElementsByClassName("container")[0].onscroll = function () {
-                if (isLoaded == true) return;
-                if (loaded == 0) loaded = 80;
-                var isElViu = isElementInView($(`li[data-track="${loaded - 5}"]`), false);
-
-                if (isElViu) {
-                    isLoaded = true;
-                    for (let i = loaded; i < loaded + 50; i++) {
-                        document.getElementsByClassName('music-el')[i].style.display = "inline-block";
-                    }
-                    setTimeout(() => {
-                        isLoaded = false
-                    }, 500);
-                    loaded = loaded + 50;
-                }
-            };
-
-            loaded = 0;
+            refresh();
             document.getElementById('pl').classList.remove("hide");
         }
     }
@@ -205,6 +166,8 @@ function random() {
 
 function searchbtn() {
     app.search();
+    document.getElementById(`app`).style.display = "block";
+    document.getElementById('pl').classList.add("hide");
 }
 
 async function addMusicFolder() {
@@ -245,7 +208,6 @@ async function addMusicFolder() {
 
 async function addosu() {
     let dir = await remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
-    console.log(dir.filePaths[0])
     fs.readdir(dir.filePaths[0], function (err, items) {
         loadMusic();
         checkDir(0, items, dir.filePaths[0])
@@ -394,9 +356,9 @@ function start() {
                 if (item.file.indexOf("osu") > -1) type = `<img class="pl-img" src="assets/icons/osu.svg">`;
                 if (item.videoId != undefined) type = `<i class="fab fa-youtube"></i>`;
                 if (i < 80) {
-                    html.push(`<li class="music-el" real-id="${item.id}" data-track="${i}"><div class="pog"><div class="left"><div class="pl-number"><div class="pl-count">${type}</div><div class="pl-playing"><i class="fas fa-play"></i></div></div></div><div class="center" real-id="${item.id}" data-track="${i}"><div class="pl-title">${item.title}</div></div><div class="right" real-id="${item.id}" data-track="${i}"><div class="music-id">${i + 1}/${playList.length}</div>${fav}<i class="far fa-trash-alt pl-remove pl-del"></i></div><div class="music-background" style="background: url('${item.icon}');"></div></div></li>`);
+                    html.push(`<li class="music-el" real-id="${item.id}" data-track="${i}"><div class="pog"><div class="left"><div class="pl-number"><div class="pl-count">${type}</div><div class="pl-playing"><i class="fas fa-play"></i></div></div></div><div class="center" real-id="${item.id}" data-track="${i}"><div class="pl-title">${item.title}</div></div><div class="right" real-id="${item.id}" data-track="${i}"><div class="music-id">${i + 1}/${playList.length}</div>${fav}<i class="far fa-trash-alt pl-remove pl-del"></i></div><div class="music-background" style="background: url('${item.icon}') center center / cover;"></div></div></li>`);
                 } else {
-                    html.push(`<li class="music-el" style="display: none" real-id="${item.id}" data-track="${i}"><div class="pog"><div class="left"><div class="pl-number"><div class="pl-count">${type}</div><div class="pl-playing"><i class="fas fa-play"></i></div></div></div><div class="center" real-id="${item.id}" data-track="${i}"><div class="pl-title">${item.title}</div></div><div class="right" real-id="${item.id}" data-track="${i}"><div class="music-id">${i + 1}/${playList.length}</div>${fav}<i class="far fa-trash-alt pl-remove pl-del"></i></div><div class="music-background" style="background: url('${item.icon}');"></div></div></li>`);
+                    html.push(`<li class="music-el" style="display: none" real-id="${item.id}" data-track="${i}"><div class="pog"><div class="left"><div class="pl-number"><div class="pl-count">${type}</div><div class="pl-playing"><i class="fas fa-play"></i></div></div></div><div class="center" real-id="${item.id}" data-track="${i}"><div class="pl-title">${item.title}</div></div><div class="right" real-id="${item.id}" data-track="${i}"><div class="music-id">${i + 1}/${playList.length}</div>${fav}<i class="far fa-trash-alt pl-remove pl-del"></i></div><div class="music-background" style="background: url('${item.icon}') center center / cover;"></div></div></li>`);
                 }
             });
             pl = create('div', {
@@ -415,7 +377,6 @@ function start() {
             if (aw == 'pl-title') {
                 var current = parseInt(evt.target.parentNode.getAttribute('data-track'), 10);
                 index = current;
-                console.log(index)
                 audio.readyState = 0;
                 plActive();
                 play();
@@ -813,27 +774,27 @@ function start() {
     window.AP = AudioPlayer;
 }
 
+document.getElementsByClassName("container")[0].onscroll = function () {
+    if (isLoaded == true) return;
+    if (loaded == 0) loaded = 80;
+    var isElViu = isElementInView($(`li[data-track="${loaded - 5}"]`), false);
+
+    if (isElViu) {
+        isLoaded = true;
+        for (let i = loaded; i < loaded + 50; i++) {
+            if(document.getElementsByClassName('music-el')[i]) document.getElementsByClassName('music-el')[i].style.display = "inline-block";
+        }
+        setTimeout(() => {
+            isLoaded = false
+        }, 500);
+        loaded = loaded + 50;
+    }
+};
+
 function refresh() {
     AP.init({
         playList: db.get("music").value()
     });
-
-    document.getElementsByClassName("container")[0].onscroll = function () {
-        if (isLoaded == true) return;
-        if (loaded == 0) loaded = 80;
-        var isElViu = isElementInView($(`li[data-track="${loaded - 5}"]`), false);
-
-        if (isElViu) {
-            isLoaded = true;
-            for (let i = loaded; i < loaded + 50; i++) {
-                document.getElementsByClassName('music-el')[i].style.display = "inline-block";
-            }
-            setTimeout(() => {
-                isLoaded = false
-            }, 500);
-            loaded = loaded + 50;
-        }
-    };
 
     loaded = 0;
     ilLoved = false;
@@ -1038,23 +999,6 @@ function openloved() {
 
     loaded = 0;
     document.getElementById('pl').classList.remove("hide");
-
-    document.getElementsByClassName("container")[0].onscroll = function () {
-        if (isLoaded == true) return;
-        if (loaded == 0) loaded = 80;
-        var isElViu = isElementInView($(`li[data-track="${loaded - 5}"]`), false);
-
-        if (isElViu) {
-            isLoaded = true;
-            for (let i = loaded; i < loaded + 50; i++) {
-                document.getElementsByClassName('music-el')[i].style.display = "inline-block";
-            }
-            setTimeout(() => {
-                isLoaded = false
-            }, 500);
-            loaded = loaded + 50;
-        }
-    };
 
     if (document.getElementsByClassName("pl-container")[1] != undefined) {
         document.getElementsByClassName("pl-container")[1].parentNode.removeChild(document.getElementsByClassName("pl-container")[1]);
