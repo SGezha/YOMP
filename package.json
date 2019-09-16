@@ -10,7 +10,7 @@
       "target": [
         "NSIS"
       ],
-      "icon": "icons/icon.png"
+      "icon": "assets/icons/icon.png"
     }
   },
   "scripts": {
