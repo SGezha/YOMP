@@ -965,9 +965,10 @@ function loadMusic() {
         document.getElementById('ap').style.display = "none";
         document.getElementById('load-music').style.display = "block";
         document.getElementById('yomp').style.background = "var(--bg)";
+        document.getElementsByClassName('main')[0].style.height = "35px";
         document.getElementsByClassName('maximize')[0].style.opacity = "0";
         document.getElementsByClassName('minimize')[0].style.opacity = "0";
-        remote.getCurrentWindow().setSize(500, 70);
+        remote.getCurrentWindow().setSize(500, 91);
         remote.getCurrentWindow().center();
     } else {
         refresh();
