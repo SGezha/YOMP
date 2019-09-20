@@ -794,3 +794,5 @@ h3 {padding: 17px 0;}
     max-width: 100px;
     text-align: right;
 }
+.pog:after {content: '';position: absolute;top: 0;left: 0;width: calc(100% - 4px);height: calc(100% - 4px);border: 2px solid #ffffff00;border-radius: 10px;transition: all .2s;}
+.pl-current .pog:after {border: 2px solid #fff}
