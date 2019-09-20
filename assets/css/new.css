@@ -279,8 +279,8 @@ i.fas.fa-times {
 }
 .menu>.links>ul {
   text-transform: capitalize;
-  font-size: 18px;
-  margin: 20px 15px;
+  font-size: 16px;
+  margin: 20px 8px 20px 0;
 }
 .menu>.links>ul>li {
   align-items: center;
@@ -291,7 +291,7 @@ i.fas.fa-times {
   border-radius: 6px;
   transition: all .2s;}
 .menu>.links>ul>li>a>i {
-  width: 25px;
+  width: 22px;
   margin: 0 10px 0 5px;
   color: var(--text);
 }
@@ -317,7 +317,7 @@ i.fas.fa-times {
   color: var(--text);
   display: flex;
   align-items: center;
-  padding: 12px 10px;
+  padding: 10px 10px;
 }
 .menu>.links>ul>li:hover i {color: var(--text) !important;}
 .menu>.links>ul>li:hover a {color: var(--text) !important;}
