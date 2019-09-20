@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "discord-rpc": "^3.0.2",
+    "electron-dl": "^1.14.0",
     "electron-drag": "^1.2.2",
     "jimp": "^0.8.1",
     "lowdb": "^1.0.0",
