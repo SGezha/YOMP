@@ -70,7 +70,7 @@ document.getElementById("search").onchange = function (e) {
         if (l > 0) {
             for (var i = 0; i < base.length; i++) {
                 let title = base[i].title;
-                if (base[i].title[0].length > 1) title = base[i].title[0];
+                if (Array.isArray(base[i].title)) title = base[i].title[0];
                 if (title.toLowerCase().match(input.value.toLowerCase())) {
                     result.push(base[i]);
                 }
@@ -350,8 +350,8 @@ function start() {
         function renderPL() {
             var html = [];
             playList.forEach(function (item, i) {
-                let fav = `<i onclick="love(${item.id}, this);" class="fas fa-heart"></i>`;
-                if (db.get("music").find({ title: item.title }).value().loved == true) fav = `<i onclick="love(${item.id}, this);" class="fas fa-heart fav"></i>`;
+                let fav = `<i onclick="love(${item.id}, this);" class="fas fa-heart owo"></i>`;
+                if (db.get("music").find({ title: item.title }).value().loved == true) fav = `<i onclick="love(${item.id}, this);" class="fas fa-heart owo fav"></i>`;
                 let type = '<svg fill="#fff" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M0 0h24v24H0z" fill="none"/>' + '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>' + '</svg>';
                 if (item.file.indexOf("osu") > -1) type = `<img class="pl-img" src="assets/icons/osu.svg">`;
                 if (item.videoId != undefined) type = `<i class="fab fa-youtube"></i>`;
@@ -865,7 +865,7 @@ function parse_str(str) {
 }
 
 function lovethis() {
-    love(parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('real-id'), 10), document.getElementsByClassName('fav')[document.getElementsByClassName('pl-current')[0].getAttribute('data-track')]);
+    love(parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('real-id'), 10), document.getElementsByClassName('owo')[document.getElementsByClassName('pl-current')[0].getAttribute('data-track')]);
 }
 
 function getRandomInt(min, max) { return Math.round(Math.random() * (max - min)) + min; };

@@ -288,8 +288,9 @@ i.fas.fa-times {
   margin: 10px 0;
   background: var(--block);
   box-shadow: 0 2px 5px var(--block);
-  border-radius: 6px;
-  transition: all .2s;}
+  border-radius: 0 100px 100px 0;
+  transition: all .2s;
+  }
 .menu>.links>ul>li>a>i {
   width: 22px;
   margin: 0 10px 0 5px;
@@ -533,7 +534,7 @@ li.music-el>.pog>.center {
   margin: 0 10px;
   transition: all .3s ease;
 }
-i.fas.fa-heart:hover {
+.right>i.owo:hover {
   color: #E91E63 !important;
   text-shadow: 0 0 10px #E91E63, 0 0 10px #E91E63, 0 0 10px black, 0 0 10px black;
 }
