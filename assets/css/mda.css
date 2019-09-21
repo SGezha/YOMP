@@ -583,7 +583,7 @@ i.far.fa-trash-alt.pl-remove:hover {
 }
 .ap-volume-btn:hover i {cursor: pointer;}
 .ap-panel i:hover {text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);}
-.ap-panel i {transition: all .3s;}
+.ap-panel i {position: relative;transition: all .3s;}
 .ap-volume-btn > .ap--volume-off,
 .muted > .ap--volume-on {display: none;}
 .muted > .ap--volume-off {display: inline;}
@@ -1039,3 +1039,15 @@ input[type="checkbox"], label {cursor: pointer;}
     .set-main-container {height: calc(100vh - 146px);}
     .set-btn {max-width: 40%;flex: 0 0 40%;-ms-flex: 0 0 40%;-webkit-box-flex: 0;}
 }
+button>i:after {
+    content: '1';
+    position: absolute;
+    font-size: 14px;
+    color: white;
+    right: -3px;
+    bottom: -4px;
+    opacity: 0;
+    text-shadow: 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black;
+    transition: all .2s;
+}
+button.ap-active>i:after {opacity: 1;}
