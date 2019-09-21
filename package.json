@@ -6,6 +6,7 @@
   "build": {
     "productName": "YOMP",
     "appId": "YOMP",
+    "copyright": "Copyright © 2019 ${author}",
     "win": {
       "target": [
         "NSIS"
@@ -15,7 +16,9 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true
+      "createDesktopShortcut": true,
+      "artifactName": "${productName} Setup ${version} ${arch}.${ext}",
+      "license": "license"
     }
   },
   "scripts": {
