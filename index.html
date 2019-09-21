@@ -17,9 +17,10 @@
                 <div class="set-top">
                     <div class="set-top-left">
                         <div onclick="setsToggle()" class="set-btn back"><div class="btn-ov"><i class="fas fa-arrow-left"></i><span>Back</span></div></div>
-                        <div onclick="setsSave()" class="set-btn save"><div class="btn-ov"><i class="far fa-save"></i><span>Save</span></div></div>
+                        <div onclick="setsSave()" class="set-btn save"><div class="btn-ov"><i class="far fa-save"></i><span>Save settings</span></div></div>
                         <div onclick="exportLoved()" class="set-btn loved"><div class="btn-ov"><i class="fas fa-heart"></i><span>Export loved</span></div></div>
-                        <div onclick="exportAll()" class="set-btn all"><div class="btn-ov"><i class="fas fa-download"></i><span>Export all music</span></div></div>
+                        <div onclick="updatePG()" class="set-btn all"><div class="btn-ov"><i class="fas fa-cloud-download-alt"></i><span>Update</span></div></div>
+                        <div onclick="exportAll()" class="set-btn all"><div class="btn-ov"><i class="fas fa-download"></i><span>Export all</span></div></div>
                         <div onclick="clearPl()" class="set-btn all"><div class="btn-ov"><i class="fas fa-minus-circle"></i><span>Clear playlist</span></div></div>
                     </div>
                     <h2 class="set-title">Settings</h2>
@@ -172,39 +173,39 @@
                             <div class="menu">
                                 <div class="links" style="height:100vh;">
                                     <ul class="links-block">
-                                        <li class="ap-playlist-btn">
+                                        <li class="ap-playlist-btn liactiver">
                                             <a onclick="refresh(); document.getElementById(`app`).style.display = 'none';" href="#">
                                                 <svg class="btn-menu" fill="var(--text)" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none" /><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" /></svg>
                                                 <span>Playlist</span>
                                             </a>
                                         </li>
-                                        <li>
+                                        <li class="liactiver">
                                             <a onclick="openloved(); document.getElementById(`app`).style.display = 'none';" href="#">
                                                 <i class="fas fa-heart"></i>
                                                 <span>Loved</span>
                                             </a>
                                         </li>
                                         <li class="cat"></li>
-                                        <li>
+                                        <li class="liactiver">
                                             <a onclick="searchbtn()" href="#">
                                                 <i class="fab fa-youtube"></i>
                                                 <span>YouTube</span>
                                             </a>
                                         </li>
-                                        <li>
+                                        <li class="liactiver">
                                             <a onclick="addosu()" href="#">
                                                 <img class="osu" src="assets/icons/osu.svg" />
                                                 <span>Import osu! songs</span>
                                             </a>
                                         </li>
-                                        <li>
+                                        <li class="liactiver">
                                             <a onclick="addMusicFolder()" href="#">
                                                 <i class="far fa-plus-square"></i>
                                                 <span>Import Folder</span>
                                             </a>
                                         </li>
                                         <li class="cat"></li>
-                                        <li>
+                                        <li class="liactiver">
                                             <a onclick="setsToggle()" href="#">
                                                 <i class="fas fa-cogs"></i>
                                                 <span>Settings</span>
