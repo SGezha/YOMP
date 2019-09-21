@@ -888,7 +888,7 @@ input[type="checkbox"], label {cursor: pointer;}
     height: 25px;
     width: 25px;
     position: absolute;
-    content: 'Ã¢Å“â€œ';
+    content: 'ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“';
     display: inline-block;
     font-size: 20px;
     text-align: center;
@@ -1039,18 +1039,7 @@ input[type="checkbox"], label {cursor: pointer;}
     .set-main-container {height: calc(100vh - 146px);}
     .set-btn {max-width: 40%;flex: 0 0 40%;-ms-flex: 0 0 40%;-webkit-box-flex: 0;}
 }
-button>i:after {
-    content: '1';
-    position: absolute;
-    font-size: 14px;
-    color: white;
-    right: -10px;
-    bottom: -6px;
-    opacity: 0;
-    background: var(--bg);
-    padding: 2px 6px;
-    border-radius: 50px;
-    box-shadow: 0 0 5px var(--bg);
-    transition: all .2s;
+button.ap-active>i {
+    color: #DA4453;
+    text-shadow: 0 0 15px rgba(218, 68, 83, .5) !important;
 }
-button.ap-active>i:after {opacity: 1;}
