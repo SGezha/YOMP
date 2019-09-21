@@ -138,7 +138,7 @@ button {
 .top>.title-controls>button:hover {background: rgba(255, 255, 255, 0.05);}
 .top>.title-controls>button.close:hover {background: #f44336;}
 .top>.title-text>.loged {width: 35px;}
-.top>div:nth-child(1) {padding-left: 20px;}
+.top>div:nth-child(1) {padding-left: 10px;}
 .main>.center {
     position: relative;
     width: 100%;
@@ -511,6 +511,7 @@ i.far.fa-trash-alt.pl-remove:hover {
     align-items: center;
     position: relative;
     display: flex;
+    transition: .4s ease;
 }
 .ap {background: var(--block) !important;font-size: 19px;}
 .ap-inner {width: 100%;}
@@ -965,7 +966,7 @@ input[type="checkbox"], label {cursor: pointer;}
     height: 25px;
     width: 25px;
     position: absolute;
-    content: '✔';
+    content: 'ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â';
     display: inline-block;
     font-size: 20px;
     text-align: center;
@@ -1008,4 +1009,16 @@ input[type="checkbox"], label {cursor: pointer;}
     bottom: 0;
     background: var(--bg);
     z-index: 99999;
+}
+
+#hide-progres {
+    display: none;
+    position: absolute;
+    height: 5px;
+    bottom: 50px;
+    width: 100%;
+    z-index: 1;
+    background: linear-gradient(90deg, #DA4453, #89216B);
+    opacity: 0.7;
+    transition: all 1s linear;
 }

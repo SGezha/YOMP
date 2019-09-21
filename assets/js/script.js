@@ -30,14 +30,22 @@ window.onload = function () {
 	fixmusic();
 	AP.plToggle();
 	document.getElementById('loader').parentNode.removeChild(document.getElementById('loader'));
+	document.getElementById('preloaderd').parentNode.removeChild(document.getElementById('preloaderd'));
 	loadSettings();
 };
 
 function notify(title, body) {
 	if (!db.get("settings").value()[0].noti.turn) {
+		let icon = "assets/icons/head.png";
 		if (db.get("settings").value()[0].noti.loved && title.toLocaleLowerCase().indexOf("loved") > -1) return;
 		if (db.get("settings").value()[0].noti.add && title.toLocaleLowerCase().indexOf("success") > -1) return;
-		new Notification(title, { silent: true, silent: true, body: body, icon: "assets/icons/icon.png" })
+		if (title.toLocaleLowerCase().indexOf("loved") > -1) icon = "assets/icons/i_loved.png";
+		if (title.toLocaleLowerCase().indexOf("now") > -1) icon = "assets/icons/i_np.png";
+		if (title.toLocaleLowerCase().indexOf("success") > -1) icon = "assets/icons/i_add.png";
+		if (title.toLocaleLowerCase().indexOf("error") > -1) icon = "assets/icons/i_error.png";
+		if(body.length > 30) body = body.substring(0, 27) + "...";
+		new Notification(title, { silent: true, silent: true, body: body, icon: icon })
+		// ipcRenderer.send("notification", {title: title, body: body})
 	}
 }
 
@@ -318,23 +326,23 @@ function exportProces(id, mas, dir) {
 		document.getElementById("load-progress").innerHTML = `<div class="textload">${e.title}</div> <span> ${id + 1}/${mas.length}</span>`;
 		fs.copyFile(e.file, `${dir.filePaths[0]}/${e.title}.mp3`, (err) => {
 			if (err) throw err;
-			if(e.full) {
+			if (e.full) {
 				Jimp.read(e.full)
-				.then(lenna => {
-					lenna.quality(80).cover(128, 128, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE).write(`${root}/full/${e.title}.jpg`);
-					let metadata = {
-						title: e.title.split(" - ")[1],
-						artist: e.title.split(" - ")[0],
-						APIC: `${root}/full/${e.title}.jpg`
-					}
-					NodeID3.update(metadata, `${dir.filePaths[0]}/${e.title}.mp3`, function (err, buffer) {
-						exportProces(id + 1, mas, dir);
+					.then(lenna => {
+						lenna.quality(80).cover(128, 128, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE).write(`${root}/full/${e.title}.jpg`);
+						let metadata = {
+							title: e.title.split(" - ")[1],
+							artist: e.title.split(" - ")[0],
+							APIC: `${root}/full/${e.title}.jpg`
+						}
+						NodeID3.update(metadata, `${dir.filePaths[0]}/${e.title}.mp3`, function (err, buffer) {
+							exportProces(id + 1, mas, dir);
+						})
 					})
-				})
-				.catch(err => {
-					console.error(err);
-					exportProces(id + 1, mas, dir);
-				});		
+					.catch(err => {
+						console.error(err);
+						exportProces(id + 1, mas, dir);
+					});
 			} else {
 				exportProces(id + 1, mas, dir);
 			}
@@ -346,22 +354,22 @@ function offKey(el) {
 	document.getElementById(el.getAttribute('dlya')).value = "";
 }
 
-for(let i = 0; i < document.getElementsByClassName('input-keys').length; i++) {
+for (let i = 0; i < document.getElementsByClassName('input-keys').length; i++) {
 
 	document.getElementsByClassName('input-keys')[i].onkeyup = function (evt) {
 		document.getElementsByClassName('check-key-input')[i].checked = false;
-		if(evt.key == "ArrowUp") {
+		if (evt.key == "ArrowUp") {
 			document.getElementsByClassName('input-keys')[i].value = "ctrl+Up";
-		} else if(evt.key == "ArrowDown") {
+		} else if (evt.key == "ArrowDown") {
 			document.getElementsByClassName('input-keys')[i].value = "ctrl+Down";
-		} else if(evt.key == "ArrowLeft") {
+		} else if (evt.key == "ArrowLeft") {
 			document.getElementsByClassName('input-keys')[i].value = "ctrl+Left";
-		} else if(evt.key == "ArrowRight") {
+		} else if (evt.key == "ArrowRight") {
 			document.getElementsByClassName('input-keys')[i].value = "ctrl+Right";
 		} else {
 			document.getElementsByClassName('input-keys')[i].value = "ctrl+" + evt.key;
 		}
-	}	
+	}
 }
 
 function start() {
@@ -549,19 +557,34 @@ function start() {
 
 		function prev() {
 			index = index - 1;
-			if (mini == true && ping > 1) ping = 5;
+			if (mini == true && ping > 1) {
+				document.getElementById('hide-progres').style.width = `100%`;
+				ping = 5;
+			}
+			let title = document.getElementsByClassName('pl-title')[index].innerHTML;
+			notify(`Now playing`, title)
 			play();
 		}
 
 		function next() {
 			index = index + 1;
-			if (mini == true && ping > 1) ping = 5;
+			if (mini == true && ping > 1) {
+				document.getElementById('hide-progres').style.width = `100%`;
+				ping = 5;
+			} 		
+			let title = document.getElementsByClassName('pl-title')[index].innerHTML;
+			notify(`Now playing`, title)	
 			play();
 		}
 
 		function random() {
 			index = getRandomInt(0, db.get("music").value().length);
-			if (mini == true && ping > 1) ping = 5;
+			if (mini == true && ping > 1) {
+				document.getElementById('hide-progres').style.width = `100%`;
+				ping = 5;
+			}
+			let title = document.getElementsByClassName('pl-title')[index].innerHTML;
+			notify(`Now playing`, title)
 			play();
 		}
 
@@ -974,7 +997,16 @@ function shuffle(arr) {
 }
 
 function miniPlayer() {
-	if (document.getElementById('ap').style.transform == "translateY(180px)") document.getElementById('ap').style.transform = "translateY(0px)";
+	if (document.getElementById('ap').style.transform == "translateY(180px)") {
+		document.getElementById('hide-progres').style.display = "none";
+		document.getElementById('ap').style.transform = "translateY(0px)";
+		setTimeout(() => {
+			document.getElementById('hide-progres').style.width = `100%`;
+			document.getElementById('hide-progres').style.display = "block";
+		}, 410)
+	} else {
+		document.getElementById('hide-progres').style.display = "block";
+	}
 	document.getElementById('pl').style.display = "none";
 	document.getElementsByClassName('center')[0].style.display = "none";
 	document.getElementsByClassName('top')[0].style.display = "none";
@@ -991,18 +1023,23 @@ function miniPlayer() {
 
 setInterval(() => {
 	if (ping != false) {
-		if (ping == 1 && mini == true) {
-			if (!$('#ap').is(':hover') && document.getElementById('ap').style.transform != "translateY(180px)") {
-				document.getElementsByClassName('ap-volume')[0].style.height = null;
-				document.getElementsByClassName('ap-volume')[0].style.visibility = null;
-				document.getElementsByClassName('ap-volume-container')[0].style.background = null;
-				setTimeout(() => {
+		if (!$('#ap').is(':hover') && document.getElementById('ap').style.transform != "translateY(180px)") {
+			if (ping == 1 && mini == true) {
+					document.getElementsByClassName('ap-volume')[0].style.height = null;
+					document.getElementsByClassName('ap-volume')[0].style.visibility = null;
+					document.getElementsByClassName('ap-volume-container')[0].style.background = null;
 					document.getElementById('ap').style.transform = `translateY(180px)`;
-					setTimeout(() => { remote.getCurrentWindow().hide(); }, 310);
-				}, 310)
-				ping = false;
-			} else { miniPlayer(); }
-		} else { if (mini == true) { ping--; } }
+					setTimeout(() => { remote.getCurrentWindow().hide(); }, 410);
+					ping = false;
+			} else {
+				if (mini == true) {
+					ping--;
+					document.getElementById('hide-progres').style.width = `${((ping-1)*2)*10}%`;
+				}
+			}
+		} else { 
+			miniPlayer();
+		}
 	};
 }, 1000)
 
@@ -1010,6 +1047,7 @@ function miniPlayerOff() {
 	if (document.getElementById('ap').style.transform == "translateY(180px)") document.getElementById('ap').style.transform = `translateY(0px)`;
 	remote.getCurrentWindow().focus();
 	document.getElementById('pl').style.display = "block";
+	document.getElementById('hide-progres').style.display = "none";
 	document.getElementsByClassName('center')[0].style.display = null;
 	document.getElementsByClassName('top')[0].style.display = "flex";
 	document.getElementsByClassName('main')[0].style.background = "var(--bg)";
@@ -1109,7 +1147,7 @@ function loadSettings() {
 	if (db.get("settings").value()[0].key.next == "") document.getElementsByClassName('check-key-input')[1].checked = true;
 	if (db.get("settings").value()[0].key.prev == "") document.getElementsByClassName('check-key-input')[2].checked = true;
 	if (db.get("settings").value()[0].key.random == "") document.getElementsByClassName('check-key-input')[3].checked = true;
-	if (db.get("settings").value()[0].key.volumeup== "") document.getElementsByClassName('check-key-input')[4].checked = true;
+	if (db.get("settings").value()[0].key.volumeup == "") document.getElementsByClassName('check-key-input')[4].checked = true;
 	if (db.get("settings").value()[0].key.volumedown == "") document.getElementsByClassName('check-key-input')[5].checked = true;
 	if (db.get("settings").value()[0].key.mute == "") document.getElementsByClassName('check-key-input')[6].checked = true;
 	if (db.get("settings").value()[0].key.love == "") document.getElementsByClassName('check-key-input')[7].checked = true;

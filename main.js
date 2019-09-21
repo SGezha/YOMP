@@ -9,6 +9,7 @@ const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc } = require
   rpc = new DiscordRPC.Client({ transport: 'ipc' });
 
 let mainWindow,
+  notiWindow,
   appIcon = null,
   s = {key: { play: `ctrl+Space`, random: `ctrl+r`, love: `ctrl+l`, next: `ctrl+Right`, prev: `ctrl+Left`, focus: `ctrl+Up`, mini: `ctrl+Down`, volumeup: `ctrl+=`, volumedown: `ctrl+-`, mute: `ctrl+-` } };
 
@@ -35,7 +36,7 @@ function createWindow() {
     { label: 'Prev track', click: function () { mainWindow.webContents.executeJavaScript(`AP.prev();`); } },
     { label: 'Quit', click: function () { mainWindow.close(); } }
   ]);
-  appIcon.setToolTip('YOMP');
+  appIcon.setToolTip('YT music player');
   appIcon.on('click', () => {
     mainWindow.webContents.executeJavaScript("miniPlayerOff();");
     mainWindow.show();
@@ -50,8 +51,8 @@ function createWindow() {
 
   if(s.key.play != "") globalShortcut.register(s.key.play, () => { mainWindow.webContents.executeJavaScript(`AP.playToggle();`); });
   if(s.key.next != "") globalShortcut.register(s.key.next, () => { mainWindow.webContents.executeJavaScript(`AP.next();`); });
-  if(s.key.volumedown != "") globalShortcut.register(s.key.volumedown, () => { mainWindow.show(); mainWindow.webContents.executeJavaScript(`AP.volumeDown()`); });
-  if(s.key.volumeup != "") globalShortcut.register(s.key.volumeup, () => { mainWindow.show(); mainWindow.webContents.executeJavaScript(`AP.volumeUp()`); });
+  if(s.key.volumedown != "") globalShortcut.register(s.key.volumedown, () => { mainWindow.webContents.executeJavaScript(`AP.volumeDown()`); });
+  if(s.key.volumeup != "") globalShortcut.register(s.key.volumeup, () => { mainWindow.webContents.executeJavaScript(`AP.volumeUp()`); });
   if(s.key.random != "") globalShortcut.register(s.key.random, () => { mainWindow.webContents.executeJavaScript(`AP.random();`); });
   if(s.key.mute != "") globalShortcut.register(s.key.mute, () => { mainWindow.webContents.executeJavaScript(`AP.mute();`); });
   if(s.key.prev != "") globalShortcut.register(s.key.love, () => { mainWindow.webContents.executeJavaScript(`lovethis();`); });
@@ -84,6 +85,19 @@ ipcMain.on("download", (event, arg) => {
     mainWindow.webContents.send("download complete", {id: arg.id, mas: arg.mas, dir: arg.dir})
   });
 });
+
+// ipcMain.on("notification", (event, arg) => {
+//   fs.writeFileSync('notify.html', `<style>body{color: white;}</style><h1>${arg.title}</h1> <p>${arg.body}</p>`)
+//   if(!notiWindow) {
+//     var mainScreen = require('electron').screen.getPrimaryDisplay().workAreaSize;
+//     notiWindow = new BrowserWindow({
+//       alwaysOnTop: true, x: mainScreen.width-370, y: mainScreen.height-130, transparent: true, frame: false, width: 360, height: 120, webPreferences: { nodeIntegration: true }
+//     });
+//     notiWindow.loadFile('notify.html');
+//   } else {
+//     notiWindow.loadFile('notify.html');
+//   }
+// })
 
 function createActivity(data) {
   let act = {};
