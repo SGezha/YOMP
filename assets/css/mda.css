@@ -7,9 +7,6 @@
         url(../fonts/torus/39F3E3_2_0.woff) format("woff"),
         url(../fonts/torus/39F3E3_2_0.ttf) format("truetype");
 }
-* {
-    transition: all .5s;
-}
 :root {
     --bg: #1b1b1b;
     --block: #2b2b2b;
@@ -81,7 +78,7 @@ button {
 .top>.title-text {
     align-items: center;
     display: flex;
-    width: calc(100% - 174px);
+    width: calc(100% - 164px);
     -webkit-app-region: drag;
 }
 .top>.title-controls>button {
@@ -809,7 +806,6 @@ h3 {padding: 17px 0;}
 .set-btn:hover:after {transform: translateY(-20%);}
 .set-btn>.btn-ov {position: relative;z-index: 1;}
 .set-btn>.btn-ov>i {margin: 0 10px 0 0;transition: all .6s;}
-.set-btn:hover .btn-ov>i {margin: 0 5px;text-shadow: 0 0 10px;}
 .set-title {font-size: 30px;margin-right: 10px;}
 .set-main {
     width: 100%;
@@ -825,7 +821,7 @@ h3 {padding: 17px 0;}
     margin-bottom: 20px;
 }
 .set-block>.set-block-title {align-items: center;text-align: center;display: flex;font-size: 25px;padding-bottom: 10px;}
-.set-block>.div-check {display: flex;margin-top: 10px;}
+.set-block>.div-check {display: flex;margin-top: 10px;align-items: center;}
 input[type="checkbox"], label {cursor: pointer;}
 .set-main::-webkit-scrollbar {width: 5px;}
 .set-main::-webkit-scrollbar-track {}
@@ -839,7 +835,6 @@ input[type="checkbox"], label {cursor: pointer;}
     border: 1px solid #1b1b1b;
 }
 .set-block>.div-input {
-    margin-top: 5px;
 }
 .check-key {display: flex;align-items: center;}
 .pog:after {
@@ -867,7 +862,7 @@ input[type="checkbox"], label {cursor: pointer;}
     align-items: center;
     text-align: center;
     display: flex;
-    padding: 10px 0;
+    padding: 5px 0;
 }
 .set-block>.div-input>.div-input-sep>.name {
     justify-content: center;
@@ -924,7 +919,7 @@ input[type="checkbox"], label {cursor: pointer;}
     height: 25px;
     width: 25px;
     position: absolute;
-    content: 'ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â';
+    content: '✓';
     display: inline-block;
     font-size: 20px;
     text-align: center;
@@ -978,7 +973,6 @@ input[type="checkbox"], label {cursor: pointer;}
     bottom: 0;
     background: var(--bg);
     border-radius: 7px;
-    transition: all .5s;
     z-index: 99999;
     -webkit-app-region: drag;
 }

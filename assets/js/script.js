@@ -29,14 +29,7 @@ window.onload = function () {
     start();
     fixmusic();
     AP.plToggle();
-    /*remote.getCurrentWindow().setSize(1000, 700);
-    remote.getCurrentWindow().center();*/
-    setTimeout(() => {
-        document.getElementById('preloaderd').style.opacity = 0;
-        setTimeout(() => {
-            document.getElementById('preloaderd').parentNode.removeChild(document.getElementById('preloaderd'));
-        }, 500);
-    }, 1000);
+    ipcRenderer.send('ready');
     loadSettings();
 };
 

@@ -10,6 +10,7 @@ const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc } = require
 
 let mainWindow,
     notiWindow,
+    preloader,
     appIcon = null,
     s = {key: { play: `ctrl+Space`, random: `ctrl+r`, love: `ctrl+l`, next: `ctrl+Right`, prev: `ctrl+Left`, focus: `ctrl+Up`, mini: `ctrl+Down`, volumeup: `ctrl+=`, volumedown: `ctrl+-`, mute: `ctrl+-` } };
 
@@ -17,8 +18,13 @@ if (fs.existsSync(`${root}/database.json`)) s = JSON.parse(fs.readFileSync(`${ro
 
 app.setAppUserModelId("YOMP");
 function createWindow() {
+    preloader = new BrowserWindow({
+        transparent: true, frame: false, width: 250, height: 300, minWidth: 250, icon: "icon.png", webPreferences: { nodeIntegration: true }
+    });
+    preloader.loadFile('preloader.html');
+
     mainWindow = new BrowserWindow({
-        transparent: true, frame: false, width: 1000, height: 700, minWidth: 500, icon: "icon.png", webPreferences: { nodeIntegration: true }
+        show: false, transparent: true, frame: false, width: 1000, height: 700, minWidth: 500, icon: "icon.png", webPreferences: { nodeIntegration: true }
     });
     mainWindow.loadFile('index.html');
     mainWindow.on('closed', function () {
@@ -84,6 +90,12 @@ ipcMain.on("download", (event, arg) => {
         .then(dl => {
         mainWindow.webContents.send("download complete", {id: arg.id, mas: arg.mas, dir: arg.dir})
     });
+});
+
+ipcMain.on("ready", (event, arg) => {
+    if(preloader) preloader.close();
+    preloader = null;
+    mainWindow.show();
 });
 
 // ipcMain.on("notification", (event, arg) => {
