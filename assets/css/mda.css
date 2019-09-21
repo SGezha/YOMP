@@ -888,7 +888,7 @@ input[type="checkbox"], label {cursor: pointer;}
     height: 25px;
     width: 25px;
     position: absolute;
-    content: 'âœ“';
+    content: 'Ã¢Å“â€œ';
     display: inline-block;
     font-size: 20px;
     text-align: center;
@@ -1044,10 +1044,13 @@ button>i:after {
     position: absolute;
     font-size: 14px;
     color: white;
-    right: -3px;
-    bottom: -4px;
+    right: -10px;
+    bottom: -6px;
     opacity: 0;
-    text-shadow: 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black;
+    background: var(--bg);
+    padding: 2px 6px;
+    border-radius: 50px;
+    box-shadow: 0 0 5px var(--bg);
     transition: all .2s;
 }
 button.ap-active>i:after {opacity: 1;}
