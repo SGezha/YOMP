@@ -1,6 +1,6 @@
 const fs = require("fs");
 let root = require('electron').remote.app.getPath('userData').split("\\").join("/");
-if (!fs.existsSync(`${root}/database.json`)) fs.writeFileSync(`${root}/database.json`, '{"music":[{"id": 0,"title": "AKINO with bless4 - cross the line","file": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.mp3","icon": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.jpg","loved": false}], "settings": [{"noti": {"turn": false, "loved": false, "add": false}, "key": { "play": "ctrl+Space", "random": "ctrl+r", "love": "ctrl+l", "next": "ctrl+Right", "prev": "ctrl+Left", "focus": "ctrl+Up", "mini": "ctrl+Down", "volumeup": "ctrl+=", "volumedown": "ctrl+-", "mute": "ctrl+-"}}]}');
+if (!fs.existsSync(`${root}/database.json`)) fs.writeFileSync(`${root}/database.json`, '{"music":[{"id": 0,"title": "AKINO with bless4 - cross the line","file": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.mp3","icon": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.jpg","loved": false}], "settings": [{"noti": {"turn": false, "loved": false, "add": false}, "key": { "play": "ctrl+Space", "random": "ctrl+r", "love": "ctrl+l", "next": "ctrl+Right", "prev": "ctrl+Left", "focus": "ctrl+Up", "mini": "ctrl+Down", "volumeup": "ctrl+=", "volumedown": "ctrl+-", "mute": "ctrl+0"}}]}');
 if (!fs.existsSync(`${root}/images`)) {
     fs.mkdirSync(`${root}/images`);
     fs.writeFileSync(`${root}/images/cache.json`, '{"data":[]}');
