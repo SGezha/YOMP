@@ -365,9 +365,9 @@ function offKey(el) {
 }
 
 for (let i = 0; i < document.getElementsByClassName('input-keys').length; i++) {
-    
     document.getElementsByClassName('input-keys')[i].onkeyup = function (evt) {
         document.getElementsByClassName('check-key-input')[i].checked = false;
+        if(evt.keyCode == 16) return;
         if (evt.key == "ArrowUp") {
             document.getElementsByClassName('input-keys')[i].value = "ctrl+Up";
         } else if (evt.key == "ArrowDown") {
@@ -376,6 +376,8 @@ for (let i = 0; i < document.getElementsByClassName('input-keys').length; i++) {
             document.getElementsByClassName('input-keys')[i].value = "ctrl+Left";
         } else if (evt.key == "ArrowRight") {
             document.getElementsByClassName('input-keys')[i].value = "ctrl+Right";
+        } else if(evt.keyCode == 32) {
+            document.getElementsByClassName('input-keys')[i].value = "ctrl+Space";
         } else {
             document.getElementsByClassName('input-keys')[i].value = "ctrl+" + evt.key;
         }
