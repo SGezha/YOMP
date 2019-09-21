@@ -1149,7 +1149,7 @@ function openloved() {
 }
 
 function loadSettings() {
-    //settings notification
+    //settings
     if (db.get("settings").value()[0].noti.turn) document.getElementById('noti-turn').checked = true;
     if (db.get("settings").value()[0].noti.loved) document.getElementById('noti-loved').checked = true;
     if (db.get("settings").value()[0].noti.add) document.getElementById('noti-youtube').checked = true;
@@ -1163,7 +1163,6 @@ function loadSettings() {
     if (db.get("settings").value()[0].key.love == "") document.getElementsByClassName('check-key-input')[7].checked = true;
     if (db.get("settings").value()[0].key.mini == "") document.getElementsByClassName('check-key-input')[8].checked = true;
     if (db.get("settings").value()[0].key.focus == "") document.getElementsByClassName('check-key-input')[9].checked = true;
-    //settings keys
     document.getElementById('key-toggle').value = db.get("settings").value()[0].key.play;
     document.getElementById('key-next').value = db.get("settings").value()[0].key.next;
     document.getElementById('key-prev').value = db.get("settings").value()[0].key.prev;
