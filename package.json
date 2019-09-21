@@ -1,6 +1,6 @@
 {
   "name": "osu-youtube-music-player",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Enjoi listen music from osu! and youtube :3",
   "main": "main.js",
   "build": {
@@ -11,6 +11,11 @@
         "NSIS"
       ],
       "icon": "assets/icons/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
     }
   },
   "scripts": {

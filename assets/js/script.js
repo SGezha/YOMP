@@ -33,6 +33,11 @@ window.onload = function () {
     loadSettings();
 };
 
+function clearPl() {
+    db.set("music", [{"id": 0,"title": "AKINO with bless4 - cross the line","file": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.mp3","icon": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.jpg","loved": false}]).write();
+    refresh();
+}
+
 function notify(title, body) {
     if (!db.get("settings").value()[0].noti.turn) {
         let icon = "assets/icons/icon.png";
@@ -455,9 +460,9 @@ function start() {
                 if (item.file.indexOf("osu") > -1) type = `<img class="pl-img" src="assets/icons/osu.svg">`;
                 if (item.videoId != undefined) type = `<i class="fab fa-youtube"></i>`;
                 if (i < 80) {
-                    html.push(`<li class="music-el" real-id="${item.id}" data-track="${i}"><div class="pog" real-id="${item.id}" data-track="${i}"><div class="left"><div class="pl-number"><div class="pl-count">${type}</div><div class="pl-playing"><i class="fas fa-play"></i></div></div></div><div class="center" real-id="${item.id}" data-track="${i}"><div class="pl-title">${item.title}</div></div><div class="right" real-id="${item.id}" data-track="${i}"><div class="music-id">${i + 1}/${playList.length}</div>${fav}<i class="far fa-trash-alt pl-remove pl-del"></i></div><div class="music-background" style="background: url('${item.icon}') center center / cover;"></div></div></li>`);
+                    html.push(`<li class="music-el" real-id="${item.id}" data-track="${i}"><div class="pog" real-id="${item.id}" data-track="${i}"><div class="left"><div class="pl-number"><div class="pl-count">${type}</div><div class="pl-playing"><i class="fas fa-play"></i></div></div></div><div class="center" real-id="${item.id}" data-track="${i}"><div class="pl-title">${item.title}</div></div><div class="right" real-id="${item.id}" data-track="${i}"><div class="music-id">${i + 1}/${playList.length}</div>${fav}<i class="fas fa-trash pl-remove pl-del"></i></div><div class="music-background" style="background: url('${item.icon}') center center / cover;"></div></div></li>`);
                 } else {
-                    html.push(`<li class="music-el" style="display: none" real-id="${item.id}" data-track="${i}"><div class="pog" real-id="${item.id}" data-track="${i}"><div class="left"><div class="pl-number"><div class="pl-count">${type}</div><div class="pl-playing"><i class="fas fa-play"></i></div></div></div><div class="center" real-id="${item.id}" data-track="${i}"><div class="pl-title">${item.title}</div></div><div class="right" real-id="${item.id}" data-track="${i}"><div class="music-id">${i + 1}/${playList.length}</div>${fav}<i class="far fa-trash-alt pl-remove pl-del"></i></div><div class="music-background" style="background: url('${item.icon}') center center / cover;"></div></div></li>`);
+                    html.push(`<li class="music-el" style="display: none" real-id="${item.id}" data-track="${i}"><div class="pog" real-id="${item.id}" data-track="${i}"><div class="left"><div class="pl-number"><div class="pl-count">${type}</div><div class="pl-playing"><i class="fas fa-play"></i></div></div></div><div class="center" real-id="${item.id}" data-track="${i}"><div class="pl-title">${item.title}</div></div><div class="right" real-id="${item.id}" data-track="${i}"><div class="music-id">${i + 1}/${playList.length}</div>${fav}<i class="fas fa-trash pl-remove pl-del"></i></div><div class="music-background" style="background: url('${item.icon}') center center / cover;"></div></div></li>`);
                 }
             });
             pl = create('div', {
@@ -690,7 +695,7 @@ function start() {
                     play();
                 }
             } else {
-                index = (index === playList.length - 1) ? 0 : index + 1;
+                if (!repeating) index = (index === playList.length - 1) ? 0 : index + 1;
                 let title = document.getElementsByClassName('pl-title')[index].innerHTML;
                 notify(`Now playing`, title)
                 play();
