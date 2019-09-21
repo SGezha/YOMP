@@ -17,7 +17,6 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "artifactName": "${productName} Setup ${version} ${arch}.${ext}",
       "license": "license"
     }
   },
