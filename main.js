@@ -10,7 +10,7 @@ const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc } = require
 
 let mainWindow,
   appIcon = null,
-  s = { theme: "dark", key: { play: `ctrl+Space`, random: `ctrl+r`, love: `ctrl+l`, next: `ctrl+Right`, prev: `ctrl+Left`, focus: `ctrl+Up`, mini: `ctrl+Down`, volumeup: `ctrl+=`, volumedown: `ctrl+-`, mute: `ctrl+-` } };
+  s = {key: { play: `ctrl+Space`, random: `ctrl+r`, love: `ctrl+l`, next: `ctrl+Right`, prev: `ctrl+Left`, focus: `ctrl+Up`, mini: `ctrl+Down`, volumeup: `ctrl+=`, volumedown: `ctrl+-`, mute: `ctrl+-` } };
 
 if (fs.existsSync(`${root}/database.json`)) s = JSON.parse(fs.readFileSync(`${root}/database.json`).toString()).settings[0];
 
@@ -48,49 +48,16 @@ function createWindow() {
   });
   appIcon.setContextMenu(contextMenu);
 
-  globalShortcut.register(s.key.play, () => {
-    mainWindow.webContents.executeJavaScript(`AP.playToggle();`);
-  });
-
-  globalShortcut.register(s.key.next, () => {
-    mainWindow.webContents.executeJavaScript(`AP.next();`);
-  });
-
-  globalShortcut.register(s.key.volumedown, () => {
-    mainWindow.show();
-    mainWindow.webContents.executeJavaScript(`AP.volumeDown()`);
-  });
-
-  globalShortcut.register(s.key.volumeup, () => {
-    mainWindow.show();
-    mainWindow.webContents.executeJavaScript(`AP.volumeUp()`);
-  });
-
-  globalShortcut.register(s.key.random, () => {
-    mainWindow.webContents.executeJavaScript(`AP.random();`);
-  });
-
-  globalShortcut.register(s.key.mute, () => {
-    mainWindow.webContents.executeJavaScript(`AP.mute();`);
-  });
-
-  globalShortcut.register(s.key.love, () => {
-    mainWindow.webContents.executeJavaScript(`lovethis();`);
-  });
-
-  globalShortcut.register(s.key.prev, () => {
-    mainWindow.webContents.executeJavaScript(`AP.prev();`);
-  });
-
-  globalShortcut.register(s.key.mini, () => {
-    mainWindow.show();
-    mainWindow.webContents.executeJavaScript('miniPlayer();');
-  });
-
-  globalShortcut.register(s.key.focus, () => {
-    mainWindow.show();
-    mainWindow.webContents.executeJavaScript(`miniPlayerOff();`);
-  });
+  if(s.key.play != "") globalShortcut.register(s.key.play, () => { mainWindow.webContents.executeJavaScript(`AP.playToggle();`); });
+  if(s.key.next != "") globalShortcut.register(s.key.next, () => { mainWindow.webContents.executeJavaScript(`AP.next();`); });
+  if(s.key.volumedown != "") globalShortcut.register(s.key.volumedown, () => { mainWindow.show(); mainWindow.webContents.executeJavaScript(`AP.volumeDown()`); });
+  if(s.key.volumeup != "") globalShortcut.register(s.key.volumeup, () => { mainWindow.show(); mainWindow.webContents.executeJavaScript(`AP.volumeUp()`); });
+  if(s.key.random != "") globalShortcut.register(s.key.random, () => { mainWindow.webContents.executeJavaScript(`AP.random();`); });
+  if(s.key.mute != "") globalShortcut.register(s.key.mute, () => { mainWindow.webContents.executeJavaScript(`AP.mute();`); });
+  if(s.key.prev != "") globalShortcut.register(s.key.love, () => { mainWindow.webContents.executeJavaScript(`lovethis();`); });
+  if(s.key.prev != "") globalShortcut.register(s.key.prev, () => { mainWindow.webContents.executeJavaScript(`AP.prev();`); });
+  if(s.key.mini != "") globalShortcut.register(s.key.mini, () => { mainWindow.show(); mainWindow.webContents.executeJavaScript('miniPlayer();'); });
+  if(s.key.focus != "") globalShortcut.register(s.key.focus, () => { mainWindow.show(); mainWindow.webContents.executeJavaScript(`miniPlayerOff();`); });
 }
 app.on('ready', createWindow);
 

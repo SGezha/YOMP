@@ -18,19 +18,19 @@
 	<div id="yomp">
 		<div id="settings">
 			<div class="set-top">
-					<div class="set-top-left">
-						<div onclick="setsToggle()" class="set-btn back">
-							<i class="fas fa-arrow-left"></i> Back
-						</div>
-						<div onclick="setsSave()" class="set-btn save">
-								<i class="far fa-save"></i> Save
-						</div>
-						<div onclick="exportLoved()" class="set-btn loved">
-								<i class="fas fa-heart"></i> Export loved
-						</div>
-						<div onclick="exportAll()" class="set-btn all">
-								<i class="fas fa-download"></i> Export all music
-						</div>
+				<div class="set-top-left">
+					<div onclick="setsToggle()" class="set-btn back">
+						<i class="fas fa-arrow-left"></i> Back
+					</div>
+					<div onclick="setsSave()" class="set-btn save">
+						<i class="far fa-save"></i> Save
+					</div>
+					<div onclick="exportLoved()" class="set-btn loved">
+						<i class="fas fa-heart"></i> Export loved
+					</div>
+					<div onclick="exportAll()" class="set-btn all">
+						<i class="fas fa-download"></i> Export all music
+					</div>
 				</div>
 				<h2 class="set-title">Settings</h2>
 			</div>
@@ -57,34 +57,34 @@
 						Keyboard shortcuts
 					</div>
 					<div class="div-input">
-						Play/Pause: <input type="text" id="key-toggle">
+						Play/Pause: <div class="check-key">Disable: <input class="check-key-input" type="checkbox" onclick="offKey(this)" dlya="key-toggle"></div> <input type="text" class="input-keys" id="key-toggle">
 					</div>
 					<div class="div-input">
-						Next track: <input type="text" id="key-next">
+						Next track: <div class="check-key">Disable: <input class="check-key-input" type="checkbox" onclick="offKey(this)" dlya="key-next"></div> <input type="text" class="input-keys" id="key-next">
 					</div>
 					<div class="div-input">
-						Prev track: <input type="text" id="key-prev">
+						Prev track: <div class="check-key">Disable: <input class="check-key-input" type="checkbox" onclick="offKey(this)" dlya="key-prev"></div>	<input type="text" class="input-keys" id="key-prev">
 					</div>
 					<div class="div-input">
-						Random track: <input type="text" id="key-random">
+						Random track: <div class="check-key">Disable: <input class="check-key-input" type="checkbox" onclick="offKey(this)" dlya="key-random"></div> <input type="text" class="input-keys" id="key-random">
 					</div>
 					<div class="div-input">
-						Volume UP: <input type="text" id="key-volup">
+						Volume UP: <div class="check-key">Disable: <input class="check-key-input" type="checkbox" onclick="offKey(this)" dlya="key-volup"></div> <input type="text" class="input-keys" id="key-volup">
 					</div>
 					<div class="div-input">
-						Volume DOWN: <input type="text" id="key-voldown">
+						Volume DOWN: <div class="check-key">Disable: <input class="check-key-input" type="checkbox" onclick="offKey(this)" dlya="key-voldown"></div> <input type="text" class="input-keys" id="key-voldown">
 					</div>
 					<div class="div-input">
-						Volume MUTE: <input type="text" id="key-mute">
+						Volume MUTE: <div class="check-key">Disable: <input class="check-key-input" type="checkbox" onclick="offKey(this)" dlya="key-mute"></div> <input type="text" class="input-keys" id="key-mute">
 					</div>
 					<div class="div-input">
-						Love this track: <input type="text" id="key-love">
+						Love this track: <div class="check-key">Disable: <input class="check-key-input" type="checkbox" onclick="offKey(this)" dlya="key-love"></div> <input type="text" class="input-keys" id="key-love">
 					</div>
 					<div class="div-input">
-						Mini mode: <input type="text" id="key-mini">
+						Mini mode: <div class="check-key">Disable: <input class="check-key-input" type="checkbox" onclick="offKey(this)" dlya="key-mini"></div> <input type="text" class="input-keys" id="key-mini">
 					</div>
 					<div class="div-input">
-						Mini off: <input type="text" id="key-minioff">
+						Mini off: <div class="check-key">Disable: <input class="check-key-input" type="checkbox" onclick="offKey(this)" dlya="key-minioff"></div> <input type="text" class="input-keys" id="key-minioff">
 					</div>
 				</div>
 			</div>
@@ -105,7 +105,7 @@
 						<svg viewBox="0 0 10 10">
 							<polygon fill="var(--text)"
 								points="10.2,0.7 9.5,0 5.1,4.4 0.7,0 0,0.7 4.4,5.1 0,9.5 0.7,10.2 5.1,5.8 9.5,10.2 10.2,9.5 5.8,5.1" />
-							</svg>
+						</svg>
 					</button>
 				</div>
 			</div>

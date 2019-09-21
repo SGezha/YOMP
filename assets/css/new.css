@@ -935,6 +935,9 @@ label {
 
 .div-input {
   margin-top: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .div-input input:focus {
@@ -945,6 +948,11 @@ label {
 .loved:hover {
   background: #d31d00;
   box-shadow: 0 2px 5px #d31d00;
+}
+
+.check-key {
+  display: flex;
+  align-items: center;
 }
 
 

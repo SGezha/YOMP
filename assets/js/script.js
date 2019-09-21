@@ -5,6 +5,8 @@ if (!fs.existsSync(`${root}/images`)) {
 	fs.mkdirSync(`${root}/images`);
 	fs.writeFileSync(`${root}/images/cache.json`, '{"data":[]}');
 }
+if (!fs.existsSync(`${root}/full`)) fs.mkdirSync(`${root}/full`);
+
 const { remote, ipcRenderer: ipc } = require('electron'),
 	ipcRenderer = require('electron').ipcRenderer,
 	lowdb = require('lowdb'),
@@ -28,37 +30,21 @@ window.onload = function () {
 	fixmusic();
 	AP.plToggle();
 	document.getElementById('loader').parentNode.removeChild(document.getElementById('loader'));
-
-
-	//settings notification
-	if(db.get("settings").value()[0].noti.turn) document.getElementById('noti-turn').checked = true;
-	if(db.get("settings").value()[0].noti.loved) document.getElementById('noti-loved').checked = true;
-	if(db.get("settings").value()[0].noti.add) document.getElementById('noti-youtube').checked = true;
-	//settings keys
-	document.getElementById('key-toggle').value = db.get("settings").value()[0].key.play;
-	document.getElementById('key-next').value = db.get("settings").value()[0].key.next;
-	document.getElementById('key-prev').value = db.get("settings").value()[0].key.prev;
-	document.getElementById('key-random').value = db.get("settings").value()[0].key.random;
-	document.getElementById('key-volup').value = db.get("settings").value()[0].key.volumeup;
-	document.getElementById('key-voldown').value = db.get("settings").value()[0].key.volumedown;
-	document.getElementById('key-mute').value = db.get("settings").value()[0].key.mute;
-	document.getElementById('key-love').value = db.get("settings").value()[0].key.love;
-	document.getElementById('key-mini').value = db.get("settings").value()[0].key.mini;
-	document.getElementById('key-minioff').value = db.get("settings").value()[0].key.focus;
+	loadSettings();
 };
 
 function notify(title, body) {
-	if(!db.get("settings").value()[0].noti.turn) {
-		if(db.get("settings").value()[0].noti.loved && title.toLocaleLowerCase().indexOf("loved") > -1) return;
-		if(db.get("settings").value()[0].noti.add && title.toLocaleLowerCase().indexOf("success") > -1) return;
+	if (!db.get("settings").value()[0].noti.turn) {
+		if (db.get("settings").value()[0].noti.loved && title.toLocaleLowerCase().indexOf("loved") > -1) return;
+		if (db.get("settings").value()[0].noti.add && title.toLocaleLowerCase().indexOf("success") > -1) return;
 		new Notification(title, { silent: true, silent: true, body: body, icon: "assets/icons/icon.png" })
 	}
 }
 
 function setsSave() {
 	db.set('settings', [{
-		noti: {turn: document.getElementById('noti-turn').checked, loved: document.getElementById('noti-loved').checked, add: document.getElementById('noti-youtube').checked},
-		key: {play: document.getElementById('key-toggle').value, random: document.getElementById('key-random').value, love: document.getElementById('key-love').value, next: document.getElementById('key-next').value, prev: document.getElementById('key-prev').value, focus: document.getElementById('key-minioff').value, mini: document.getElementById('key-mini').value, volumeup: document.getElementById('key-volup').value, volumedown: document.getElementById('key-voldown').value, mute: document.getElementById('key-mute').value}
+		noti: { turn: document.getElementById('noti-turn').checked, loved: document.getElementById('noti-loved').checked, add: document.getElementById('noti-youtube').checked },
+		key: { play: document.getElementById('key-toggle').value, random: document.getElementById('key-random').value, love: document.getElementById('key-love').value, next: document.getElementById('key-next').value, prev: document.getElementById('key-prev').value, focus: document.getElementById('key-minioff').value, mini: document.getElementById('key-mini').value, volumeup: document.getElementById('key-volup').value, volumedown: document.getElementById('key-voldown').value, mute: document.getElementById('key-mute').value }
 	}]).write();
 	remote.app.relaunch();
 	remote.app.exit();
@@ -202,7 +188,7 @@ async function addMusicFolder() {
 		loadMusic();
 		items.forEach((i, ind) => {
 			setTimeout(() => {
-				if (ind+1 == items.length) loadMusic();
+				if (ind + 1 == items.length) loadMusic();
 				if (i.toLocaleLowerCase().indexOf(".mp3") > -1) {
 					if (db.get("music").find({ file: `${dir.filePaths[0]}/${i}` }).value() == undefined) {
 						var id = 0;
@@ -242,7 +228,7 @@ async function addosu() {
 
 function checkDir(ind, mas, dir) {
 	let i = mas[ind];
-	if (ind+1 == mas.length) return loadMusic();
+	if (ind + 1 == mas.length) return loadMusic();
 	if (cache.get("data").find({ id: `${dir}/${i}` }).value() == undefined) {
 		cache.get("data").push({ id: `${dir}/${i}` }).write();
 		if (i.indexOf(".") == -1) {
@@ -276,6 +262,7 @@ function checkDir(ind, mas, dir) {
 									title: obj.title,
 									file: `${obj.file}`,
 									icon: `${root}/images/${obj.title}.jpg`,
+									full: obj.img,
 									loved: false
 								}).write();
 								checkDir(ind + 1, mas, dir);
@@ -305,7 +292,7 @@ async function exportLoved() {
 	let dir = await remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
 	let exportLoved = [];
 	db.get("music").value().forEach(m => {
-		if(m.loved) exportLoved.push(m);
+		if (m.loved) exportLoved.push(m);
 	});
 	loadMusic();
 	exportProces(0, exportLoved, dir);
@@ -322,18 +309,59 @@ ipcRenderer.on("download complete", (event, arg) => {
 });
 
 function exportProces(id, mas, dir) {
-	if(id == mas.length) return loadMusic();
+	if (id == mas.length) return loadMusic();
 	let e = mas[id];
-	if(e.videoId) {
-		document.getElementById("load-progress").innerHTML = `<div class="textload">${e.title}</div> <span> ${id+1}/${mas.length}</span>`;
-		ipcRenderer.send("download", {url: e.file, properties: {directory: dir.filePaths[0], filename: `${e.title}.mp3`}, id: id, mas: mas, dir: dir});
+	if (e.videoId) {
+		document.getElementById("load-progress").innerHTML = `<div class="textload">${e.title}</div> <span> ${id + 1}/${mas.length}</span>`;
+		ipcRenderer.send("download", { url: e.file, properties: { directory: dir.filePaths[0], filename: `${e.title}.mp3` }, id: id, mas: mas, dir: dir });
 	} else {
-		document.getElementById("load-progress").innerHTML = `<div class="textload">${e.title}</div> <span> ${id+1}/${mas.length}</span>`;
+		document.getElementById("load-progress").innerHTML = `<div class="textload">${e.title}</div> <span> ${id + 1}/${mas.length}</span>`;
 		fs.copyFile(e.file, `${dir.filePaths[0]}/${e.title}.mp3`, (err) => {
 			if (err) throw err;
-			exportProces(id + 1, mas, dir);
+			if(e.full) {
+				Jimp.read(e.full)
+				.then(lenna => {
+					lenna.quality(80).cover(128, 128, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE).write(`${root}/full/${e.title}.jpg`);
+					let metadata = {
+						title: e.title.split(" - ")[1],
+						artist: e.title.split(" - ")[0],
+						APIC: `${root}/full/${e.title}.jpg`
+					}
+					NodeID3.update(metadata, `${dir.filePaths[0]}/${e.title}.mp3`, function (err, buffer) {
+						exportProces(id + 1, mas, dir);
+					})
+				})
+				.catch(err => {
+					console.error(err);
+					exportProces(id + 1, mas, dir);
+				});		
+			} else {
+				exportProces(id + 1, mas, dir);
+			}
 		});
 	}
+}
+
+function offKey(el) {
+	document.getElementById(el.getAttribute('dlya')).value = "";
+}
+
+for(let i = 0; i < document.getElementsByClassName('input-keys').length; i++) {
+
+	document.getElementsByClassName('input-keys')[i].onkeyup = function (evt) {
+		document.getElementsByClassName('check-key-input')[i].checked = false;
+		if(evt.key == "ArrowUp") {
+			document.getElementsByClassName('input-keys')[i].value = "ctrl+Up";
+		} else if(evt.key == "ArrowDown") {
+			document.getElementsByClassName('input-keys')[i].value = "ctrl+Down";
+		} else if(evt.key == "ArrowLeft") {
+			document.getElementsByClassName('input-keys')[i].value = "ctrl+Left";
+		} else if(evt.key == "ArrowRight") {
+			document.getElementsByClassName('input-keys')[i].value = "ctrl+Right";
+		} else {
+			document.getElementsByClassName('input-keys')[i].value = "ctrl+" + evt.key;
+		}
+	}	
 }
 
 function start() {
@@ -909,7 +937,7 @@ function youtube(vid, title, icon) {
 					db.get("music").remove({ id: id }).write();
 				})
 				setTimeout(() => {
-					if(succses) {
+					if (succses) {
 						notify('Success', `${title} added to playlist :3`);
 					}
 				}, 1000)
@@ -1070,4 +1098,32 @@ function openloved() {
 	if (document.getElementsByClassName("pl-container")[1] != undefined) {
 		document.getElementsByClassName("pl-container")[1].parentNode.removeChild(document.getElementsByClassName("pl-container")[1]);
 	}
+}
+
+function loadSettings() {
+	//settings notification
+	if (db.get("settings").value()[0].noti.turn) document.getElementById('noti-turn').checked = true;
+	if (db.get("settings").value()[0].noti.loved) document.getElementById('noti-loved').checked = true;
+	if (db.get("settings").value()[0].noti.add) document.getElementById('noti-youtube').checked = true;
+	if (db.get("settings").value()[0].key.play == "") document.getElementsByClassName('check-key-input')[0].checked = true;
+	if (db.get("settings").value()[0].key.next == "") document.getElementsByClassName('check-key-input')[1].checked = true;
+	if (db.get("settings").value()[0].key.prev == "") document.getElementsByClassName('check-key-input')[2].checked = true;
+	if (db.get("settings").value()[0].key.random == "") document.getElementsByClassName('check-key-input')[3].checked = true;
+	if (db.get("settings").value()[0].key.volumeup== "") document.getElementsByClassName('check-key-input')[4].checked = true;
+	if (db.get("settings").value()[0].key.volumedown == "") document.getElementsByClassName('check-key-input')[5].checked = true;
+	if (db.get("settings").value()[0].key.mute == "") document.getElementsByClassName('check-key-input')[6].checked = true;
+	if (db.get("settings").value()[0].key.love == "") document.getElementsByClassName('check-key-input')[7].checked = true;
+	if (db.get("settings").value()[0].key.mini == "") document.getElementsByClassName('check-key-input')[8].checked = true;
+	if (db.get("settings").value()[0].key.focus == "") document.getElementsByClassName('check-key-input')[9].checked = true;
+	//settings keys
+	document.getElementById('key-toggle').value = db.get("settings").value()[0].key.play;
+	document.getElementById('key-next').value = db.get("settings").value()[0].key.next;
+	document.getElementById('key-prev').value = db.get("settings").value()[0].key.prev;
+	document.getElementById('key-random').value = db.get("settings").value()[0].key.random;
+	document.getElementById('key-volup').value = db.get("settings").value()[0].key.volumeup;
+	document.getElementById('key-voldown').value = db.get("settings").value()[0].key.volumedown;
+	document.getElementById('key-mute').value = db.get("settings").value()[0].key.mute;
+	document.getElementById('key-love').value = db.get("settings").value()[0].key.love;
+	document.getElementById('key-mini').value = db.get("settings").value()[0].key.mini;
+	document.getElementById('key-minioff').value = db.get("settings").value()[0].key.focus;
 }
