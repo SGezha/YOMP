@@ -19,7 +19,6 @@
     --pl-lead: #333;
 }
 ::-webkit-scrollbar {width: 6px;}
-::-webkit-scrollbar-track {}
 ::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, #DA4453, #89216B);
     border-radius: 100px;
@@ -555,7 +554,6 @@ i.far.fa-trash-alt.pl-remove:hover {
     z-index: 1000;
     cursor: pointer;
 }
-.ap-controls svg {/* fill: #333; */}
 .ap-controls:hover svg {fill: var(--text);}
 .ap--playback > .ap-controls,
 .ap--settings > .ap-controls {flex: 0 25%;}
@@ -730,7 +728,6 @@ h3 {padding: 17px 0;}
     color: #E91E63 !important;
     text-shadow: 0 0 10px #E91E63, 0 0 10px #E91E63, 0 0 10px black;
 }
-#yomp>#load-music {}
 #yomp>#load-music>#load-progress {
     justify-content: center;
     align-items: center;
@@ -824,7 +821,6 @@ h3 {padding: 17px 0;}
 .set-block>.div-check {display: flex;margin-top: 10px;align-items: center;}
 input[type="checkbox"], label {cursor: pointer;}
 .set-main::-webkit-scrollbar {width: 5px;}
-.set-main::-webkit-scrollbar-track {}
 .set-block>.div-input>.div-input-sep>.key>input {
     color: white;
     width: 100%;
@@ -833,8 +829,6 @@ input[type="checkbox"], label {cursor: pointer;}
     background: #1b1b1b;
     text-align: center;
     border: 1px solid #1b1b1b;
-}
-.set-block>.div-input {
 }
 .check-key {display: flex;align-items: center;}
 .pog:after {
