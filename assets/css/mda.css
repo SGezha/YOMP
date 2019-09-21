@@ -1,23 +1,5 @@
 @font-face{
     font-family:Torus;
-    font-weight:100;
-    src:url(../fonts/torus/39F3E3_0_0.eot);
-    src:url(../fonts/torus/39F3E3_0_0.eot?#iefix) format("embedded-opentype"),
-        url(../fonts/torus/39F3E3_0_0.woff2) format("woff2"),
-        url(../fonts/torus/39F3E3_0_0.woff) format("woff"),
-        url(../fonts/torus/39F3E3_0_0.ttf) format("truetype");
-}
-@font-face{
-    font-family:Torus;
-    font-weight:600;
-    src:url(../fonts/torus/39F3E3_1_0.eot);
-    src:url(../fonts/torus/39F3E3_1_0.eot?#iefix) format("embedded-opentype"),
-        url(../fonts/torus/39F3E3_1_0.woff2) format("woff2"),
-        url(../fonts/torus/39F3E3_1_0.woff) format("woff"),
-        url(../fonts/torus/39F3E3_1_0.ttf) format("truetype");
-}
-@font-face{
-    font-family:Torus;
     font-weight:400;
     src:url(../fonts/torus/39F3E3_2_0.eot);
     src:url(../fonts/torus/39F3E3_2_0.eot?#iefix) format("embedded-opentype"),
@@ -25,32 +7,8 @@
         url(../fonts/torus/39F3E3_2_0.woff) format("woff"),
         url(../fonts/torus/39F3E3_2_0.ttf) format("truetype");
 }
-@font-face{
-    font-family:Torus;
-    font-weight:300;
-    src:url(../fonts/torus/39F3E3_3_0.eot);
-    src:url(../fonts/torus/39F3E3_3_0.eot?#iefix) format("embedded-opentype"),
-        url(../fonts/torus/39F3E3_3_0.woff2) format("woff2"),
-        url(../fonts/torus/39F3E3_3_0.woff) format("woff"),
-        url(../fonts/torus/39F3E3_3_0.ttf) format("truetype");
-}
-@font-face{
-    font-family:Torus;
-    font-weight:900;
-    src:url(../fonts/torus/39F3E3_4_0.eot);
-    src:url(../fonts/torus/39F3E3_4_0.eot?#iefix) format("embedded-opentype"),
-        url(../fonts/torus/39F3E3_4_0.woff2) format("woff2"),
-        url(../fonts/torus/39F3E3_4_0.woff) format("woff"),
-        url(../fonts/torus/39F3E3_4_0.ttf) format("truetype");
-}
-@font-face{
-    font-family:Torus;
-    font-weight:700;
-    src:url(../fonts/torus/39F3E3_5_0.eot);
-    src:url(../fonts/torus/39F3E3_5_0.eot?#iefix) format("embedded-opentype"),
-        url(../fonts/torus/39F3E3_5_0.woff2) format("woff2"),
-        url(../fonts/torus/39F3E3_5_0.woff) format("woff"),
-        url(../fonts/torus/39F3E3_5_0.ttf) format("truetype");
+* {
+    transition: all .5s;
 }
 :root {
     --bg: #1b1b1b;
@@ -966,7 +924,7 @@ input[type="checkbox"], label {cursor: pointer;}
     height: 25px;
     width: 25px;
     position: absolute;
-    content: 'ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â';
+    content: 'ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â';
     display: inline-block;
     font-size: 20px;
     text-align: center;
@@ -998,19 +956,6 @@ input[type="checkbox"], label {cursor: pointer;}
 }
 .set-block>.div-input>.div-input-sep>.name>i.far.fa-window-maximize {transform: rotate(180deg);}
 .set-block>.div-input>.div-input-sep>.key>input:focus {outline: #696969 auto 1px;}
-.preloaderd {
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    display: flex;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--bg);
-    z-index: 99999;
-}
-
 #hide-progres {
     display: none;
     position: absolute;
@@ -1022,3 +967,72 @@ input[type="checkbox"], label {cursor: pointer;}
     opacity: 0.7;
     transition: all 1s linear;
 }
+.preloaderd {
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    display: flex;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg);
+    border-radius: 7px;
+    transition: all .5s;
+    z-index: 99999;
+    -webkit-app-region: drag;
+}
+.preloaderd>.loader-circle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  margin-left: -70px;
+  margin-top: -70px;
+}
+.preloaderd>.loader-line-mask {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 70px;
+  height: 140px;
+  margin-left: -70px;
+  margin-top: -70px;
+  overflow: hidden;
+  -webkit-transform-origin: 70px 70px;
+  -moz-transform-origin: 70px 70px;
+  -ms-transform-origin: 70px 70px;
+  -o-transform-origin: 70px 70px;
+  transform-origin: 70px 70px;
+  -webkit-mask-image: -webkit-linear-gradient(top, #000000, rgba(0, 0, 0, 0));
+  -webkit-animation: rotate 1.2s infinite linear;
+  -moz-animation: rotate 1.2s infinite linear;
+  -o-animation: rotate 1.2s infinite linear;
+  animation: rotate 1.2s infinite linear;
+}
+.preloaderd>.loader-line-mask>.loader-line {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.preloaderd>.load-block {width: 80px;}
+.preloaderd>.load-block>img.load {width: 100%;}
+@keyframes rotate{
+    0% {
+      -webkit-transform: rotate(0deg);
+      -moz-transform: rotate(0deg);
+      -ms-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      -moz-transform: rotate(360deg);
+      -ms-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
