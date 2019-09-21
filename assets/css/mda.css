@@ -164,11 +164,11 @@ button {
     width: 100vw;
     display: none;
     height: 100vh;
-    background: linear-gradient(45deg, rgba(0, 0, 0, 0.5), transparent);
+    background: linear-gradient(45deg, rgba(0, 0, 0, 1), transparent);
     opacity: 0;
     visibility: hidden;
     transition: all .2s;
-    z-index: -1;
+    z-index: 0;
 }
 .menu>.links {width: 100%;overflow-y: scroll;}
 .menu>.profile>.full>.float-icons {
