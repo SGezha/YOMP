@@ -24,7 +24,7 @@
     "url": "https://github.com/SGezha/osu-youtube-music-player.git"
   },
   "devDependencies": {
-    "electron": "^6.0.9",
+    "electron": "^6.0.10",
     "electron-builder": "^20.44.4"
   },
   "dependencies": {
