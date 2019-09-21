@@ -35,7 +35,7 @@ function createWindow() {
     { label: 'Prev track', click: function () { mainWindow.webContents.executeJavaScript(`AP.prev();`); } },
     { label: 'Quit', click: function () { mainWindow.close(); } }
   ]);
-  appIcon.setToolTip('YT music player');
+  appIcon.setToolTip('YOMP');
   appIcon.on('click', () => {
     mainWindow.webContents.executeJavaScript("miniPlayerOff();");
     mainWindow.show();
