@@ -21,7 +21,6 @@ let musicSelectedId = 0,
     loaded = 0,
     mini = false,
     fullscreen = 0,
-    base = db.get("music").value(),
     ilLoved = false,
     ping = false;
 
@@ -86,6 +85,13 @@ document.getElementById("search").onchange = function (e) {
     if (document.getElementById('pl').classList.length == 2) {
         app.search();
     } else {
+        let base = db.get("music").value();
+        if(ilLoved) {
+            base = [];
+            db.get("music").value().forEach(m => {
+                if(m.loved == true) base.push(m);
+            })
+        }
         if (base.length == 0) return;
         if (document.getElementById("pl").classList.length == 2) return;
         let result = [];
@@ -168,7 +174,7 @@ function maxsize() {
 
 
 function random() {
-    var mas = shuffle(base);
+    var mas = shuffle(db.get("music").value());
     let result = [];
     db.set('music', []).write();
     mas.forEach((m, ind) => {
