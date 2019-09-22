@@ -60,6 +60,7 @@ function checkUpdate(auto) {
 }
 
 function clearPl() {
+	cache.set("data", []).write();
 	db.set("music", [{ "id": 0, "title": "AKINO with bless4 - cross the line", "file": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.mp3", "icon": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.jpg", "loved": false }]).write();
 	refresh();
 }
