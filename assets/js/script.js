@@ -282,7 +282,7 @@ function checkDir(ind, mas, dir) {
 			fs.readdir(`${dir}/${i}`, function (err, files) {
 				let obj = {};
 				obj.img = undefined;
-				if(files.length > 0) {
+				if(files) {
 					files.forEach(f => {
 						if (f.indexOf(".osu") > -1) {
 							obj.title = f.split("[")[0];
