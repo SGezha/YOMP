@@ -22,7 +22,7 @@ let musicSelectedId = 0,
 	loaded = 0,
 	mini = false,
 	fullscreen = 0,
-	ilLoved = false,
+	isLoved = false,
 	ping = false;
 
 window.onload = function () {
@@ -96,6 +96,12 @@ function setsToggle() {
 	document.getElementsByClassName('shadow')[0].style.display = "none";
 }
 
+function infoToggle() {
+	document.getElementById("info").classList.toggle("openAbout");
+	document.getElementsByClassName('menu-left')[0].classList.remove('act-menu');
+	document.getElementsByClassName('shadow')[0].style.display = "none";
+}
+
 function openMenu() {
 	if (document.getElementsByClassName('menu-left')[0].className.indexOf('act-menu') == -1) {
 		document.getElementsByClassName('menu-left')[0].classList.add('act-menu');
@@ -115,7 +121,7 @@ document.getElementById("search").onchange = function (e) {
 		app.search();
 	} else {
 		let base = db.get("music").value();
-		if (ilLoved) {
+		if (isLoved) {
 			base = [];
 			db.get("music").value().forEach(m => {
 				if (m.loved == true) base.push(m);
@@ -517,30 +523,21 @@ function start() {
 
 		function listHandler(evt) {
 			evt.preventDefault();
-			var aw = evt.target.className;
+			let aw = evt.target.className;
 			if (aw == 'pl-title') {
-				var current = parseInt(evt.target.parentNode.getAttribute('data-track'), 10);
+				let current = parseInt(evt.target.parentNode.getAttribute('data-track'), 10);
 				index = current;
 				audio.readyState = 0;
 				plActive();
 				play();
-				setTimeout(() => {
-					play();
-				}, 300)
 			} else {
-				var target = evt.target;
-				if (target.className === 'fas fa-heart owo' || target.className === 'fas fa-heart owo fav') return;
+				let target = evt.target;
+				if (target.className === 'fas fa-heart owo' || target.className === 'fas fa-heart owo fav' || target.className == 'right') return;
 				while (target.className !== pl.className) {
 					if (target.className === 'pl-remove' || target.className === 'pl-del' || target.className === 'right') {
-						var id = 0;
-						var isDel = parseInt(target.parentNode.getAttribute('data-track'), 10);
-						playList.splice(isDel, 1);
 						db.get("music").remove({ id: parseInt(target.parentNode.getAttribute('real-id'), 10) }).write();
-						target.parentNode.parentNode.removeChild(target.parentNode);
-						plLi = pl.querySelectorAll('li');
-						[].forEach.call(plLi, function (el, i) {
-							el.setAttribute('data-track', i);
-						});
+						if(!isLoved) { refresh(); } else { openloved(); }
+						document.getElementById('pl').classList.remove('hide');
 						if (!audio.paused) {
 							if (isDel === index) {
 								play();
@@ -569,11 +566,10 @@ function start() {
 				plLi[index].classList.remove('pl-current');
 				return;
 			}
-			var current = index;
 			for (var i = 0, len = plLi.length; len > i; i++) {
 				plLi[i].classList.remove('pl-current');
 			}
-			plLi[current].classList.add('pl-current');
+			plLi[index].classList.add('pl-current');
 		}
 
 		function error() {
@@ -956,7 +952,7 @@ function refresh() {
 	});
 
 	loaded = 0;
-	ilLoved = false;
+	isLoved = false;
 	if (document.getElementsByClassName("pl-container")[1] != undefined) {
 		document.getElementsByClassName("pl-container")[1].parentNode.removeChild(document.getElementsByClassName("pl-container")[1]);
 	}
@@ -1107,7 +1103,7 @@ function love(id, el) {
 		db.get("music").find({ id: id }).assign({ loved: false }).write();
 		el.classList.remove("fav");
 		notify('Removed from loved :c', `${track.title}`);
-		if (ilLoved == true) openloved();
+		if (isLoved == true) openloved();
 	} else {
 		notify('Added to loved :3', `${track.title}`);
 		el.classList.add("fav");
@@ -1161,7 +1157,7 @@ function loadMusic() {
 }
 
 function openloved() {
-	ilLoved = true;
+	isLoved = true;
 	let lovedMas = [];
 
 	db.get("music").value().forEach(l => {

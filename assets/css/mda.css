@@ -882,7 +882,7 @@ input[type="checkbox"], label {cursor: pointer;}
     height: 25px;
     width: 25px;
     position: absolute;
-    content: 'ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“';
+    content: '✓';
     display: inline-block;
     font-size: 20px;
     text-align: center;
@@ -1141,7 +1141,7 @@ button.ap-active>i {
     z-index: 999;
 }
 .openAbout {
-    animation: xynya 1s 1s ease forwards;
+    animation: xynya 1s ease forwards;
 }
 @keyframes xynya {
     0%{

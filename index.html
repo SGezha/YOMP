@@ -13,9 +13,144 @@
     </head>
     <body>
         <div id="yomp">
-            <div class="modal1 openAbout" id="info">
+            <div class="main">
+                <div class="top">
+                    <div class="title-text"><img class="loged" src="assets/icons/head.png"> Music Player</div>
+                    <div class="title-controls">
+                        <button onclick="hidetray()" class="ui-btn minimize"><svg x="0px" y="0px" viewBox="0 0 10.2 1"><rect fill="var(--text)" x="0" y="50%" width="10.2" height="1" /></svg></button>
+                        <button onclick="maxsize()" class="ui-btn maximize"><i style="color: var(--text);" class="far fa-square"></i></button>
+                        <button onclick="winowClose()" class="ui-btn close"><svg viewBox="0 0 10 10"><polygon fill="var(--text)" points="10.2,0.7 9.5,0 5.1,4.4 0.7,0 0,0.7 4.4,5.1 0,9.5 0.7,10.2 5.1,5.8 9.5,10.2 10.2,9.5 5.8,5.1" /></svg></button>
+                    </div>
+                </div>
+                <div class="center">
+                    <div class="mini-field">
+                        <div class="menu-icon"><i onclick="openMenu()" class="fas fa-bars"></i></div>
+                        <div class="search">
+                            <div class="asd">
+                                <input id="search" class="search" type="text" placeholder="Search">
+                                <i @click="search()" class="fas fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <img class="loader-xd" src="assets/icons/loader.gif" id="loader" style="display:none;">
+                        <div class="menu-left">
+                            <div class="menu">
+                                <div class="links" style="height:100vh;">
+                                    <ul class="links-block">
+                                        <li class="ap-playlist-btn liactiver">
+                                            <a onclick="refresh(); document.getElementById(`app`).style.display = 'none';" href="#">
+                                                <svg class="btn-menu" fill="var(--text)" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none" /><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" /></svg>
+                                                <span>Playlist</span>
+                                            </a>
+                                        </li>
+                                        <li class="liactiver">
+                                            <a onclick="openloved(); document.getElementById(`app`).style.display = 'none';" href="#">
+                                                <i class="fas fa-heart"></i>
+                                                <span>Loved</span>
+                                            </a>
+                                        </li>
+                                        <li class="cat"></li>
+                                        <li class="liactiver">
+                                            <a onclick="searchbtn()" href="#">
+                                                <i class="fab fa-youtube"></i>
+                                                <span>YouTube</span>
+                                            </a>
+                                        </li>
+                                        <li class="liactiver">
+                                            <a onclick="addosu()" href="#">
+                                                <img class="osu" src="assets/icons/osu.svg" />
+                                                <span>Import osu! songs</span>
+                                            </a>
+                                        </li>
+                                        <li class="liactiver">
+                                            <a onclick="addMusicFolder()" href="#">
+                                                <i class="far fa-plus-square"></i>
+                                                <span>Import Folder</span>
+                                            </a>
+                                        </li>
+                                        <li class="cat"></li>
+                                        <li class="liactiver">
+                                            <a onclick="infoToggle()" href="#">
+                                                <i class="fas fa-info-circle"></i>
+                                                <span>Info</span>
+                                            </a>
+                                        </li>
+                                        <li class="liactiver">
+                                            <a onclick="setsToggle()" href="#">
+                                                <i class="fas fa-cogs"></i>
+                                                <span>Settings</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div onclick="openMenu()" class="shadow"></div>
+                        </div>
+                        <div id="app">
+                            <div class="video-pl">
+                                <template v-for="m in music">
+                                    <div @click="youtube(m.id.videoId, m.snippet.title, m.snippet.thumbnails.high.url)" class="video">
+                                        <div class="cssucks">
+                                            <div class="left">
+                                                <img src="assets/icons/playlist.png" class="pizdec">
+                                                <img src="assets/icons/youtube.png" class="plpizdec">
+                                            </div>
+                                            <div class="center">
+                                                <h3>{{ m.snippet.title }}</h3>
+                                            </div>
+                                            <div class="bgg" :style="{ background: 'url(' + m.snippet.thumbnails.medium.url + ')', backgroundPosition: 'center', backgroundSize: 'cover' }"></div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom">
+                    <div id="hide-progres"></div>
+                    <div class="ap" id="ap">
+                        <div class="ap-inner">
+                            <div class="ap-panel">
+                                <div class="ap-item ap--playback">
+                                    <button class="ap-controls ap-prev-btn"><i class="fas fa-step-backward"></i></button>
+                                    <button class="ap-controls ap-toggle-btn">
+                                        <i class="fas fa-play ap--play"></i>
+                                        <i class="fas fa-pause ap--pause"></i>
+                                    </button>
+                                    <button class="ap-controls ap-next-btn"><i class="fas fa-step-forward"></i></button>
+                                </div>
+                                <div class="ap-item ap--track">
+                                    <div class="ap-info">
+                                        <div class="ap-title">Unknown</div>
+                                        <div class="ap-time"><span class="ap-time--current">--</span><span>/</span><span class="ap-time--duration">--</span></div>
+                                        <div class="ap-progress-container">
+                                            <div class="ap-progress">
+                                                <div class="ap-bar"></div>
+                                                <div class="ap-preload-bar"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ap-item ap--settings">
+                                    <div class="ap-controls ap-volume-container">
+                                        <button class="ap-volume-btn">
+                                            <i class="fas fa-volume-up ap--volume-on"></i>
+                                            <i class="fas fa-volume-mute ap--volume-off"></i>
+                                        </button>
+                                        <div class="ap-volume"><div class="ap-volume-progress"><div class="ap-volume-bar"></div></div></div>
+                                    </div>
+                                    <button class="ap-controls ap-repeat-btn"><i class="fas fa-sync-alt"></i></button>
+                                    <button class="ap-controls" onclick="random()"><i class="fas fa-random"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal1" id="info">
                 <div class="info-block">
-                    <div class="float-exit"><a href="#" class="exitowo"><i class="fas fa-arrow-left"></i>Back</a></div>
+                    <div onclick="infoToggle()" class="float-exit"><a href="#" class="exitowo"><i class="fas fa-arrow-left"></i>Back</a></div>
                     <div class="links">
                         <div class="sep">
                             <a href="#" class="link github"><img src="assets/icons/logo/l_github.png" /><span>Source code</span></a>
@@ -33,7 +168,7 @@
                             <div class="block">
                                 <div class="over">
                                     <div class="avatar"><img src="assets/icons/a/4fun.png" /></div>
-                                    <h1>4Fun</h1>
+                                    <h1>4FuN</h1>
                                 </div>
                                 <ul class="collapsible">
                                     <li>
@@ -205,135 +340,6 @@
                                         <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-minioff">
                                         <span>Disable?</span>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="main">
-                <div class="top">
-                    <div class="title-text"><img class="loged" src="assets/icons/head.png"> Music Player</div>
-                    <div class="title-controls">
-                        <button onclick="hidetray()" class="ui-btn minimize"><svg x="0px" y="0px" viewBox="0 0 10.2 1"><rect fill="var(--text)" x="0" y="50%" width="10.2" height="1" /></svg></button>
-                        <button onclick="maxsize()" class="ui-btn maximize"><i style="color: var(--text);" class="far fa-square"></i></button>
-                        <button onclick="winowClose()" class="ui-btn close"><svg viewBox="0 0 10 10"><polygon fill="var(--text)" points="10.2,0.7 9.5,0 5.1,4.4 0.7,0 0,0.7 4.4,5.1 0,9.5 0.7,10.2 5.1,5.8 9.5,10.2 10.2,9.5 5.8,5.1" /></svg></button>
-                    </div>
-                </div>
-                <div class="center">
-                    <div class="mini-field">
-                        <div class="menu-icon"><i onclick="openMenu()" class="fas fa-bars"></i></div>
-                        <div class="search">
-                            <div class="asd">
-                                <input id="search" class="search" type="text" placeholder="Search">
-                                <i @click="search()" class="fas fa-search"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="container">
-                        <img class="loader-xd" src="assets/icons/loader.gif" id="loader" style="display:none;">
-                        <div class="menu-left">
-                            <div class="menu">
-                                <div class="links" style="height:100vh;">
-                                    <ul class="links-block">
-                                        <li class="ap-playlist-btn liactiver">
-                                            <a onclick="refresh(); document.getElementById(`app`).style.display = 'none';" href="#">
-                                                <svg class="btn-menu" fill="var(--text)" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none" /><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" /></svg>
-                                                <span>Playlist</span>
-                                            </a>
-                                        </li>
-                                        <li class="liactiver">
-                                            <a onclick="openloved(); document.getElementById(`app`).style.display = 'none';" href="#">
-                                                <i class="fas fa-heart"></i>
-                                                <span>Loved</span>
-                                            </a>
-                                        </li>
-                                        <li class="cat"></li>
-                                        <li class="liactiver">
-                                            <a onclick="searchbtn()" href="#">
-                                                <i class="fab fa-youtube"></i>
-                                                <span>YouTube</span>
-                                            </a>
-                                        </li>
-                                        <li class="liactiver">
-                                            <a onclick="addosu()" href="#">
-                                                <img class="osu" src="assets/icons/osu.svg" />
-                                                <span>Import osu! songs</span>
-                                            </a>
-                                        </li>
-                                        <li class="liactiver">
-                                            <a onclick="addMusicFolder()" href="#">
-                                                <i class="far fa-plus-square"></i>
-                                                <span>Import Folder</span>
-                                            </a>
-                                        </li>
-                                        <li class="cat"></li>
-                                        <li class="liactiver">
-                                            <a onclick="setsToggle()" href="#">
-                                                <i class="fas fa-cogs"></i>
-                                                <span>Settings</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div onclick="openMenu()" class="shadow"></div>
-                        </div>
-                        <div id="app">
-                            <div class="video-pl">
-                                <template v-for="m in music">
-                                    <div @click="youtube(m.id.videoId, m.snippet.title, m.snippet.thumbnails.high.url)" class="video">
-                                        <div class="cssucks">
-                                            <div class="left">
-                                                <img src="assets/icons/playlist.png" class="pizdec">
-                                                <img src="assets/icons/youtube.png" class="plpizdec">
-                                            </div>
-                                            <div class="center">
-                                                <h3>{{ m.snippet.title }}</h3>
-                                            </div>
-                                            <div class="bgg" :style="{ background: 'url(' + m.snippet.thumbnails.medium.url + ')', backgroundPosition: 'center', backgroundSize: 'cover' }"></div>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bottom">
-                    <div id="hide-progres"></div>
-                    <div class="ap" id="ap">
-                        <div class="ap-inner">
-                            <div class="ap-panel">
-                                <div class="ap-item ap--playback">
-                                    <button class="ap-controls ap-prev-btn"><i class="fas fa-step-backward"></i></button>
-                                    <button class="ap-controls ap-toggle-btn">
-                                        <i class="fas fa-play ap--play"></i>
-                                        <i class="fas fa-pause ap--pause"></i>
-                                    </button>
-                                    <button class="ap-controls ap-next-btn"><i class="fas fa-step-forward"></i></button>
-                                </div>
-                                <div class="ap-item ap--track">
-                                    <div class="ap-info">
-                                        <div class="ap-title">Unknown</div>
-                                        <div class="ap-time"><span class="ap-time--current">--</span><span>/</span><span class="ap-time--duration">--</span></div>
-                                        <div class="ap-progress-container">
-                                            <div class="ap-progress">
-                                                <div class="ap-bar"></div>
-                                                <div class="ap-preload-bar"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="ap-item ap--settings">
-                                    <div class="ap-controls ap-volume-container">
-                                        <button class="ap-volume-btn">
-                                            <i class="fas fa-volume-up ap--volume-on"></i>
-                                            <i class="fas fa-volume-mute ap--volume-off"></i>
-                                        </button>
-                                        <div class="ap-volume"><div class="ap-volume-progress"><div class="ap-volume-bar"></div></div></div>
-                                    </div>
-                                    <button class="ap-controls ap-repeat-btn"><i class="fas fa-sync-alt"></i></button>
-                                    <button class="ap-controls" onclick="random()"><i class="fas fa-random"></i></button>
                                 </div>
                             </div>
                         </div>
