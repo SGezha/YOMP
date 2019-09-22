@@ -40,7 +40,7 @@ ipcRenderer.on("update complete", (event, arg) => {
 
 function checkUpdate(auto) {
 	let ver = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString()).version;
-	axios.get(`https://allpl.glitch.me/yomp`)
+	axios.get(`https://4kc-version.glitch.me/yomp`)
 	.then(res => {
 		let r = res.data;
 		if(ver != r.ver && auto) {
