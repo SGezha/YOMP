@@ -35,6 +35,7 @@
     "electron-builder": "^20.44.4"
   },
   "dependencies": {
+    "child_process": "^1.0.2",
     "discord-rpc": "^3.0.2",
     "electron-dl": "^1.14.0",
     "electron-drag": "^1.2.2",

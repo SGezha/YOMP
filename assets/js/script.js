@@ -14,7 +14,8 @@ const { remote, ipcRenderer: ipc } = require('electron'),
 	db = lowdb(new FileSync(`${root}/database.json`)),
 	cache = lowdb(new FileSync(`${root}/images/cache.json`)),
 	NodeID3 = require('node-id3'),
-	Jimp = require('jimp');
+	Jimp = require('jimp'),
+	os = require('os');
 
 let musicSelectedId = 0,
 	isLoaded = false,
@@ -30,7 +31,33 @@ window.onload = function () {
 	AP.plToggle();
 	ipcRenderer.send('ready');
 	loadSettings();
+	checkUpdate(true);
 };
+
+ipcRenderer.on("update complete", (event, arg) => {
+	notify("Update", `Download update complete :>`);
+});
+
+function checkUpdate(auto) {
+	let ver = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString()).version;
+	axios.get(`https://allpl.glitch.me/yomp`)
+	.then(res => {
+		let r = res.data;
+		if(ver != r.ver && auto) {
+			notify("Update", `New ${r.ver} version available to download, check settings :3`);
+		}
+		if (ver == r.ver && !auto) {
+			notify("Update", `You use latest version :P`);
+		}
+		if (ver != r.ver && !auto) {
+			notify("Update", `New version ${r.ver} started to download c:`);
+			let osp = os.platform(),
+					arch = os.arch().split("x").join("");
+			if(osp.indexOf("win") > -1) osp = "win";
+			ipcRenderer.send("update", { url: r[osp + arch], properties: { directory: `${root}/cache`, filename: `update.exe` }});
+		}
+	})
+}
 
 function clearPl() {
 	db.set("music", [{ "id": 0, "title": "AKINO with bless4 - cross the line", "file": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.mp3", "icon": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.jpg", "loved": false }]).write();
@@ -46,7 +73,8 @@ function notify(title, body) {
 		if (title.toLocaleLowerCase().indexOf("now") > -1) icon = "assets/icons/notif-icon/i_np.png";
 		if (title.toLocaleLowerCase().indexOf("success") > -1) icon = "assets/icons/notif-icon/i_add.png";
 		if (title.toLocaleLowerCase().indexOf("error") > -1) icon = "assets/icons/notif-icon/i_error.png";
-		if (body.length > 30) body = body.substring(0, 27) + "...";
+		if (title.toLocaleLowerCase().indexOf("update") > -1) icon = "assets/icons/notif-icon/i_up.png";
+		if (body.length > 60) body = body.substring(0, 57) + "...";
 		new Notification(title, { silent: true, silent: true, body: body, icon: icon })
 		// ipcRenderer.send("notification", {title: title, body: body})
 	}
@@ -251,7 +279,6 @@ function checkDir(ind, mas, dir) {
 		cache.get("data").push({ id: `${dir}/${i}` }).write();
 		if (i.indexOf(".") == -1) {
 			fs.readdir(`${dir}/${i}`, function (err, files) {
-				console.log(files);
 				let obj = {};
 				obj.img = undefined;
 				files.forEach(f => {
