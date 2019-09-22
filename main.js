@@ -25,7 +25,7 @@ function createWindow() {
 	preloader.loadFile('preloader.html');
 
 	mainWindow = new BrowserWindow({
-		show: false, transparent: true, frame: false, width: 1000, height: 700, minWidth: 500, icon: "icon.png", webPreferences: { nodeIntegration: true }
+		show: false, frame: false, width: 1000, height: 700, minWidth: 500, icon: "icon.png", webPreferences: { nodeIntegration: true }
 	});
 	mainWindow.loadFile('index.html');
 	mainWindow.on('closed', function () {
@@ -54,12 +54,6 @@ function createWindow() {
 	appIcon.on('click', () => {
 		mainWindow.webContents.executeJavaScript("miniPlayerOff();");
 		mainWindow.show();
-	});
-	mainWindow.on('show', () => {
-		appIcon.setHighlightMode('always');
-	});
-	mainWindow.on('hide', () => {
-		appIcon.setHighlightMode('never');
 	});
 	appIcon.setContextMenu(contextMenu);
 

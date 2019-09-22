@@ -195,12 +195,10 @@ function fixmusic() {
 
 function maxsize() {
 	if (fullscreen == 0) {
-		document.getElementById('yomp').style.borderRadius = "0";
 		remote.getCurrentWindow().maximize();
 		fullscreen++;
 		document.getElementsByClassName("maximize")[0].innerHTML = `<i style="color: var(--text);" class="fas fa-square"></i>`;
 	} else {
-		document.getElementById('yomp').style.borderRadius = "5px";
 		remote.getCurrentWindow().unmaximize();
 		fullscreen = 0;
 		document.getElementsByClassName("maximize")[0].innerHTML = `<i style="color: var(--text);" class="far fa-square"></i>`;
@@ -1040,10 +1038,8 @@ function miniPlayer() {
 	if (document.getElementById('ap').style.transform == "translateY(180px)") {
 		document.getElementById('hide-progres').style.display = "none";
 		document.getElementById('ap').style.transform = "translateY(0px)";
-		setTimeout(() => {
-			document.getElementById('hide-progres').style.width = `100%`;
-			document.getElementById('hide-progres').style.display = "block";
-		}, 410)
+		document.getElementById('hide-progres').style.width = `100%`;
+		document.getElementById('hide-progres').style.display = "block";
 	} else {
 		document.getElementById('hide-progres').style.display = "block";
 	}
@@ -1053,8 +1049,8 @@ function miniPlayer() {
 	document.getElementsByClassName('main')[0].style.background = "transparent";
 	document.getElementsByClassName('bottom')[0].style.position = "absolute";
 	document.getElementsByClassName('bottom')[0].style.bottom = "0";
-	remote.getCurrentWindow().setSize(screen.availWidth, 170);
-	remote.getCurrentWindow().setPosition(0, screen.availHeight - 170);
+	remote.getCurrentWindow().setSize(screen.availWidth, 55);
+	remote.getCurrentWindow().setPosition(0, screen.availHeight - 55);
 	remote.getCurrentWindow().setSkipTaskbar(true);
 	remote.getCurrentWindow().focus();
 	mini = true;
@@ -1069,7 +1065,7 @@ setInterval(() => {
 				document.getElementsByClassName('ap-volume')[0].style.visibility = null;
 				document.getElementsByClassName('ap-volume-container')[0].style.background = null;
 				document.getElementById('ap').style.transform = `translateY(180px)`;
-				setTimeout(() => { remote.getCurrentWindow().hide(); }, 410);
+				remote.getCurrentWindow().hide();
 				ping = false;
 			} else {
 				if (mini == true) {

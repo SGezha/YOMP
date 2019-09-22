@@ -31,6 +31,7 @@ html, body {
     color: var(--text);
     background: none;
     overflow: hidden;
+    background: var(--bg);
 }
 a {text-decoration: none;}
 i {font-size: 18px !important;color: var(--text);}
@@ -53,7 +54,7 @@ button {
     transition: 1s linear;
     z-index: 9999999999999999;
 }
-#yomp {border-radius: 7px;overflow: hidden;}
+#yomp {overflow: hidden;}
 .hide {display: none !important;}
 .main {
     width: 100%;
@@ -465,7 +466,6 @@ i.far.fa-trash-alt.pl-remove:hover {
     align-items: center;
     position: relative;
     display: flex;
-    transition: transform .4s ease;
 }
 .ap {background: var(--block) !important;font-size: 19px;}
 .ap-inner {width: 100%;}
