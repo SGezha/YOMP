@@ -1049,8 +1049,6 @@ setInterval(() => {
                     document.getElementById('hide-progres').style.width = `${((ping-1)*2)*10}%`;
                 }
             }
-        } else { 
-            miniPlayer();
         }
     };
 }, 1000)

@@ -465,7 +465,7 @@ i.far.fa-trash-alt.pl-remove:hover {
     align-items: center;
     position: relative;
     display: flex;
-    transition: .4s ease;
+    transition: transform .4s ease;
 }
 .ap {background: var(--block) !important;font-size: 19px;}
 .ap-inner {width: 100%;}
@@ -765,9 +765,9 @@ h3 {padding: 17px 0;}
     overflow: hidden;
     border-radius: 7px;
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.5);
+    transform: translate(-50%, -50%) scale(0.8);
     background: #1b1b1b;
-    transition: 0.5s ease;
+    transition: 0.3s ease;
 }
 .openSettings {
     opacity: 1 !important;
@@ -1011,7 +1011,7 @@ input[type="checkbox"], label {cursor: pointer;}
     li.music-el {width: 20% !important;}
     .video {width: 20% !important;}
 }
-@media(max-width: 1000px) {
+@media(max-width: 999px) {
     .set-top {height: 105px;}
     .set-main {height: calc(100vh - 161px);}
     #settings {grid-template-rows: 126px calc(100% - 126px);}
