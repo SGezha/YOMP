@@ -7,11 +7,7 @@ if (!fs.existsSync(`${root}/full`)) fs.mkdirSync(`${root}/full`);
 
 const { shell, remote, ipcRenderer: ipc } = require('electron'),
 	ipcRenderer = require('electron').ipcRenderer,
-	lowdb = require('lowdb'),
-	FileSync = require('lowdb/adapters/FileSync'),
-	db = lowdb(new FileSync(`${root}/database.json`)),
 	sdb = require('better-sqlite3-helper'),
-	cache = lowdb(new FileSync(`${root}/images/cache.json`)),
 	NodeID3 = require('node-id3'),
 	Jimp = require('jimp'),
 	os = require('os');
@@ -24,6 +20,7 @@ let musicSelectedId = 0,
 	mini = false,
 	fullscreen = 0,
 	isLoved = false,
+	cache = [],
 	ping = false;
 
 window.onload = function () {
@@ -272,16 +269,24 @@ async function addosu() {
 	let dir = await remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
 	fs.readdir(dir.filePaths[0], function (err, items) {
 		loadMusic();
-		checkDir(0, items, dir.filePaths[0])
+		checkDir(-1, items, dir.filePaths[0])
 	});
 }
 
 function checkDir(ind, mas, dir) {
+	if (ind + 1 == mas.length) return loadMusic();
+	if(ind == -1) {
+		cache = [];
+		sdb().query(`SELECT * from music`).forEach(m => {
+			cache.push(m.dir);
+		})
+		checkDir(ind + 1, mas, dir);
+		return;
+	}
 	let i = mas[ind];
 	i = i.split("~").join("").split("'").join("");
 	console.log(i);
-	if (ind + 1 == mas.length) return loadMusic();
-	if (sdb().query(`SELECT * from music where dir='${dir}/${i}'`).length == 0) {
+	if (cache.indexOf(`${dir}/${i}`) == -1) {
 		if (i.indexOf(".") == -1) {
 			fs.readdir(`${dir}/${i}`, function (err, files) {
 				let obj = {};
