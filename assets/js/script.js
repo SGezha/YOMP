@@ -348,14 +348,18 @@ async function exportLoved() {
 	db.get("music").value().forEach(m => {
 		if (m.loved) exportLoved.push(m);
 	});
-	loadMusic();
-	exportProces(0, exportLoved, dir);
+	if(dir[0]) {
+		loadMusic();
+		exportProces(0, exportLoved, dir);
+	}
 }
 
 async function exportAll() {
 	let dir = await remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
-	loadMusic();
-	exportProces(0, db.get("music").value(), dir);
+	if(dir[0]) {
+		loadMusic();
+		exportProces(0, db.get("music").value(), dir);
+	}
 }
 
 ipcRenderer.on("download complete", (event, arg) => {
