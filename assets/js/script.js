@@ -91,15 +91,15 @@ function setsSave() {
 }
 
 function setsToggle() {
-	document.getElementById("settings").classList.toggle("openSettings");
-	document.getElementsByClassName('menu-left')[0].classList.remove('act-menu');
-	document.getElementsByClassName('shadow')[0].style.display = "none";
+	$("#settings").toggleClass('openmodal');
+	$(".menu-left").removeClass('act-menu');
+	$(".shadow").hide();
 }
 
 function infoToggle() {
-	document.getElementById("info").classList.toggle("openAbout");
-	document.getElementsByClassName('menu-left')[0].classList.remove('act-menu');
-	document.getElementsByClassName('shadow')[0].style.display = "none";
+	$("#info").toggleClass('openmodal');
+	$(".menu-left").removeClass('act-menu');
+	$(".shadow").hide();
 }
 
 function openMenu() {

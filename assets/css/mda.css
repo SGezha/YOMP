@@ -751,7 +751,7 @@ h3 {padding: 17px 0;}
     max-width: 100px;
     text-align: right;
 }
-.modal {
+/*.modal {
     position: absolute;
     display: grid;
     grid-template-columns: 1fr;
@@ -768,12 +768,7 @@ h3 {padding: 17px 0;}
     transform: translate(-50%, -50%) scale(0.8);
     background: #1b1b1b;
     transition: 0.3s ease;
-}
-.openSettings {
-    opacity: 1 !important;
-    z-index: 999 !important;
-    transform: translate(-50%, -50%) scale(1) !important;
-}
+}*/
 .set-btn {
     position: relative;
     padding: 10px 20px;
@@ -1127,7 +1122,7 @@ button.ap-active>i {
           box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
   margin: 16px 0;
 }
-.modal1 {
+.modal {
     position: absolute;
     width: 100%;
     height: calc(100% - 35px);
@@ -1135,24 +1130,13 @@ button.ap-active>i {
     left: 0;
     background: #1b1b1b;
     border-radius: 0 0 7px 7px;
-    transition: 0.3s ease;
-    transform: translateX(-100%) scale(.2);
+    transition: 0.5s ease;
+    transform: translateY(100%);
     overflow: hidden;
     z-index: 999;
 }
-.openAbout {
-    animation: xynya 1s ease forwards;
-}
-@keyframes xynya {
-    0%{
-        transform: translateX(-100%) scale(.2);
-    }
-    50% {
-        transform: translateX(0%) scale(.2);
-    }
-    100% {
-        transform: translateX(0%) scale(1);
-    }
+.openmodal {
+    transform: translateY(0%);
 }
 .info-block {
     width: 100%;
