@@ -235,15 +235,15 @@ function searchbtn() {
 
 async function addMusicFolder() {
 	let dir = await remote.dialog.showOpenDialog({ title: 'Select Music Folder', properties: ['openDirectory'] });
-	fs.readdir(dir.filePaths[0], function (err, items) {
+	fs.readdir(dir[0], function (err, items) {
 		loadMusic();
 		items.forEach((i, ind) => {
 			setTimeout(() => {
 				if (ind + 1 == items.length) loadMusic();
 				if (i.toLocaleLowerCase().indexOf(".mp3") > -1) {
-					if (db.get("music").find({ file: `${dir.filePaths[0]}/${i}` }).value() == undefined) {
+					if (db.get("music").find({ file: `${dir[0]}/${i}` }).value() == undefined) {
 						var id = 0;
-						let metadata = NodeID3.read(`${dir.filePaths[0]}/${i}`);
+						let metadata = NodeID3.read(`${dir[0]}/${i}`);
 						let img = undefined;
 						let title = i.toLocaleLowerCase().split(".mp3");
 						if (metadata.title != undefined && metadata.artist != undefined) title = `${metadata.artist} - ${metadata.title}`;
@@ -258,7 +258,7 @@ async function addMusicFolder() {
 							id: id,
 							title: title,
 							icon: img,
-							file: `${dir.filePaths[0]}/${i}`,
+							file: `${dir[0]}/${i}`,
 							loved: false
 						}).write();
 						document.getElementById("load-progress").innerHTML = `<div class="textload">${title}</div> <span> ${ind + 1}/${items.length}</span>`;
@@ -271,9 +271,9 @@ async function addMusicFolder() {
 
 async function addosu() {
 	let dir = await remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
-	fs.readdir(dir.filePaths[0], function (err, items) {
+	fs.readdir(dir[0], function (err, items) {
 		loadMusic();
-		checkDir(0, items, dir.filePaths[0])
+		checkDir(0, items, dir[0])
 	});
 }
 
@@ -367,10 +367,10 @@ function exportProces(id, mas, dir) {
 	let e = mas[id];
 	if (e.videoId) {
 		document.getElementById("load-progress").innerHTML = `<div class="textload">${e.title}</div> <span> ${id + 1}/${mas.length}</span>`;
-		ipcRenderer.send("download", { url: e.file, properties: { directory: dir.filePaths[0], filename: `${e.title}.mp3` }, id: id, mas: mas, dir: dir });
+		ipcRenderer.send("download", { url: e.file, properties: { directory: dir[0], filename: `${e.title}.mp3` }, id: id, mas: mas, dir: dir });
 	} else {
 		document.getElementById("load-progress").innerHTML = `<div class="textload">${e.title}</div> <span> ${id + 1}/${mas.length}</span>`;
-		fs.copyFile(e.file, `${dir.filePaths[0]}/${e.title}.mp3`, (err) => {
+		fs.copyFile(e.file, `${dir[0]}/${e.title}.mp3`, (err) => {
 			if (err) throw err;
 			if (e.full) {
 				Jimp.read(e.full)
@@ -381,7 +381,7 @@ function exportProces(id, mas, dir) {
 							artist: e.title.split(" - ")[0],
 							APIC: `${root}/full/${e.title}.jpg`
 						}
-						NodeID3.update(metadata, `${dir.filePaths[0]}/${e.title}.mp3`, function (err, buffer) {
+						NodeID3.update(metadata, `${dir[0]}/${e.title}.mp3`, function (err, buffer) {
 							exportProces(id + 1, mas, dir);
 						})
 					})
