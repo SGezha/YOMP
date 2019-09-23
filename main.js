@@ -20,7 +20,7 @@ if (fs.existsSync(`${root}/database.json`)) s = JSON.parse(fs.readFileSync(`${ro
 app.setAppUserModelId("YOMP");
 function createWindow() {
 	preloader = new BrowserWindow({
-		transparent: true, frame: false, width: 250, height: 300, minWidth: 250, icon: "icon.png", webPreferences: { nodeIntegration: true }
+		show: true, transparent: true, frame: false, width: 250, height: 300, minWidth: 250, icon: "icon.png", webPreferences: { nodeIntegration: true }
 	});
 	preloader.loadFile('preloader.html');
 

@@ -76,7 +76,12 @@ function notify(title, body) {
 		if (title.toLocaleLowerCase().indexOf("error") > -1) icon = "assets/icons/notif-icon/i_error.png";
 		if (title.toLocaleLowerCase().indexOf("update") > -1) icon = "assets/icons/notif-icon/i_up.png";
 		if (body.length > 60) body = body.substring(0, 57) + "...";
-		new Notification(title, { silent: true, silent: true, body: body, icon: icon })
+		let noti = new Notification(title, { silent: true, silent: true, body: body, icon: icon });
+		if(title.toLocaleLowerCase().indexOf("update") > -1) {
+			noti.onclick = () => {
+				setsToggle();
+			}
+		}
 		// ipcRenderer.send("notification", {title: title, body: body})
 	}
 }
@@ -155,6 +160,7 @@ document.getElementById("search").onchange = function (e) {
 };
 
 function winowClose() {
+	if(document.getElementsByClassName('pl-current')[0]) db.set("status", [{dataId: parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('data-track'), 10), realId: parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('real-id'), 10)}]).write();
 	window.close();
 }
 
@@ -489,6 +495,16 @@ function start() {
 			});
 			volumeBar.style.height = audio.volume * 100 + '%';
 			volumeLength = volumeBar.css('height');
+			if(db.get("status").value() && db.get("status").value()[0].dataId && db.get("status").value()[0].realId) {
+				index = parseInt(document.querySelector(`.music-el[real-id='${db.get("status").value()[0].realId}']`).getAttribute("data-track"));
+				audio.src = playList[index].file;
+				audio.preload = 'auto';
+				trackTitle.innerHTML = playList[index].title;
+				ipc.send("rpc", {
+					status: "playing",
+					title: playList[index].title
+				});
+			}
 			audio.addEventListener('error', error, false);
 			audio.addEventListener('timeupdate', update, false);
 			audio.addEventListener('ended', doEnd, false);
@@ -833,6 +849,10 @@ function start() {
 			seeking = false;
 		}
 
+		function setIndex(value) {
+			idnex = value;
+		}
+
 		function setVolume(evt) {
 			volumeLength = volumeBar.css('height');
 			if (seeking && rightClick === false) {
@@ -925,6 +945,7 @@ function start() {
 			mute: volumeToggle,
 			volumeUp: volumeUp,
 			volumeDown: volumeDown,
+			setIndex: setIndex
 		};
 	})();
 
