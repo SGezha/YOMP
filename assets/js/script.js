@@ -41,22 +41,22 @@ ipcRenderer.on("update complete", (event, arg) => {
 function checkUpdate(auto) {
 	let ver = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString()).version;
 	axios.get(`https://4kc-version.glitch.me/yomp`)
-	.then(res => {
-		let r = res.data;
-		if(ver != r.ver && auto) {
-			notify("Update", `New ${r.ver} version available to download, check settings :3`);
-		}
-		if (ver == r.ver && !auto) {
-			notify("Update", `You use latest version :P`);
-		}
-		if (ver != r.ver && !auto) {
-			notify("Update", `New version ${r.ver} started to download c:`);
-			let osp = os.platform(),
+		.then(res => {
+			let r = res.data;
+			if (ver != r.ver && auto) {
+				notify("Update", `New ${r.ver} version available to download, check settings :3`);
+			}
+			if (ver == r.ver && !auto) {
+				notify("Update", `You use latest version :P`);
+			}
+			if (ver != r.ver && !auto) {
+				notify("Update", `New version ${r.ver} started to download c:`);
+				let osp = os.platform(),
 					arch = os.arch().split("x").join("");
-			if(osp.indexOf("win") > -1) osp = "win";
-			ipcRenderer.send("update", { url: r[osp + arch], properties: { directory: `${root}/cache`, filename: `update.exe` }});
-		}
-	})
+				if (osp.indexOf("win") > -1) osp = "win";
+				ipcRenderer.send("update", { url: r[osp + arch], properties: { directory: `${root}/cache`, filename: `update.exe` } });
+			}
+		})
 }
 
 function clearPl() {
@@ -286,7 +286,7 @@ function checkDir(ind, mas, dir) {
 			fs.readdir(`${dir}/${i}`, function (err, files) {
 				let obj = {};
 				obj.img = undefined;
-				if(files) {
+				if (files) {
 					files.forEach(f => {
 						if (f.indexOf(".osu") > -1) {
 							obj.title = f.split("[")[0];
@@ -534,7 +534,7 @@ function start() {
 				while (target.className !== pl.className) {
 					if (target.className === 'pl-remove' || target.className === 'pl-del' || target.className === 'right') {
 						db.get("music").remove({ id: parseInt(target.parentNode.getAttribute('real-id'), 10) }).write();
-						if(!isLoved) { refresh(); } else { openloved(); }
+						if (!isLoved) { refresh(); } else { openloved(); }
 						document.getElementById('pl').classList.remove('hide');
 						if (!audio.paused) {
 							if (isDel === index) {
