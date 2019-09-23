@@ -37,13 +37,9 @@
   },
   "dependencies": {
     "better-sqlite3-helper": "^2.1.1",
-    "child_process": "^1.0.2",
     "discord-rpc": "^3.0.2",
     "electron-dl": "^1.14.0",
-    "electron-drag": "^1.2.2",
     "jimp": "^0.8.1",
-    "lowdb": "^1.0.0",
-    "node-id3": "^0.1.11",
-    "register-scheme": "0.0.2"
+    "node-id3": "^0.1.11"
   }
 }

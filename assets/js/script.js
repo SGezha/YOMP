@@ -318,7 +318,7 @@ function checkDir(ind, mas, dir) {
 								})
 								checkDir(ind + 1, mas, dir);
 								return lenna
-									.quality(80)
+									.quality(50)
 									.cover(500, 60, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE)
 									.write(`${root}/images/${obj.title}.jpg`);
 							})
