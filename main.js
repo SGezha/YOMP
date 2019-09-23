@@ -4,6 +4,7 @@ const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc } = require
 	root = app.getPath('userData'),
 	DiscordRPC = require('discord-rpc'),
 	iconPath = path.join(__dirname, 'assets/icons/icon.png'),
+	db = require('better-sqlite3-helper'),
 	fs = require('fs'),
 	{ download } = require("electron-dl"),
 	rpc = new DiscordRPC.Client({ transport: 'ipc' }),
@@ -13,9 +14,20 @@ let mainWindow,
 	notiWindow,
 	preloader,
 	appIcon = null,
-	s = { key: { play: `ctrl+Space`, random: `ctrl+r`, love: `ctrl+l`, next: `ctrl+Right`, prev: `ctrl+Left`, focus: `ctrl+Up`, mini: `ctrl+Down`, volumeup: `ctrl+=`, volumedown: `ctrl+-`, mute: `ctrl+-` } };
+	s = { keyplay: `ctrl+Space`, keyrandom: `ctrl+r`, keylove: `ctrl+l`, keynext: `ctrl+Right`, keyprev: `ctrl+Left`, keyfocus: `ctrl+Up`, keymini: `ctrl+Down`, keyvolumeup: `ctrl+=`, keyvolumedown: `ctrl+-`, keymute: `ctrl+-` };
 
-if (fs.existsSync(`${root}/database.json`)) s = JSON.parse(fs.readFileSync(`${root}/database.json`).toString()).settings[0];
+if (fs.existsSync(`${root}/database.db`)) {
+	db({path: `${root}/database.db`, memory: false, readonly: false, fileMustExist: false, migrate: false});
+	s = db().query(`SELECT * from settings`)[0];
+	console.log(s)
+} else {
+	db({path: `${root}/database.db`, memory: false, readonly: false, fileMustExist: false, migrate: false});
+  db().run(`CREATE TABLE IF NOT EXISTS music(id INTEGER PRIMARY KEY, title VARCHAR(150), dir VARCHAR(150) , file VARCHAR(999) , icon VARCHAR(150) , full VARCHAR(150) , loved BOOLEAN , videoId VARCHAR(11));`);
+  db().run(`CREATE TABLE IF NOT EXISTS status(dataId INTEGER, realId INTEGER);`);
+  db().run(`CREATE TABLE IF NOT EXISTS settings( notiturn VARCHAR(5),notiloved VARCHAR(5) ,notiadd VARCHAR(5) ,keyplay VARCHAR(99) ,keyrandom VARCHAR(99) ,keylove VARCHAR(99) ,keynext VARCHAR(99) ,keyprev VARCHAR(99) ,keyfocus VARCHAR(99) ,keymini VARCHAR(99) ,keyvolumeup VARCHAR(99) ,keyvolumedown VARCHAR(99) ,keymute VARCHAR(99));`);
+	db().run(`INSERT INTO settings(notiturn,notiloved,notiadd,keyplay,keyrandom,keylove,keynext,keyprev,keyfocus,keymini,keyvolumeup,keyvolumedown,keymute) VALUES('false','false','false','ctrl+Space','ctrl+r','ctrl+l','ctrl+Right','ctrl+Left','ctrl+Up','ctrl+Down','ctrl+=','ctrl+-','ctrl+0');`);
+	db().run(`INSERT INTO status(dataId,realId) VALUES(0, 0);`);
+}
 
 app.setAppUserModelId("YOMP");
 function createWindow() {
@@ -57,16 +69,16 @@ function createWindow() {
 	});
 	appIcon.setContextMenu(contextMenu);
 
-	if (s.key.play != "") globalShortcut.register(s.key.play, () => { mainWindow.webContents.executeJavaScript(`AP.playToggle();`); });
-	if (s.key.next != "") globalShortcut.register(s.key.next, () => { mainWindow.webContents.executeJavaScript(`AP.next();`); });
-	if (s.key.volumedown != "") globalShortcut.register(s.key.volumedown, () => { mainWindow.webContents.executeJavaScript(`AP.volumeDown()`); });
-	if (s.key.volumeup != "") globalShortcut.register(s.key.volumeup, () => { mainWindow.webContents.executeJavaScript(`AP.volumeUp()`); });
-	if (s.key.random != "") globalShortcut.register(s.key.random, () => { mainWindow.webContents.executeJavaScript(`AP.random();`); });
-	if (s.key.mute != "") globalShortcut.register(s.key.mute, () => { mainWindow.webContents.executeJavaScript(`AP.mute();`); });
-	if (s.key.prev != "") globalShortcut.register(s.key.love, () => { mainWindow.webContents.executeJavaScript(`lovethis();`); });
-	if (s.key.prev != "") globalShortcut.register(s.key.prev, () => { mainWindow.webContents.executeJavaScript(`AP.prev();`); });
-	if (s.key.mini != "") globalShortcut.register(s.key.mini, () => { mainWindow.show(); mainWindow.webContents.executeJavaScript('miniPlayer();'); });
-	if (s.key.focus != "") globalShortcut.register(s.key.focus, () => { mainWindow.show(); mainWindow.webContents.executeJavaScript(`miniPlayerOff();`); });
+	if (s.keyplay != "") globalShortcut.register(s.keyplay, () => { mainWindow.webContents.executeJavaScript(`AP.playToggle();`); });
+	if (s.keynext != "") globalShortcut.register(s.keynext, () => { mainWindow.webContents.executeJavaScript(`AP.next();`); });
+	if (s.keyvolumedown != "") globalShortcut.register(s.keyvolumedown, () => { mainWindow.webContents.executeJavaScript(`AP.volumeDown()`); });
+	if (s.keyvolumeup != "") globalShortcut.register(s.keyvolumeup, () => { mainWindow.webContents.executeJavaScript(`AP.volumeUp()`); });
+	if (s.keyrandom != "") globalShortcut.register(s.keyrandom, () => { mainWindow.webContents.executeJavaScript(`AP.random();`); });
+	if (s.keymute != "") globalShortcut.register(s.keymute, () => { mainWindow.webContents.executeJavaScript(`AP.mute();`); });
+	if (s.keylove != "") globalShortcut.register(s.keylove, () => { mainWindow.webContents.executeJavaScript(`lovethis();`); });
+	if (s.keyprev != "") globalShortcut.register(s.keyprev, () => { mainWindow.webContents.executeJavaScript(`AP.prev();`); });
+	if (s.keymini != "") globalShortcut.register(s.keymini, () => { mainWindow.show(); mainWindow.webContents.executeJavaScript('miniPlayer();'); });
+	if (s.keyfocus != "") globalShortcut.register(s.keyfocus, () => { mainWindow.show(); mainWindow.webContents.executeJavaScript(`miniPlayerOff();`); });
 }
 app.on('ready', createWindow);
 

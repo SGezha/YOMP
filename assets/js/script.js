@@ -1,9 +1,7 @@
 const fs = require("fs");
 let root = require('electron').remote.app.getPath('userData').split("\\").join("/");
-if (!fs.existsSync(`${root}/database.json`)) fs.writeFileSync(`${root}/database.json`, '{"music":[{"id": 0,"title": "AKINO with bless4 - cross the line","file": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.mp3","icon": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.jpg","loved": false}], "settings": [{"noti": {"turn": false, "loved": false, "add": false}, "key": { "play": "ctrl+Space", "random": "ctrl+r", "love": "ctrl+l", "next": "ctrl+Right", "prev": "ctrl+Left", "focus": "ctrl+Up", "mini": "ctrl+Down", "volumeup": "ctrl+=", "volumedown": "ctrl+-", "mute": "ctrl+0"}}]}');
 if (!fs.existsSync(`${root}/images`)) {
 	fs.mkdirSync(`${root}/images`);
-	fs.writeFileSync(`${root}/images/cache.json`, '{"data":[]}');
 }
 if (!fs.existsSync(`${root}/full`)) fs.mkdirSync(`${root}/full`);
 
@@ -12,10 +10,13 @@ const { shell, remote, ipcRenderer: ipc } = require('electron'),
 	lowdb = require('lowdb'),
 	FileSync = require('lowdb/adapters/FileSync'),
 	db = lowdb(new FileSync(`${root}/database.json`)),
+	sdb = require('better-sqlite3-helper'),
 	cache = lowdb(new FileSync(`${root}/images/cache.json`)),
 	NodeID3 = require('node-id3'),
 	Jimp = require('jimp'),
 	os = require('os');
+
+sdb({path: `${root}/database.db`, memory: false, readonly: false, fileMustExist: false, migrate: false});
 
 let musicSelectedId = 0,
 	isLoaded = false,
@@ -60,16 +61,16 @@ function checkUpdate(auto) {
 }
 
 function clearPl() {
-	cache.set("data", []).write();
-	db.set("music", [{ "id": 0, "title": "AKINO with bless4 - cross the line", "file": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.mp3", "icon": "http://osuck.net/AKINO%20with%20bless4%20-%20cross%20the%20line%20.jpg", "loved": false }]).write();
+	sdb().run("DROP TABLE music");
+	sdb().run(`CREATE TABLE IF NOT EXISTS music(id INTEGER PRIMARY KEY, title VARCHAR(150), dir VARCHAR(150) , file VARCHAR(999) , icon VARCHAR(150) , full VARCHAR(150) , loved BOOLEAN , videoId VARCHAR(11));`);
 	refresh();
 }
 
 function notify(title, body) {
-	if (!db.get("settings").value()[0].noti.turn) {
+	if (sdb().query("SELECT * from settings")[0].notiturn == "false") {
 		let icon = "assets/icons/icon.png";
-		if (db.get("settings").value()[0].noti.loved && title.toLocaleLowerCase().indexOf("loved") > -1) return;
-		if (db.get("settings").value()[0].noti.add && title.toLocaleLowerCase().indexOf("success") > -1) return;
+		if (sdb().query("SELECT * from settings")[0].notiloved == "false" && title.toLocaleLowerCase().indexOf("loved") > -1) return;
+		if (sdb().query("SELECT * from settings")[0].notiadd == "false" && title.toLocaleLowerCase().indexOf("success") > -1) return;
 		if (title.toLocaleLowerCase().indexOf("loved") > -1) icon = "assets/icons/notif-icon/i_loved.png";
 		if (title.toLocaleLowerCase().indexOf("now") > -1) icon = "assets/icons/notif-icon/i_np.png";
 		if (title.toLocaleLowerCase().indexOf("success") > -1) icon = "assets/icons/notif-icon/i_add.png";
@@ -87,10 +88,9 @@ function notify(title, body) {
 }
 
 function setsSave() {
-	db.set('settings', [{
-		noti: { turn: document.getElementById('noti-turn').checked, loved: document.getElementById('noti-loved').checked, add: document.getElementById('noti-youtube').checked },
-		key: { play: document.getElementById('key-toggle').value, random: document.getElementById('key-random').value, love: document.getElementById('key-love').value, next: document.getElementById('key-next').value, prev: document.getElementById('key-prev').value, focus: document.getElementById('key-minioff').value, mini: document.getElementById('key-mini').value, volumeup: document.getElementById('key-volup').value, volumedown: document.getElementById('key-voldown').value, mute: document.getElementById('key-mute').value }
-	}]).write();
+	sdb().run("DROP TABLE settings");
+  sdb().run(`CREATE TABLE IF NOT EXISTS settings( notiturn VARCHAR(5),notiloved VARCHAR(5) ,notiadd VARCHAR(5) ,keyplay VARCHAR(99) ,keyrandom VARCHAR(99) ,keylove VARCHAR(99) ,keynext VARCHAR(99) ,keyprev VARCHAR(99) ,keyfocus VARCHAR(99) ,keymini VARCHAR(99) ,keyvolumeup VARCHAR(99) ,keyvolumedown VARCHAR(99) ,keymute VARCHAR(99));`);
+	sdb().run(`INSERT INTO settings(notiturn,notiloved,notiadd,keyplay,keyrandom,keylove,keynext,keyprev,keyfocus,keymini,keyvolumeup,keyvolumedown,keymute) VALUES('${document.getElementById('noti-turn').checked}','${document.getElementById('noti-loved').checked}','${document.getElementById('noti-youtube').checked}','${document.getElementById('key-toggle').value}','${document.getElementById('key-random').value}','${document.getElementById('key-love').value}','${document.getElementById('key-next').value}','${document.getElementById('key-prev').value}','${document.getElementById('key-minioff').value}','${document.getElementById('key-mini').value}','${document.getElementById('key-volup').value}','${document.getElementById('key-voldown').value}','${document.getElementById('key-mute').value}');`);
 	remote.app.relaunch();
 	remote.app.exit();
 }
@@ -125,10 +125,10 @@ document.getElementById("search").onchange = function (e) {
 	if (document.getElementById('pl').classList.length == 2) {
 		app.search();
 	} else {
-		let base = db.get("music").value();
+		let base = sdb().query("SELECT * from music");
 		if (isLoved) {
 			base = [];
-			db.get("music").value().forEach(m => {
+			sdb().query("SELECT * from music").forEach(m => {
 				if (m.loved == true) base.push(m);
 			})
 		}
@@ -160,12 +160,12 @@ document.getElementById("search").onchange = function (e) {
 };
 
 function winowClose() {
-	if(document.getElementsByClassName('pl-current')[0]) db.set("status", [{dataId: parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('data-track'), 10), realId: parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('real-id'), 10)}]).write();
+	if(document.getElementsByClassName('pl-current')[0]) sdb().run(`UPDATE status set dataId='${parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('data-track'), 10)}', realid='${parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('real-id'), 10)}'`);
 	window.close();
 }
 
 function fixmusic() {
-	var masMusic = db.get("music").value();
+	var masMusic = sdb().query("SELECT * from music");
 	masMusic.forEach((m) => {
 		if (m.videoId == undefined) return;
 		$.get("https://images" + ~~(Math.random() * 33) + "-focus-opensocial.googleusercontent.com/gadgets/proxy?container=none&url=https%3A%2F%2Fwww.youtube.com%2Fget_video_info%3Fvideo_id%3D" + m.videoId, function (data) {
@@ -188,9 +188,7 @@ function fixmusic() {
 						break;
 				}
 				if (quality) {
-					db.get("music").find({ videoId: m.videoId }).assign({
-						file: stream.url
-					}).write();
+					sdb().run(`UPDATE music SET file='${stream.url}' WHERE videoId='${m.videoId}';`);
 				}
 			});
 		});
@@ -213,20 +211,23 @@ function maxsize() {
 
 
 function random() {
-	var mas = shuffle(db.get("music").value());
+	var mas = shuffle(sdb().query("SELECT * from music"));
 	let result = [];
-	db.set('music', []).write();
+	sdb().run("DROP TABLE music");
+	sdb().run(`CREATE TABLE IF NOT EXISTS music(id INTEGER PRIMARY KEY, title VARCHAR(150), dir VARCHAR(150) , file VARCHAR(999) , icon VARCHAR(150) , full VARCHAR(150) , loved BOOLEAN , videoId VARCHAR(11));`);
 	mas.forEach((m, ind) => {
 		let obj = {
 			id: ind,
 			title: m.title,
 			icon: m.icon,
-			videoId: m.videoId,
 			file: m.file
 		}
-		result.push(m);
+		if(m.div != null) obj.dir = m.dir;
+		if(m.videoId != null) obj.videoId = m.videoId;
+		if(m.full != null) obj.full = m.full;
+		result.push(obj);
 	});
-	db.set('music', result).write();
+	sdb().insert('music', result)
 	loaded = 0;
 	refresh();
 
@@ -247,27 +248,19 @@ async function addMusicFolder() {
 			setTimeout(() => {
 				if (ind + 1 == items.length) loadMusic();
 				if (i.toLocaleLowerCase().indexOf(".mp3") > -1) {
-					if (db.get("music").find({ file: `${dir.filePaths[0]}/${i}` }).value() == undefined) {
-						var id = 0;
+					if (sdb().query(`SELECT * from music where file='${dir.filePaths[0]}/${i}'`).length == 0) {
 						let metadata = NodeID3.read(`${dir.filePaths[0]}/${i}`);
-						let img = undefined;
-						let title = i.toLocaleLowerCase().split(".mp3");
-						if (metadata.title != undefined && metadata.artist != undefined) title = `${metadata.artist} - ${metadata.title}`;
-						if (db.get("music").value().length != undefined) {
-							id = db.get("music").value().length;
-						}
+						let obj = {};
+						obj.title = i.toLocaleLowerCase().split(".mp3");
+						obj.file = `${dir.filePaths[0]}/${i}`;
+						obj.loved = "false";
+						if (metadata.title != undefined && metadata.artist != undefined) obj.title = `${metadata.artist} - ${metadata.title}`;
 						if (metadata.image != undefined && metadata.image.imageBuffer != undefined) {
-							fs.writeFileSync(`${root}/images/${title}.jpg`, metadata.image.imageBuffer, 'binary');
-							img = encodeURI(`${root}/images/${title}.jpg`);
+							fs.writeFileSync(`${root}/images/${obj.title}.jpg`, metadata.image.imageBuffer, 'binary');
+							obj.icon = encodeURI(`${root}/images/${obj.title}.jpg`);
 						}
-						db.get("music").push({
-							id: id,
-							title: title,
-							icon: img,
-							file: `${dir.filePaths[0]}/${i}`,
-							loved: false
-						}).write();
-						document.getElementById("load-progress").innerHTML = `<div class="textload">${title}</div> <span> ${ind + 1}/${items.length}</span>`;
+						sdb().insert('music', obj);
+						document.getElementById("load-progress").innerHTML = `<div class="textload">${obj.title}</div> <span> ${ind + 1}/${items.length}</span>`;
 					}
 				}
 			}, 500 * ind)
@@ -285,9 +278,10 @@ async function addosu() {
 
 function checkDir(ind, mas, dir) {
 	let i = mas[ind];
+	i = i.split("~").join("").split("'").join("");
+	console.log(i);
 	if (ind + 1 == mas.length) return loadMusic();
-	if (cache.get("data").find({ id: `${dir}/${i}` }).value() == undefined) {
-		cache.get("data").push({ id: `${dir}/${i}` }).write();
+	if (sdb().query(`SELECT * from music where dir='${dir}/${i}'`).length == 0) {
 		if (i.indexOf(".") == -1) {
 			fs.readdir(`${dir}/${i}`, function (err, files) {
 				let obj = {};
@@ -309,27 +303,19 @@ function checkDir(ind, mas, dir) {
 						Jimp.read(obj.img)
 							.then(lenna => {
 								document.getElementById("load-progress").innerHTML = `<div class="textload">${obj.title}</div> <span> ${ind + 1}/${mas.length}</span>`;
-								if (db.get("music").find({ file: obj.file }).value() == undefined) {
-									var id = 0;
-									if (db.get("music").value().length != undefined) {
-										id = db.get("music").value().length;
-									}
-									db.get("music").push({
-										id: id,
-										title: obj.title,
-										file: `${obj.file}`,
-										icon: `${root}/images/${obj.title}.jpg`,
-										full: obj.img,
-										loved: false
-									}).write();
-									checkDir(ind + 1, mas, dir);
-									return lenna
-										.quality(80)
-										.cover(500, 60, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE)
-										.write(`${root}/images/${obj.title}.jpg`);
-								} else {
-									checkDir(ind + 1, mas, dir);
-								}
+								sdb().insert('music', {
+									title: obj.title,
+									icon: `${root}/images/${obj.title}.jpg`,
+									file: `${obj.file}`,
+									dir: `${dir}/${i}`,
+									full: obj.img,
+									loved: "false"
+								})
+								checkDir(ind + 1, mas, dir);
+								return lenna
+									.quality(80)
+									.cover(500, 60, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE)
+									.write(`${root}/images/${obj.title}.jpg`);
 							})
 							.catch(err => {
 								console.error(err);
@@ -351,7 +337,7 @@ function checkDir(ind, mas, dir) {
 async function exportLoved() {
 	let dir = await remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
 	let exportLoved = [];
-	db.get("music").value().forEach(m => {
+	sdb().query("SELECT * from music").forEach(m => {
 		if (m.loved) exportLoved.push(m);
 	});
 	if(dir.filePaths[0]) {
@@ -364,7 +350,7 @@ async function exportAll() {
 	let dir = await remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
 	if(dir.filePaths[0]) {
 		loadMusic();
-		exportProces(0, db.get("music").value(), dir);
+		exportProces(0, sdb().query("SELECT * from music"), dir);
 	}
 }
 
@@ -495,8 +481,8 @@ function start() {
 			});
 			volumeBar.style.height = audio.volume * 100 + '%';
 			volumeLength = volumeBar.css('height');
-			if(db.get("status").value() && db.get("status").value()[0].dataId && db.get("status").value()[0].realId) {
-				index = parseInt(document.querySelector(`.music-el[real-id='${db.get("status").value()[0].realId}']`).getAttribute("data-track"));
+			if(sdb().query("SELECT * from status")[0].dataId != 0 && sdb().query("SELECT * from status")[0].realId != 0) {
+				index = parseInt(document.querySelector(`.music-el[real-id='${sdb().query("SELECT * from status")[0].realId}']`).getAttribute("data-track"));
 				audio.src = playList[index].file;
 				audio.preload = 'auto';
 				trackTitle.innerHTML = playList[index].title;
@@ -519,7 +505,7 @@ function start() {
 			var html = [];
 			playList.forEach(function (item, i) {
 				let fav = `<i onclick="love(${item.id}, this);" class="fas fa-heart owo"></i>`;
-				if (db.get("music").find({ title: item.title }).value().loved == true) fav = `<i onclick="love(${item.id}, this);" class="fas fa-heart owo fav"></i>`;
+				if (item.loved == true) fav = `<i onclick="love(${item.id}, this);" class="fas fa-heart owo fav"></i>`;
 				let type = '<svg fill="#fff" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M0 0h24v24H0z" fill="none"/>' + '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>' + '</svg>';
 				if (item.file.indexOf("osu") > -1) type = `<img class="pl-img" src="assets/icons/osu.svg">`;
 				if (item.videoId != undefined) type = `<i class="fab fa-youtube"></i>`;
@@ -553,8 +539,9 @@ function start() {
 				if (target.className === 'fas fa-heart owo' || target.className === 'fas fa-heart owo fav' || target.className == 'right') return;
 				while (target.className !== pl.className) {
 					if (target.className === 'pl-remove' || target.className === 'pl-del' || target.className === 'right') {
-						db.get("music").remove({ id: parseInt(target.parentNode.getAttribute('real-id'), 10) }).write();
-						if (!isLoved) { refresh(); } else { openloved(); }
+						sdb().run(`DELETE from music where id=${parseInt(target.parentNode.getAttribute('real-id'), 10)}`);
+						if (!isLoved) { refresh(); } else { openloved(); };
+						let isDel = parseInt(target.parentNode.getAttribute('data-track'), 10);
 						document.getElementById('pl').classList.remove('hide');
 						if (!audio.paused) {
 							if (isDel === index) {
@@ -636,7 +623,7 @@ function start() {
 		}
 
 		function random() {
-			index = getRandomInt(0, db.get("music").value().length);
+			index = getRandomInt(0, sdb().query("SELECT * from music").length);
 			if (mini == true && ping > 1) {
 				document.getElementById('hide-progres').style.width = `100%`;
 				ping = 5;
@@ -971,7 +958,7 @@ document.getElementsByClassName("container")[0].onscroll = function () {
 
 function refresh() {
 	AP.init({
-		playList: db.get("music").value()
+		playList: sdb().query("SELECT * from music")
 	});
 
 	loaded = 0;
@@ -982,7 +969,7 @@ function refresh() {
 }
 
 function youtube(vid, title, icon) {
-	if (db.get("music").find({ videoId: vid }).value() != undefined) return notify('Error', 'Song already in playlist :3');
+	if (sdb().query(`SELECT * from music where videoId='${vid}'`).length > 0) return notify('Error', 'Song already in playlist :3');
 	$.get("https://images" + ~~(Math.random() * 33) + "-focus-opensocial.googleusercontent.com/gadgets/proxy?container=none&url=https%3A%2F%2Fwww.youtube.com%2Fget_video_info%3Fvideo_id%3D" + vid, function (data) {
 		if (data.indexOf("errorcode=150") > -1) return notify('Error', 'Copyright');
 		var data = parse_str(data),
@@ -1004,27 +991,21 @@ function youtube(vid, title, icon) {
 					break;
 			}
 			if (quality) {
-				var id = 0;
-				if (db.get("music").value().length != undefined) {
-					id = db.get("music").value().length;
-				}
-				db.get("music").push({
-					id: id,
-					icon: icon,
-					title: title,
-					file: stream.url,
-					videoId: vid,
-					loved: false
-				}).write();
 				let succses = true;
 				axios.get(stream.url).catch(er => {
 					succses = false;
 					notify('Error', `${title} cant find mp3 file :c`);
-					db.get("music").remove({ id: id }).write();
 				})
 				setTimeout(() => {
 					if (succses) {
 						notify('Success', `${title} added to playlist :3`);
+						sdb().insert('music', {
+							title: title,
+							icon: icon,
+							file: stream.url,
+							videoId: vid,
+							loved: "false"
+						})
 					}
 				}, 1000)
 			}
@@ -1119,16 +1100,17 @@ function miniPlayerOff() {
 }
 
 function love(id, el) {
-	let track = db.get("music").find({ id: id }).value();
+	let track = sdb().query(`SELECT * from music where id=${id}`)[0];
+	console.log(track);
 	if (track.loved == true) {
-		db.get("music").find({ id: id }).assign({ loved: false }).write();
+		sdb().run(`UPDATE music SET loved=false WHERE id=${id};`);
 		el.classList.remove("fav");
 		notify('Removed from loved :c', `${track.title}`);
 		if (isLoved == true) openloved();
 	} else {
 		notify('Added to loved :3', `${track.title}`);
 		el.classList.add("fav");
-		db.get("music").find({ id: id }).assign({ loved: true }).write();
+		sdb().run(`UPDATE music SET loved=true WHERE id=${id};`);
 	}
 }
 
@@ -1181,7 +1163,7 @@ function openloved() {
 	isLoved = true;
 	let lovedMas = [];
 
-	db.get("music").value().forEach(l => {
+	sdb().query("SELECT * from music").forEach(l => {
 		if (l.loved == true) lovedMas.push(l);
 	})
 
@@ -1199,29 +1181,29 @@ function openloved() {
 
 function loadSettings() {
 	//settings
-	if (db.get("settings").value()[0].noti.turn) document.getElementById('noti-turn').checked = true;
-	if (db.get("settings").value()[0].noti.loved) document.getElementById('noti-loved').checked = true;
-	if (db.get("settings").value()[0].noti.add) document.getElementById('noti-youtube').checked = true;
-	if (db.get("settings").value()[0].key.play == "") document.getElementsByClassName('check-key-input')[0].checked = true;
-	if (db.get("settings").value()[0].key.next == "") document.getElementsByClassName('check-key-input')[1].checked = true;
-	if (db.get("settings").value()[0].key.prev == "") document.getElementsByClassName('check-key-input')[2].checked = true;
-	if (db.get("settings").value()[0].key.random == "") document.getElementsByClassName('check-key-input')[3].checked = true;
-	if (db.get("settings").value()[0].key.volumeup == "") document.getElementsByClassName('check-key-input')[4].checked = true;
-	if (db.get("settings").value()[0].key.volumedown == "") document.getElementsByClassName('check-key-input')[5].checked = true;
-	if (db.get("settings").value()[0].key.mute == "") document.getElementsByClassName('check-key-input')[6].checked = true;
-	if (db.get("settings").value()[0].key.love == "") document.getElementsByClassName('check-key-input')[7].checked = true;
-	if (db.get("settings").value()[0].key.mini == "") document.getElementsByClassName('check-key-input')[8].checked = true;
-	if (db.get("settings").value()[0].key.focus == "") document.getElementsByClassName('check-key-input')[9].checked = true;
-	document.getElementById('key-toggle').value = db.get("settings").value()[0].key.play;
-	document.getElementById('key-next').value = db.get("settings").value()[0].key.next;
-	document.getElementById('key-prev').value = db.get("settings").value()[0].key.prev;
-	document.getElementById('key-random').value = db.get("settings").value()[0].key.random;
-	document.getElementById('key-volup').value = db.get("settings").value()[0].key.volumeup;
-	document.getElementById('key-voldown').value = db.get("settings").value()[0].key.volumedown;
-	document.getElementById('key-mute').value = db.get("settings").value()[0].key.mute;
-	document.getElementById('key-love').value = db.get("settings").value()[0].key.love;
-	document.getElementById('key-mini').value = db.get("settings").value()[0].key.mini;
-	document.getElementById('key-minioff').value = db.get("settings").value()[0].key.focus;
+	if (sdb().query("select * from settings")[0].notiturn == "true") document.getElementById('noti-turn').checked = true;
+	if (sdb().query("select * from settings")[0].notiloved == "true") document.getElementById('noti-loved').checked = true;
+	if (sdb().query("select * from settings")[0].notiadd == "true") document.getElementById('noti-youtube').checked = true;
+	if (sdb().query("select * from settings")[0].keyplay == "") document.getElementsByClassName('check-key-input')[0].checked = true;
+	if (sdb().query("select * from settings")[0].keynext == "") document.getElementsByClassName('check-key-input')[1].checked = true;
+	if (sdb().query("select * from settings")[0].keyprev == "") document.getElementsByClassName('check-key-input')[2].checked = true;
+	if (sdb().query("select * from settings")[0].keyrandom == "") document.getElementsByClassName('check-key-input')[3].checked = true;
+	if (sdb().query("select * from settings")[0].keyvolumeup == "") document.getElementsByClassName('check-key-input')[4].checked = true;
+	if (sdb().query("select * from settings")[0].keyvolumedown == "") document.getElementsByClassName('check-key-input')[5].checked = true;
+	if (sdb().query("select * from settings")[0].keymute == "") document.getElementsByClassName('check-key-input')[6].checked = true;
+	if (sdb().query("select * from settings")[0].keylove == "") document.getElementsByClassName('check-key-input')[7].checked = true;
+	if (sdb().query("select * from settings")[0].keymini == "") document.getElementsByClassName('check-key-input')[8].checked = true;
+	if (sdb().query("select * from settings")[0].keyfocus == "") document.getElementsByClassName('check-key-input')[9].checked = true;
+	document.getElementById('key-toggle').value = sdb().query("select * from settings")[0].keyplay;
+	document.getElementById('key-next').value = sdb().query("select * from settings")[0].keynext;
+	document.getElementById('key-prev').value = sdb().query("select * from settings")[0].keyprev;
+	document.getElementById('key-random').value = sdb().query("select * from settings")[0].keyrandom;
+	document.getElementById('key-volup').value = sdb().query("select * from settings")[0].keyvolumeup;
+	document.getElementById('key-voldown').value = sdb().query("select * from settings")[0].keyvolumedown;
+	document.getElementById('key-mute').value = sdb().query("select * from settings")[0].keymute;
+	document.getElementById('key-love').value = sdb().query("select * from settings")[0].keylove;
+	document.getElementById('key-mini').value = sdb().query("select * from settings")[0].keymini;
+	document.getElementById('key-minioff').value = sdb().query("select * from settings")[0].keyfocus;
 }
 
 $(document).on('click', 'a[href^="http"]', function(event) {

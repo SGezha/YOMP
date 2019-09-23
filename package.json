@@ -32,9 +32,11 @@
   },
   "devDependencies": {
     "electron": "^6.0.10",
-    "electron-builder": "^20.44.4"
+    "electron-builder": "^20.44.4",
+    "electron-rebuild": "^1.8.6"
   },
   "dependencies": {
+    "better-sqlite3-helper": "^2.1.1",
     "child_process": "^1.0.2",
     "discord-rpc": "^3.0.2",
     "electron-dl": "^1.14.0",
