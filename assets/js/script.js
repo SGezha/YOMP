@@ -890,10 +890,10 @@ ipcRenderer.on("ytcomplete", (event, arg) => {
 	ytQuery = ytQuery.filter(y => y !== arg.title);
 	if (ytQuery.length > 0) { document.getElementById("yt").innerHTML = `YouTube <i class="fas fa-download"></i> ${ytQuery.length}`; } else { document.getElementById("yt").innerHTML = `YouTube`; };
 	axios.get(arg.icon, { responseType: 'arraybuffer' }).then(response => {
-		fs.writeFileSync(`${root}/images/${arg.vid}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), Buffer.from(response.data, 'base64'));
+		fs.writeFileSync(`${root}/images/${arg.title}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), Buffer.from(response.data, 'base64'));
 		db().insert('music', {
 			title: arg.title,
-			icon: `${root}/images/${arg.vid}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""),
+			icon: `${root}/images/${arg.title}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""),
 			file: arg.file.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""),
 			videoId: arg.vid,
 			loved: "false"
@@ -901,6 +901,7 @@ ipcRenderer.on("ytcomplete", (event, arg) => {
 		notify("YouTube", `Download ${arg.title} complete :3`, true);
 	}).catch(er => { checkDir(ind + 1, mas, dir); })
 });
+
 
 ipcRenderer.on("yterror", (event, arg) => {
 	ytQuery = ytQuery.filter(y => y !== arg.title);
