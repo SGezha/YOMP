@@ -1,8 +1,3 @@
----
-
-
----
-
 <h2 id="yomp-youtube--osu-music-player">YOMP (YouTube &amp; osu! Music Player)</h2>
 <p><img src="https://puu.sh/EkVK5.png" alt="icon">Simple music player with the ability to listen to music from <strong>YouTube</strong>, <strong>osu!</strong> and <strong>local</strong>.</p>
 <h2 id="features">Features:</h2>
