@@ -1,3 +1,5 @@
 /dist
 /node_modules
+/node_modules_bak
+.vscode
 package-lock.json

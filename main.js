@@ -19,7 +19,6 @@ let mainWindow,
 if (fs.existsSync(`${root}/database.db`)) {
 	db({path: `${root}/database.db`, memory: false, readonly: false, fileMustExist: false, migrate: false});
 	s = db().query(`SELECT * from settings`)[0];
-	console.log(s)
 } else {
 	db({path: `${root}/database.db`, memory: false, readonly: false, fileMustExist: false, migrate: false});
   db().run(`CREATE TABLE IF NOT EXISTS music(id INTEGER PRIMARY KEY, title VARCHAR(150), dir VARCHAR(150) , file VARCHAR(999) , icon VARCHAR(150) , full VARCHAR(150) , loved BOOLEAN , videoId VARCHAR(11));`);
@@ -32,12 +31,12 @@ if (fs.existsSync(`${root}/database.db`)) {
 app.setAppUserModelId("YOMP");
 function createWindow() {
 	preloader = new BrowserWindow({
-		show: true, transparent: true, frame: false, width: 250, height: 300, minWidth: 250, icon: "icon.png", webPreferences: { nodeIntegration: true }
+		show: true, backgroundColor: "#1b1b1b", frame: false, width: 250, height: 300, minWidth: 250, icon: "icon.png"
 	});
 	preloader.loadFile('preloader.html');
 
 	mainWindow = new BrowserWindow({
-		show: false, frame: false, width: 1000, height: 700, minWidth: 500, icon: "icon.png", webPreferences: { nodeIntegration: true }
+		show: false, backgroundColor: "#1b1b1b", frame: false, width: 1000, height: 700, minWidth: 500, icon: "icon.png", webPreferences: { nodeIntegration: true }
 	});
 	mainWindow.loadFile('index.html');
 	mainWindow.on('closed', function () {
@@ -98,12 +97,17 @@ app.on('activate', function () {
 	}
 });
 
-
-ipcMain.on("download", (event, arg) => {
+ipcMain.on("youtube", (event, arg, obj) => {
+	arg.properties.onProgress = function(s) {
+		console.log(s);
+	}
 	download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)
-		.then(dl => {
-			mainWindow.webContents.send("download complete", { id: arg.id, mas: arg.mas, dir: arg.dir })
-		});
+	.then(dl => {
+		mainWindow.webContents.send("ytcomplete", arg.obj);
+	})
+	.catch(er => {
+		mainWindow.webContents.send("yterror", arg.obj);
+	})
 });
 
 ipcMain.on("update", (event, arg) => {
