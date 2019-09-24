@@ -1,399 +1,397 @@
 <!DOCTYPE html>
 <html>
-    
-    <head>
-        <title>YOMP</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <link rel="stylesheet" href="assets/icons/fontawsome/css/all.min.css">
-        <link rel="stylesheet" href="assets/css/mda.css">
-        <link rel="stylesheet" href="assets/css/reset.css">
-        <script src="assets/js/vue.js"></script>
-        <script src="assets/js/axios.js"></script>
-    </head>
-    
-    <body>
-        <div id="yomp">
-            <div class="main">
-                <div class="top">
-                    <div class="title-text"><img class="loged" src="assets/icons/head.png"> Music Player</div>
-                    <div class="title-controls">
-                        <button onclick="hidetray()" class="ui-btn minimize"><svg x="0px" y="0px" viewBox="0 0 10.2 1"><rect fill="var(--text)" x="0" y="50%" width="10.2" height="1" /></svg></button>
-                        <button onclick="maxsize()" class="ui-btn maximize"><i style="color: var(--text);" class="far fa-square"></i></button>
-                        <button onclick="winowClose()" class="ui-btn close"><svg viewBox="0 0 10 10"><polygon fill="var(--text)" points="10.2,0.7 9.5,0 5.1,4.4 0.7,0 0,0.7 4.4,5.1 0,9.5 0.7,10.2 5.1,5.8 9.5,10.2 10.2,9.5 5.8,5.1" /></svg></button>
-                    </div>
-                </div>
-                <div class="center">
-                    <div class="mini-field">
-                        <div class="menu-icon"><i onclick="openMenu()" class="fas fa-bars"></i></div>
-                        <div class="search">
-                            <div class="asd">
-                                <input id="search" class="search" type="text" placeholder="Search">
-                                <i @click="search()" class="fas fa-search"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="container">
-                        <img class="loader-xd" src="assets/icons/loader.gif" id="loader" style="display:none;">
-                        <div class="menu-left">
-                            <div class="menu">
-                                <div class="links" style="height:100vh;">
-                                    <ul class="links-block">
-                                        <li class="ap-playlist-btn liactiver">
-                                            <a onclick="refresh(); document.getElementById(`app`).style.display = 'none';" href="#">
-                                                <svg class="btn-menu" fill="var(--text)" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none" /><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" /></svg>
-                                                <span>Playlist</span>
-                                            </a>
-                                        </li>
-                                        <li class="liactiver">
-                                            <a onclick="openloved(); document.getElementById(`app`).style.display = 'none';" href="#">
-                                                <i class="fas fa-heart"></i>
-                                                <span>Loved</span>
-                                            </a>
-                                        </li>
-                                        <li class="cat"></li>
-                                        <li class="liactiver">
-                                            <a onclick="searchbtn()" href="#">
-                                                <i class="fab fa-youtube"></i>
-                                                <span id="yt">YouTube</span>
-                                            </a>
-                                        </li>
-                                        <li class="liactiver">
-                                            <a onclick="addosu()" href="#">
-                                                <img class="osu" src="assets/icons/osu.svg" />
-                                                <span id="osu">Import osu! songs</span>
-                                            </a>
-                                        </li>
-                                        <li class="liactiver">
-                                            <a onclick="addMusicFolder()" href="#">
-                                                <i class="far fa-plus-square"></i>
-                                                <span>Import Folder</span>
-                                            </a>
-                                        </li>
-                                        <li class="cat"></li>
-                                        <li class="liactiver">
-                                            <a onclick="infoToggle()" href="#">
-                                                <i class="fas fa-info-circle"></i>
-                                                <span>Info</span>
-                                            </a>
-                                        </li>
-                                        <li class="liactiver">
-                                            <a onclick="setsToggle()" href="#">
-                                                <i class="fas fa-cogs"></i>
-                                                <span>Settings</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div onclick="openMenu()" class="shadow"></div>
-                        </div>
-                        <div id="app">
-                            <div class="video-pl">
-                                <template v-for="m in music">
-                                    <div @click="youtube(m.id.videoId, m.snippet.title, m.snippet.thumbnails.high.url)" class="video">
-                                        <div class="cssucks">
-                                            <div class="left">
-                                                <img src="assets/icons/playlist.png" class="pizdec">
-                                                <img src="assets/icons/youtube.png" class="plpizdec">
-                                            </div>
-                                            <div class="center">
-                                                <h3>{{ m.snippet.title }}</h3>
-                                            </div>
-                                            <div class="bgg" :style="{ background: 'url(' + m.snippet.thumbnails.medium.url + ')', backgroundPosition: 'center', backgroundSize: 'cover' }"></div>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bottom">
-                    <div id="hide-progres"></div>
-                    <div class="ap" id="ap">
-                        <div class="ap-inner">
-                            <div class="ap-panel">
-                                <div class="ap-item ap--playback">
-                                    <button class="ap-controls ap-prev-btn"><i class="fas fa-step-backward"></i></button>
-                                    <button class="ap-controls ap-toggle-btn">
-                                        <i class="fas fa-play ap--play"></i>
-                                        <i class="fas fa-pause ap--pause"></i>
-                                    </button>
-                                    <button class="ap-controls ap-next-btn"><i class="fas fa-step-forward"></i></button>
-                                </div>
-                                <div class="ap-item ap--track">
-                                    <div class="ap-info">
-                                        <div class="ap-title">Unknown</div>
-                                        <div class="ap-time"><span class="ap-time--current">--</span><span>/</span><span class="ap-time--duration">--</span></div>
-                                        <div class="ap-progress-container">
-                                            <div class="ap-progress">
-                                                <div class="ap-bar"></div>
-                                                <div class="ap-preload-bar"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="ap-item ap--settings">
-                                    <div class="ap-controls ap-volume-container">
-                                        <button class="ap-volume-btn">
-                                            <i class="fas fa-volume-up ap--volume-on"></i>
-                                            <i class="fas fa-volume-mute ap--volume-off"></i>
-                                        </button>
-                                        <div class="ap-volume">
-                                            <div class="ap-volume-progress">
-                                                <div class="ap-volume-bar"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button class="ap-controls ap-repeat-btn"><i class="fas fa-sync-alt"></i></button>
-                                    <button class="ap-controls" onclick="random()"><i class="fas fa-random"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal" id="info">
-                <div class="info-block">
-                    <div onclick="infoToggle()" class="float-exit"><a href="#" class="exitowo"><i class="fas fa-arrow-left"></i>Back</a></div>
-                    <div class="links">
-                        <div class="sep">
-                            <a href="https://i.ck1t.ru/yomp-git" class="link github"><img src="assets/icons/logo/l_github.png" /><span>Source code</span></a>
-                            <a href="https://i.ck1t.ru/yomp-osuforum" class="link fosu"><img src="assets/icons/logo/l_osu.png" /><span>osu!forum</span></a>
-                            <a href="https://i.ck1t.ru/yomp-discord" class="link discord"><img src="assets/icons/logo/l_discord.png" /><span>Discord server</span></a>
-                        </div>
-                    </div>
-                    <div class="log-nam">
-                        <div class="logo"><img src="assets/icons/icon.png" /></div>
-                        <div class="name">YOMP <span>v1.0.3</span></div>
-                        <div class="license">License: <span>GNU</span></div>
-                    </div>
-                    <div class="team">
-                        <div class="member">
-                            <div class="block">
-                                <div class="over">
-                                    <div class="avatar"><img src="assets/icons/a/4fun.png" /></div>
-                                    <h1>4FuN</h1>
-                                </div>
-                                <ul class="collapsible">
-                                    <li>
-                                        <div class="collapsible-header"><i class="fas fa-share-alt"></i> social links</div>
-                                        <div class="collapsible-body">
-                                            <span>
-                                                <a href="https://i.ck1t.ru/yomp-4osu" class="soc osu"><img src="assets/icons/osu.svg" /></a>
-                                                <!--a href="https://i.ck1t.ru/yomp-4ds" class="soc discord"><i class="fab fa-discord"></i></a-->
-                                                <a href="https://i.ck1t.ru/yomp-4tg" class="soc telegram"><i class="fab fa-telegram"></i></a>
-                                                <a href="https://i.ck1t.ru/yomp-4git" class="soc github"><i class="fab fa-github"></i></a>
-                                                <a href="https://i.ck1t.ru/yomp-4vk" class="soc vk"><i class="fab fa-vk"></i></a>
-                                            </span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="member">
-                            <div class="block">
-                                <div class="over">
-                                    <div class="avatar"><img src="assets/icons/a/ck.jpg" /></div>
-                                    <h1>cyperdark</h1>
-                                </div>
-                                <ul class="collapsible">
-                                    <li>
-                                        <div class="collapsible-header"><i class="fas fa-share-alt"></i> social links</div>
-                                        <div class="collapsible-body">
-                                            <span>
-                                                <a href="https://i.ck1t.ru/yomp-ckosu" class="soc osu"><img src="assets/icons/osu.svg" /></a>
-                                                <!--a href="https://i.ck1t.ru/yomp-ckds" class="soc discord"><i class="fab fa-discord"></i></a-->
-                                                <a href="https://i.ck1t.ru/yomp-ckgit" class="soc github"><i class="fab fa-github"></i></a>
-                                                <a href="https://i.ck1t.ru/yomp-ckvk" class="soc vk"><i class="fab fa-vk"></i></a>
-                                            </span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal" id="settings">
-                <div class="set-top">
-                    <div class="set-top-left">
-                        <div onclick="setsToggle()" class="set-btn back"><div class="btn-ov"><i class="fas fa-arrow-left"></i><span>Back</span></div></div>
-                        <div onclick="setsSave()" class="set-btn save"><div class="btn-ov"><i class="far fa-save"></i><span>Save settings</span></div></div>
-                        <div onclick="exportLoved()" class="set-btn loved"><div class="btn-ov"><i class="fas fa-heart"></i><span>Export loved</span></div></div>
-                        <div onclick="checkUpdate(false)" class="set-btn all"><div class="btn-ov"><i class="fas fa-cloud-download-alt"></i><span>Update</span></div></div>
-                        <div onclick="exportAll()" class="set-btn all"><div class="btn-ov"><i class="fas fa-download"></i><span>Export all</span></div></div>
-                        <div onclick="clearPl()" class="set-btn all"><div class="btn-ov"><i class="fas fa-minus-circle"></i><span>Clear playlist</span></div></div>
-                    </div>
-                    <h2 class="set-title">Settings</h2>
-                </div>
-                <div class="set-main">
-                    <div class="set-main-container">
-                        <div class="set-block">
-                            <div class="set-block-title"><i class="fas fa-bell"></i><span>Notification</span></div>
-                            <div class="div-check">
-                                <input class="notif-config" type="checkbox" id="noti-turn">
-                                <label for="noti-turn" class="check-title">Disable notifications</label>
-                            </div>
-                            <div class="div-check">
-                                <input class="notif-config" type="checkbox" id="noti-loved">
-                                <label for="noti-loved" class="check-title">Disable loved/unloved notifications</label>
-                            </div>
-                            <div class="div-check">
-                                <input class="notif-config" type="checkbox" id="noti-youtube">
-                                <label for="noti-youtube" class="check-title">Disable youtube add notifications</label>
-                            </div>
-                        </div>
-                        <div class="set-block">
-                            <div class="set-block-title"><i class="fas fa-keyboard"></i><span>Keyboard shortcuts</span></div>
-                            <div class="div-input">
-                                <div class="div-input-sep">
-                                    <div class="name"><i class="fas fa-pause"></i><span>Play/Pause</span></div>
-                                    <div class="key"><input type="text" class="input-keys" id="key-toggle"></div>
-                                    <div class="disable">
-                                        <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-toggle">
-                                        <span>Disable?</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="div-input">
-                                <div class="div-input-sep">
-                                    <div class="name"><i class="fas fa-fast-forward"></i><span>Next track</span></div>
-                                    <div class="key"><input type="text" class="input-keys" id="key-next"></div>
-                                    <div class="disable">
-                                        <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-next">
-                                        <span>Disable?</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="div-input">
-                                <div class="div-input-sep">
-                                    <div class="name"><i class="fas fa-fast-backward"></i><span>Prev track</span></div>
-                                    <div class="key"><input type="text" class="input-keys" id="key-prev"></div>
-                                    <div class="disable">
-                                        <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-prev">
-                                        <span>Disable?</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="div-input">
-                                <div class="div-input-sep">
-                                    <div class="name"><i class="fas fa-random"></i><span>Random track</span></div>
-                                    <div class="key"><input type="text" class="input-keys" id="key-random"></div>
-                                    <div class="disable">
-                                        <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-random">
-                                        <span>Disable?</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="div-input">
-                                <div class="div-input-sep">
-                                    <div class="name"><i class="fas fa-volume-up"></i><span>Volume UP</span></div>
-                                    <div class="key"><input type="text" class="input-keys" id="key-volup"></div>
-                                    <div class="disable">
-                                        <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-volup">
-                                        <span>Disable?</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="div-input">
-                                <div class="div-input-sep">
-                                    <div class="name"><i class="fas fa-volume-down"></i><span>Volume DOWN</span></div>
-                                    <div class="key"><input type="text" class="input-keys" id="key-voldown"></div>
-                                    <div class="disable">
-                                        <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-voldown">
-                                        <span>Disable?</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="div-input">
-                                <div class="div-input-sep">
-                                    <div class="name"><i class="fas fa-volume-mute"></i><span>Volume MUTE</span></div>
-                                    <div class="key"><input type="text" class="input-keys" id="key-mute"></div>
-                                    <div class="disable">
-                                        <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-mute">
-                                        <span>Disable?</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="div-input">
-                                <div class="div-input-sep">
-                                    <div class="name"><i class="fas fa-heart"></i><span>Love this track</span></div>
-                                    <div class="key"><input type="text" class="input-keys" id="key-love"></div>
-                                    <div class="disable">
-                                        <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-love">
-                                        <span>Disable?</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="div-input">
-                                <div class="div-input-sep">
-                                    <div class="name"><i class="far fa-window-maximize"></i><span>Mini mode</span></div>
-                                    <div class="key"><input type="text" class="input-keys" id="key-mini"></div>
-                                    <div class="disable">
-                                        <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-cmini">
-                                        <span>Disable?</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="div-input">
-                                <div class="div-input-sep">
-                                    <div class="name"><i class="fas fa-window-maximize"></i><span>Mini mode off</span></div>
-                                    <div class="key"><input type="text" class="input-keys" id="key-minioff"></div>
-                                    <div class="disable">
-                                        <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-minioff">
-                                        <span>Disable?</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="load-music"><div class="text" id="load-progress"><span></span></div></div>
+<head>
+  <title>YOMP</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="assets/icons/fontawsome/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/mda.css">
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <script src="assets/js/vue.js"></script>
+  <script src="assets/js/axios.js"></script>
+</head>
+
+<body>
+  <div id="yomp">
+    <div class="main">
+      <div class="top">
+        <div class="title-text"><img class="loged" src="assets/icons/head.png"> Music Player</div>
+        <div class="title-controls">
+          <button onclick="hidetray()" class="ui-btn minimize"><svg x="0px" y="0px" viewBox="0 0 10.2 1"><rect fill="var(--text)" x="0" y="50%" width="10.2" height="1" /></svg></button>
+          <button onclick="maxsize()" class="ui-btn maximize"><i style="color: var(--text);" class="far fa-square"></i></button>
+          <button onclick="winowClose()" class="ui-btn close"><svg viewBox="0 0 10 10"><polygon fill="var(--text)" points="10.2,0.7 9.5,0 5.1,4.4 0.7,0 0,0.7 4.4,5.1 0,9.5 0.7,10.2 5.1,5.8 9.5,10.2 10.2,9.5 5.8,5.1" /></svg></button>
         </div>
-        
-        <script>
-            if (typeof module === 'object') {
-                window.module = module;
-                module = undefined;
-            }
-        </script>
-        <script src="assets/js/jquery.js"></script>
-        <script src="assets/js/script.js"></script>
-        <script src="assets/js/materialize.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                $('.collapsible').collapsible();
-            });
-        </script>
-        <script>
-            if (window.module) module = window.module;
-        </script>
-        <script>
-            var app = new Vue({
-                el: '#app',
-                data: {
-                    music: []
-                },
-                methods: {
-                    search() {
-                        if (document.getElementsByClassName('pl-container')[0].classList.length == 1) AP.plToggle();
-                        axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + document.getElementById("search").value + "&maxResults=50&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs")
-                            .then(res => {
-                            if (document.getElementById('pl').classList.length == 1) document.getElementById('pl').classList.add("hide");
-                            this.music = [];
-                            res.data.items.forEach(v => {
-                                if (v.id.kind == "youtube#video") {
-                                    this.music.push(v);
-                                }
-                            })
-                        })
-                    }
-                }
+      </div>
+      <div class="center">
+        <div class="mini-field">
+          <div class="menu-icon"><i onclick="openMenu()" class="fas fa-bars"></i></div>
+          <div class="search">
+            <div class="asd">
+              <input id="search" class="search" type="text" placeholder="Search">
+              <i @click="search()" class="fas fa-search"></i>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <img class="loader-xd" src="assets/icons/loader.gif" id="loader" style="display:none;">
+          <div class="menu-left">
+            <div class="menu">
+              <div class="links" style="height:100vh;">
+                <ul class="links-block">
+                  <li class="ap-playlist-btn liactiver">
+                    <a onclick="refresh(); document.getElementById(`app`).style.display = 'none';" href="#">
+                      <svg class="btn-menu" fill="var(--text)" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none" /><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" /></svg>
+                      <span>Playlist</span>
+                    </a>
+                  </li>
+                  <li class="liactiver">
+                    <a onclick="openloved(); document.getElementById(`app`).style.display = 'none';" href="#">
+                      <i class="fas fa-heart"></i>
+                      <span>Loved</span>
+                    </a>
+                  </li>
+                  <li class="cat"></li>
+                  <li class="liactiver">
+                    <a onclick="searchbtn()" href="#">
+                      <i class="fab fa-youtube"></i>
+                      <span id="yt">YouTube</span>
+                    </a>
+                  </li>
+                  <li class="liactiver">
+                    <a onclick="addosu()" href="#">
+                      <img class="osu" src="assets/icons/osu.svg" />
+                      <span id="osu">Import osu! songs</span>
+                    </a>
+                  </li>
+                  <li class="liactiver">
+                    <a onclick="addMusicFolder()" href="#">
+                      <i class="far fa-plus-square"></i>
+                      <span>Import Folder</span>
+                    </a>
+                  </li>
+                  <li class="cat"></li>
+                  <li class="liactiver">
+                    <a onclick="infoToggle()" href="#">
+                      <i class="fas fa-info-circle"></i>
+                      <span>Info</span>
+                    </a>
+                  </li>
+                  <li class="liactiver">
+                    <a onclick="setsToggle()" href="#">
+                      <i class="fas fa-cogs"></i>
+                      <span>Settings</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div onclick="openMenu()" class="shadow"></div>
+          </div>
+          <div id="app">
+            <div class="video-pl">
+              <template v-for="m in music">
+                <div @click="youtube(m.id.videoId, m.snippet.title, m.snippet.thumbnails.high.url)" class="video">
+                  <div class="cssucks">
+                    <div class="left">
+                      <img src="assets/icons/playlist.png" class="pizdec">
+                      <img src="assets/icons/youtube.png" class="plpizdec">
+                    </div>
+                    <div class="center">
+                      <h3>{{ m.snippet.title }}</h3>
+                    </div>
+                    <div class="bgg" :style="{ background: 'url(' + m.snippet.thumbnails.medium.url + ')', backgroundPosition: 'center', backgroundSize: 'cover' }"></div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom">
+        <div id="hide-progres"></div>
+        <div class="ap" id="ap">
+          <div class="ap-inner">
+            <div class="ap-panel">
+              <div class="ap-item ap--playback">
+                <button class="ap-controls ap-prev-btn"><i class="fas fa-step-backward"></i></button>
+                <button class="ap-controls ap-toggle-btn">
+                  <i class="fas fa-play ap--play"></i>
+                  <i class="fas fa-pause ap--pause"></i>
+                </button>
+                <button class="ap-controls ap-next-btn"><i class="fas fa-step-forward"></i></button>
+              </div>
+              <div class="ap-item ap--track">
+                <div class="ap-info">
+                  <div class="ap-title">Unknown</div>
+                  <div class="ap-time"><span class="ap-time--current">--</span><span>/</span><span class="ap-time--duration">--</span></div>
+                  <div class="ap-progress-container">
+                    <div class="ap-progress">
+                      <div class="ap-bar"></div>
+                      <div class="ap-preload-bar"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="ap-item ap--settings">
+                <div class="ap-controls ap-volume-container">
+                  <button class="ap-volume-btn">
+                    <i class="fas fa-volume-up ap--volume-on"></i>
+                    <i class="fas fa-volume-mute ap--volume-off"></i>
+                  </button>
+                  <div class="ap-volume">
+                    <div class="ap-volume-progress">
+                      <div class="ap-volume-bar"></div>
+                    </div>
+                  </div>
+                </div>
+                <button class="ap-controls ap-repeat-btn"><i class="fas fa-sync-alt"></i></button>
+                <button class="ap-controls" onclick="random()"><i class="fas fa-random"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="info">
+      <div class="info-block">
+        <div onclick="infoToggle()" class="float-exit"><a href="#" class="exitowo"><i class="fas fa-arrow-left"></i>Back</a></div>
+        <div class="links">
+          <div class="sep">
+            <a href="https://i.ck1t.ru/yomp-git" class="link github"><img src="assets/icons/logo/l_github.png" /><span>Source code</span></a>
+            <a href="https://i.ck1t.ru/yomp-osuforum" class="link fosu"><img src="assets/icons/logo/l_osu.png" /><span>osu!forum</span></a>
+            <a href="https://i.ck1t.ru/yomp-discord" class="link discord"><img src="assets/icons/logo/l_discord.png" /><span>Discord server</span></a>
+          </div>
+        </div>
+        <div class="log-nam">
+          <div class="logo"><img src="assets/icons/icon.png" /></div>
+          <div class="name">YOMP <span>v1.0.3</span></div>
+          <div class="license">License: <span>GNU</span></div>
+        </div>
+        <div class="team">
+          <div class="member">
+            <div class="block">
+              <div class="over">
+                <div class="avatar"><img src="assets/icons/a/4fun.png" /></div>
+                <h1>4FuN</h1>
+              </div>
+              <ul class="collapsible">
+                <li>
+                  <div class="collapsible-header"><i class="fas fa-share-alt"></i> social links</div>
+                  <div class="collapsible-body">
+                    <span>
+                      <a href="https://i.ck1t.ru/yomp-4osu" class="soc osu"><img src="assets/icons/osu.svg" /></a>
+                      <!--a href="https://i.ck1t.ru/yomp-4ds" class="soc discord"><i class="fab fa-discord"></i></a-->
+                      <a href="https://i.ck1t.ru/yomp-4tg" class="soc telegram"><i class="fab fa-telegram"></i></a>
+                      <a href="https://i.ck1t.ru/yomp-4git" class="soc github"><i class="fab fa-github"></i></a>
+                      <a href="https://i.ck1t.ru/yomp-4vk" class="soc vk"><i class="fab fa-vk"></i></a>
+                    </span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="member">
+            <div class="block">
+              <div class="over">
+                <div class="avatar"><img src="assets/icons/a/ck.jpg" /></div>
+                <h1>cyperdark</h1>
+              </div>
+              <ul class="collapsible">
+                <li>
+                  <div class="collapsible-header"><i class="fas fa-share-alt"></i> social links</div>
+                  <div class="collapsible-body">
+                    <span>
+                      <a href="https://i.ck1t.ru/yomp-ckosu" class="soc osu"><img src="assets/icons/osu.svg" /></a>
+                      <!--a href="https://i.ck1t.ru/yomp-ckds" class="soc discord"><i class="fab fa-discord"></i></a-->
+                      <a href="https://i.ck1t.ru/yomp-ckgit" class="soc github"><i class="fab fa-github"></i></a>
+                      <a href="https://i.ck1t.ru/yomp-ckvk" class="soc vk"><i class="fab fa-vk"></i></a>
+                    </span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="settings">
+      <div class="set-top">
+        <div class="set-top-left">
+          <div onclick="setsToggle()" class="set-btn back"><div class="btn-ov"><i class="fas fa-arrow-left"></i><span>Back</span></div></div>
+          <div onclick="setsSave()" class="set-btn save"><div class="btn-ov"><i class="far fa-save"></i><span>Save settings</span></div></div>
+          <div onclick="exportLoved()" class="set-btn loved"><div class="btn-ov"><i class="fas fa-heart"></i><span>Export loved</span></div></div>
+          <div onclick="checkUpdate(false)" class="set-btn all"><div class="btn-ov"><i class="fas fa-cloud-download-alt"></i><span>Update</span></div></div>
+          <div onclick="exportAll()" class="set-btn all"><div class="btn-ov"><i class="fas fa-download"></i><span>Export all</span></div></div>
+          <div onclick="clearPl()" class="set-btn all"><div class="btn-ov"><i class="fas fa-minus-circle"></i><span>Clear playlist</span></div></div>
+        </div>
+        <h2 class="set-title">Settings</h2>
+      </div>
+      <div class="set-main">
+        <div class="set-main-container">
+          <div class="set-block">
+            <div class="set-block-title"><i class="fas fa-bell"></i><span>Notification</span></div>
+            <div class="div-check">
+              <input class="notif-config" type="checkbox" id="noti-turn">
+              <label for="noti-turn" class="check-title">Disable notifications</label>
+            </div>
+            <div class="div-check">
+              <input class="notif-config" type="checkbox" id="noti-loved">
+              <label for="noti-loved" class="check-title">Disable loved/unloved notifications</label>
+            </div>
+            <div class="div-check">
+              <input class="notif-config" type="checkbox" id="noti-youtube">
+              <label for="noti-youtube" class="check-title">Disable youtube add notifications</label>
+            </div>
+          </div>
+          <div class="set-block">
+            <div class="set-block-title"><i class="fas fa-keyboard"></i><span>Keyboard shortcuts</span></div>
+            <div class="div-input">
+              <div class="div-input-sep">
+                <div class="name"><i class="fas fa-pause"></i><span>Play/Pause</span></div>
+                <div class="key"><input type="text" class="input-keys" id="key-toggle"></div>
+                <div class="disable">
+                  <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-toggle">
+                  <span>Disable?</span>
+                </div>
+              </div>
+            </div>
+            <div class="div-input">
+              <div class="div-input-sep">
+                <div class="name"><i class="fas fa-fast-forward"></i><span>Next track</span></div>
+                <div class="key"><input type="text" class="input-keys" id="key-next"></div>
+                <div class="disable">
+                  <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-next">
+                  <span>Disable?</span>
+                </div>
+              </div>
+            </div>
+            <div class="div-input">
+              <div class="div-input-sep">
+                <div class="name"><i class="fas fa-fast-backward"></i><span>Prev track</span></div>
+                <div class="key"><input type="text" class="input-keys" id="key-prev"></div>
+                <div class="disable">
+                  <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-prev">
+                  <span>Disable?</span>
+                </div>
+              </div>
+            </div>
+            <div class="div-input">
+              <div class="div-input-sep">
+                <div class="name"><i class="fas fa-random"></i><span>Random track</span></div>
+                <div class="key"><input type="text" class="input-keys" id="key-random"></div>
+                <div class="disable">
+                  <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-random">
+                  <span>Disable?</span>
+                </div>
+              </div>
+            </div>
+            <div class="div-input">
+              <div class="div-input-sep">
+                <div class="name"><i class="fas fa-volume-up"></i><span>Volume UP</span></div>
+                <div class="key"><input type="text" class="input-keys" id="key-volup"></div>
+                <div class="disable">
+                  <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-volup">
+                  <span>Disable?</span>
+                </div>
+              </div>
+            </div>
+            <div class="div-input">
+              <div class="div-input-sep">
+                <div class="name"><i class="fas fa-volume-down"></i><span>Volume DOWN</span></div>
+                <div class="key"><input type="text" class="input-keys" id="key-voldown"></div>
+                <div class="disable">
+                  <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-voldown">
+                  <span>Disable?</span>
+                </div>
+              </div>
+            </div>
+            <div class="div-input">
+              <div class="div-input-sep">
+                <div class="name"><i class="fas fa-volume-mute"></i><span>Volume MUTE</span></div>
+                <div class="key"><input type="text" class="input-keys" id="key-mute"></div>
+                <div class="disable">
+                  <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-mute">
+                  <span>Disable?</span>
+                </div>
+              </div>
+            </div>
+            <div class="div-input">
+              <div class="div-input-sep">
+                <div class="name"><i class="fas fa-heart"></i><span>Love this track</span></div>
+                <div class="key"><input type="text" class="input-keys" id="key-love"></div>
+                <div class="disable">
+                  <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-love">
+                  <span>Disable?</span>
+                </div>
+              </div>
+            </div>
+            <div class="div-input">
+              <div class="div-input-sep">
+                <div class="name"><i class="far fa-window-maximize"></i><span>Mini mode</span></div>
+                <div class="key"><input type="text" class="input-keys" id="key-mini"></div>
+                <div class="disable">
+                  <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-cmini">
+                  <span>Disable?</span>
+                </div>
+              </div>
+            </div>
+            <div class="div-input">
+              <div class="div-input-sep">
+                <div class="name"><i class="fas fa-window-maximize"></i><span>Mini mode off</span></div>
+                <div class="key"><input type="text" class="input-keys" id="key-minioff"></div>
+                <div class="disable">
+                  <input class="check-key-input option-input checkbox" type="checkbox" onclick="offKey(this)" dlya="key-minioff">
+                  <span>Disable?</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="load-music"><div class="text" id="load-progress"><span></span></div></div>
+  </div>
+
+  <script>
+    if (typeof module === 'object') {
+      window.module = module;
+      module = undefined;
+    }
+  </script>
+  <script src="assets/js/jquery.js"></script>
+  <script src="assets/js/script.js"></script>
+  <script src="assets/js/materialize.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('.collapsible').collapsible();
+    });
+  </script>
+  <script>
+    if (window.module) module = window.module;
+  </script>
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        music: []
+      },
+      methods: {
+        search() {
+          if (document.getElementsByClassName('pl-container')[0].classList.length == 1) AP.plToggle();
+          axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + document.getElementById("search").value + "&maxResults=50&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs")
+            .then(res => {
+            if (document.getElementById('pl').classList.length == 1) document.getElementById('pl').classList.add("hide");
+            this.music = [];
+            res.data.items.forEach(v => {
+              if (v.id.kind == "youtube#video") {
+                this.music.push(v);
+              }
             })
-        </script>
-    </body>
-    
+          })
+        }
+      }
+    })
+  </script>
+</body>
 </html>
