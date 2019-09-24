@@ -98,9 +98,6 @@ app.on('activate', function () {
 });
 
 ipcMain.on("youtube", (event, arg, obj) => {
-	arg.properties.onProgress = function(s) {
-		console.log(s);
-	}
 	download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)
 	.then(dl => {
 		mainWindow.webContents.send("ytcomplete", arg.obj);

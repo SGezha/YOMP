@@ -12,13 +12,11 @@ const { shell, remote, ipcRenderer: ipc } = require('electron'),
 
 db({ path: `${root}/database.db`, memory: false, readonly: false, fileMustExist: false, migrate: false });
 
-let musicSelectedId = 0,
-	isLoaded = false,
+let isLoaded = false,
 	loaded = 0,
 	mini = false,
 	fullscreen = 0,
 	isLoved = false,
-	cache = [],
 	ytQuery = [],
 	ping = false;
 
@@ -28,6 +26,7 @@ window.onload = function () {
 	loadSettings();
 	checkUpdate(true);
 	refresh();
+	discordUpdate();
 	document.getElementById('pl').classList.remove("hide");
 };
 
@@ -37,23 +36,18 @@ ipcRenderer.on("update complete", (event, arg) => {
 
 function checkUpdate(auto) {
 	let ver = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString()).version;
-	axios.get(`https://4kc-version.glitch.me/yomp`)
-		.then(res => {
-			let r = res.data;
-			if (ver != r.ver && auto) {
-				notify("Update", `New ${r.ver} version available to download, check settings :3`);
-			}
-			if (ver == r.ver && !auto) {
-				notify("Update", `You use latest version :P`);
-			}
-			if (ver != r.ver && !auto) {
-				notify("Update", `New version ${r.ver} started to download c:`);
-				let osp = os.platform(),
-					arch = os.arch().split("x").join("");
-				if (osp.indexOf("win") > -1) osp = "win";
-				ipcRenderer.send("update", { url: r[osp + arch], properties: { directory: `${root}/cache`, filename: `update.exe` } });
-			}
-		})
+	axios.get(`https://4kc-version.glitch.me/yomp`).then(res => {
+		let r = res.data;
+		if (ver != r.ver && auto) notify("Update", `New ${r.ver} version available to download, check settings :3`);
+		if (ver == r.ver && !auto) notify("Update", `You use latest version :P`);
+		if (ver != r.ver && !auto) {
+			notify("Update", `New version ${r.ver} started to download c:`);
+			let osp = os.platform(),
+				arch = os.arch().split("x").join("");
+			if (osp.indexOf("win") > -1) osp = "win";
+			ipcRenderer.send("update", { url: r[osp + arch], properties: { directory: `${root}/cache`, filename: `update.exe` } });
+		}
+	})
 }
 
 function clearDir(path) {
@@ -74,9 +68,10 @@ function clearPl() {
 	refresh();
 }
 
-function notify(title, body) {
+function notify(title, body, bol) {
 	if (db().query("SELECT * from settings")[0].notiturn == "false") {
 		let icon = "assets/icons/icon.png";
+		if(title.toLocaleLowerCase().indexOf("now") > -1 && remote.getCurrentWindow().isFocused()) return;
 		if (db().query("SELECT * from settings")[0].notiloved == "true" && title.toLocaleLowerCase().indexOf("loved") > -1) return;
 		if (db().query("SELECT * from settings")[0].notiadd == "true" && title.toLocaleLowerCase().indexOf("success") > -1) return;
 		if (title.toLocaleLowerCase().indexOf("loved") > -1) icon = "assets/icons/notif-icon/i_loved.png";
@@ -84,6 +79,8 @@ function notify(title, body) {
 		if (title.toLocaleLowerCase().indexOf("success") > -1) icon = "assets/icons/notif-icon/i_add.png";
 		if (title.toLocaleLowerCase().indexOf("error") > -1) icon = "assets/icons/notif-icon/i_error.png";
 		if (title.toLocaleLowerCase().indexOf("update") > -1) icon = "assets/icons/notif-icon/i_up.png";
+		if (title.toLocaleLowerCase().indexOf("youtube") > -1 && bol) icon = "assets/icons/notif-icon/i_yt_finish.png";
+		if (title.toLocaleLowerCase().indexOf("youtube") > -1 && !bol) icon = "assets/icons/notif-icon/i_yt_start.png";
 		if (body.length > 60) body = body.substring(0, 57) + "...";
 		let noti = new Notification(title, { silent: true, silent: true, body: body, icon: icon });
 		if (title.toLocaleLowerCase().indexOf("update") > -1) {
@@ -225,7 +222,7 @@ async function addMusicFolder() {
 						document.getElementById("load-progress").innerHTML = `<div class="textload">${obj.title}</div> <span> ${ind + 1}/${items.length}</span>`;
 					}
 				}
-			}, 500 * ind)
+			}, 200 * ind)
 		})
 	});
 }
@@ -233,17 +230,18 @@ async function addMusicFolder() {
 async function addosu() {
 	let dir = await remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
 	fs.readdir(dir.filePaths[0], function (err, items) {
-		loadMusic();
-		checkDir(-1, items, dir.filePaths[0])
+		checkDir(0, items, dir.filePaths[0])
 	});
 }
 
 function checkDir(ind, mas, dir) {
-	if (ind + 1 == mas.length) return loadMusic();
-	if (ind == -1) { cache = []; db().query(`SELECT * from music`).forEach(m => { cache.push(m.dir); }); checkDir(ind + 1, mas, dir); return;}
-	let i = mas[ind].split("~").join("").split("'").join("").split("^").join("");
-	let songFolder = i;
-	if (cache.indexOf(`${dir}/${i}`) == -1) {
+	if (ind + 1 == mas.length) {
+		document.getElementById("osu").innerHTML = `Import osu! songs`;
+		refresh();
+		document.getElementById('pl').classList.remove("hide");
+	} else {
+		let i = mas[ind].split("~").join("").split("'").join("").split("^").join("");
+		let songFolder = i;
 		if (i.indexOf(".") == -1) {
 			fs.readdir(`${dir}/${i}`, function (err, files) {
 				if (files) {
@@ -260,7 +258,7 @@ function checkDir(ind, mas, dir) {
 				} else { checkDir(ind + 1, mas, dir); }
 			})
 		} else { checkDir(ind + 1, mas, dir); }
-	} else { checkDir(ind + 1, mas, dir); }
+	}
 }
 
 function parseOsu(ind, mas, dir, songFolder, f, i, files) {
@@ -271,12 +269,22 @@ function parseOsu(ind, mas, dir, songFolder, f, i, files) {
 	if (info.indexOf("Artist:") > -1 && info.indexOf("Title:") > -1) title = `${info.split(`Artist:`)[1].split("\n")[0]} - ${info.split(`Title:`)[1].split("\n")[0]}`.replace(/(\r\n|\n|\r)/gm, "");
 	if (info.indexOf("BeatmapSetID") > -1) bmid = info.split(`BeatmapSetID:`)[1].split("\n")[0];
 	files.forEach(img => { if (img.indexOf(".jpg") > -1 || img.indexOf(".png") > -1) { full = img; } });
-	axios.get(`https://assets.ppy.sh/beatmaps/${bmid}/covers/card.jpg`, { responseType: 'arraybuffer' }).then(response => {
-		fs.writeFileSync(`${root}/images/${bmid}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), Buffer.from(response.data, 'base64'));
-		document.getElementById("load-progress").innerHTML = `<div class="textload">${title}</div> <span> ${ind + 1}/${mas.length}</span>`;
-		db().insert('music', { title: title, icon: `${root}/images/${bmid}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), file: `${dir}/${songFolder}/${info.split(`AudioFilename: `)[1].split("\n")[0]}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), dir: `${dir}/${i}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), full: `${dir}/${songFolder}/${full}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), loved: "false" });
-		checkDir(ind + 1, mas, dir);
-	}).catch(er => { checkDir(ind + 1, mas, dir); })
+	if(info.indexOf("AudioFilename") > -1) {
+		let obj = { title: title, icon: `${root}/images/${bmid}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), file: `${dir}/${songFolder}/${info.split(`AudioFilename: `)[1].split("\n")[0]}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), dir: `${dir}/${i}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), full: `${dir}/${songFolder}/${full}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), loved: "false" };
+		saveOsu(obj, mas, dir, bmid, ind, i);
+	} else {checkDir(ind + 1, mas, dir);}
+}
+
+function saveOsu(obj, mas, dir, bmid, ind) {
+	if(db().query(`SELECT * from music where dir='${obj.dir}'`).length == 0) {
+		document.getElementById("osu").innerHTML = `Inmporting ${ind+1}/${mas.length}`;
+		axios.get(`https://assets.ppy.sh/beatmaps/${bmid}/covers/card.jpg`, { responseType: 'arraybuffer' }).then(response => {
+			fs.writeFileSync(`${root}/images/${bmid}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), Buffer.from(response.data, 'base64'));
+			db().insert('music', obj);
+			document.getElementById("osu").innerHTML = `Inmporting ${ind+1}/${mas.length}`;
+			checkDir(ind + 1, mas, dir);
+		}).catch(er => { checkDir(ind + 1, mas, dir); })
+	} else {checkDir(ind + 1, mas, dir);} 
 }
 
 async function exportLoved() {
@@ -388,10 +396,6 @@ function start() {
 			audio.src = playList[index].file;
 			audio.preload = 'auto';
 			trackTitle.innerHTML = playList[index].title;
-			ipc.send("rpc", {
-				status: "playing",
-				title: playList[index].title
-			});
 			volumeBar.style.height = audio.volume * 100 + '%';
 			volumeLength = volumeBar.css('height');
 			if (db().query("SELECT * from status")[0].dataId != 0 && db().query("SELECT * from status")[0].realId != 0) {
@@ -399,10 +403,6 @@ function start() {
 				audio.src = playList[index].file;
 				audio.preload = 'auto';
 				trackTitle.innerHTML = playList[index].title;
-				ipc.send("rpc", {
-					status: "playing",
-					title: playList[index].title
-				});
 			}
 			audio.addEventListener('error', error, false);
 			audio.addEventListener('timeupdate', update, false);
@@ -507,10 +507,6 @@ function start() {
 			audio.play();
 			playBtn.classList.add('playing');
 			plActive();
-			ipc.send("rpc", {
-				status: "playing",
-				title: playList[index].title
-			});
 		}
 
 		function prev() {
@@ -568,17 +564,9 @@ function start() {
 			if (audio.paused) {
 				audio.play();
 				playBtn.classList.add('playing');
-				ipc.send("rpc", {
-					status: "playing",
-					title: playList[index].title
-				});
 			} else {
 				audio.pause();
 				playBtn.classList.remove('playing');
-				ipc.send("rpc", {
-					status: "paused",
-					title: playList[index].title
-				});
 			}
 			plActive();
 		}
@@ -887,7 +875,7 @@ function youtube(vid, title, icon) {
 					break;
 			}
 			if (quality) {
-				notify('Success', `${title} added to download queue`);
+				notify('YouTube', `${title} added to download queue`, false);
 				let obj = { title: title, icon: icon, file: `${root}/youtube/${title}.mp3`, videoId: vid, loved: "false" };
 				ytQuery.push(title);
 				document.getElementById("yt").innerHTML = `YouTube <i class="fas fa-download"></i> ${ytQuery.length}`;
@@ -909,7 +897,7 @@ ipcRenderer.on("ytcomplete", (event, arg) => {
 			videoId: arg.vid,
 			loved: "false"
 		});
-		notify("Success", `Download ${arg.title} complete :3`);
+		notify("YouTube", `Download ${arg.title} complete :3`, true);
 	}).catch(er => { checkDir(ind + 1, mas, dir); })
 });
 
@@ -1088,8 +1076,22 @@ function openloved() {
 	}
 }
 
+function discordUpdate() {
+	if (document.getElementsByClassName('pl-current')[0]) {
+		ipc.send("rpc", {
+			status: "playing",
+			title: document.querySelector('.ap-title').innerHTML
+		});
+	} else {
+		ipc.send("rpc", {
+			status: "paused",
+			title: document.querySelector('.ap-title').innerHTML
+		});
+	}
+	setTimeout(() => {discordUpdate()}, 3000)
+}
+
 function loadSettings() {
-	//settings
 	if (db().query("select * from settings")[0].notiturn == "true") document.getElementById('noti-turn').checked = true;
 	if (db().query("select * from settings")[0].notiloved == "true") document.getElementById('noti-loved').checked = true;
 	if (db().query("select * from settings")[0].notiadd == "true") document.getElementById('noti-youtube').checked = true;
