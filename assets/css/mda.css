@@ -572,14 +572,6 @@ li.music-el>.pog>.center {
     display: none;
 }
 
-.pog:hover .pl-count {
-    display: none;
-}
-
-.pog:hover .pl-playing {
-    display: block;
-}
-
 .pog:hover .music-background {
     opacity: 0.5 !important;
     transform: scale(1.05);
@@ -866,6 +858,10 @@ i.far.fa-trash-alt.pl-remove:hover {
 
 .pl-current .pl-playing {
     display: block;
+}
+
+.pl-playing>img {
+    width: 20px;
 }
 
 .pl-current .music-background {
@@ -1268,7 +1264,7 @@ input[type="checkbox"], label {
     height: 25px;
     width: 25px;
     position: absolute;
-    content: '✓';
+    content: 'âœ“';
     display: inline-block;
     font-size: 20px;
     text-align: center;
