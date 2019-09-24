@@ -10,7 +10,8 @@
     "copyright": "Copyright © 2019 ${author}",
     "win": {
       "target": [
-        "NSIS"
+        "NSIS",
+        "portable"
       ],
       "icon": "assets/icons/icon.png"
     },
@@ -23,7 +24,7 @@
   },
   "scripts": {
     "start": "electron .",
-    "rebuild": ".\\node_modules\\.bin\\electron-rebuild.cmd",
+    "rebuild": "./node_modules/.bin/electron-rebuild.cmd",
     "install": "./node_modules/.bin/electron-builder install-app-deps",
     "build": "./node_modules/.bin/electron-builder build",
     "build32": "./node_modules/.bin/electron-builder build --ia32"
