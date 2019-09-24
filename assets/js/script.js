@@ -269,8 +269,9 @@ function parseOsu(ind, mas, dir, songFolder, f, i, files) {
 		full = "";
 	if (info.indexOf("Artist:") > -1 && info.indexOf("Title:") > -1) title = `${info.split(`Artist:`)[1].split("\n")[0]} - ${info.split(`Title:`)[1].split("\n")[0]}`.replace(/(\r\n|\n|\r)/gm, "");
 	if (info.indexOf("BeatmapSetID") > -1) bmid = info.split(`BeatmapSetID:`)[1].split("\n")[0];
-	files.forEach(img => { if (img.indexOf(".jpg") > -1 || img.indexOf(".png") > -1) { full = img; } });
-	if(info.indexOf("AudioFilename") > -1) {
+  files.forEach(img => { if (img.indexOf(".jpg") > -1 || img.indexOf(".png") > -1) { full = img; } });
+  console.log(info);
+	if(info.indexOf("AudioFilename: ") > -1) {
 		let obj = { title: title, icon: `${root}/images/${bmid}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), file: `${dir}/${songFolder}/${info.split(`AudioFilename: `)[1].split("\n")[0]}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), dir: `${dir}/${i}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), full: `${dir}/${songFolder}/${full}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), loved: "false" };
 		saveOsu(obj, mas, dir, bmid, ind, i);
 	} else {checkDir(ind + 1, mas, dir);}
@@ -285,7 +286,7 @@ function saveOsu(obj, mas, dir, bmid, ind) {
 			document.getElementById("osu").innerHTML = `Inmporting ${ind+1}/${mas.length}`;
 			checkDir(ind + 1, mas, dir);
 		}).catch(er => { checkDir(ind + 1, mas, dir); })
-	} else {checkDir(ind + 1, mas, dir);} 
+	} else {checkDir(ind + 1, mas, dir);}
 }
 
 async function exportLoved() {
@@ -882,7 +883,7 @@ function youtube(vid, title, icon) {
 					ipcRenderer.send("youtube", { url: stream.url, properties: { directory: `${root}/youtube`, filename: `${title}.mp3` }, obj });
 				}
 				ytQuery.push(obj);
-				document.getElementById("yt").innerHTML = `YouTube <i class="fas fa-download"></i> ${ytQuery.length}`;
+        document.getElementById("yt").innerHTML = `YouTube <i onclick="clearYT()" class="fas fa-download"></i> ${ytQuery.length}`;
 			}
 		});
 	})
@@ -890,12 +891,12 @@ function youtube(vid, title, icon) {
 
 ipcRenderer.on("ytcomplete", (event, arg) => {
 	ytQuery = ytQuery.filter(y => y.videoId != arg.videoId);
-	if (ytQuery.length > 0) { 
+	if (ytQuery.length > 0) {
 		let obj = ytQuery[0];
 		ipcRenderer.send("youtube", { url: obj.url, properties: { directory: `${root}/youtube`, filename: `${obj.title}.mp3` }, obj });
-		document.getElementById("yt").innerHTML = `YouTube <i class="fas fa-download"></i> ${ytQuery.length}`; 
+		document.getElementById("yt").innerHTML = `YouTube <i onclick="clearYT()" class="fas fa-download"></i> ${ytQuery.length}`;
 	} else {
-		 document.getElementById("yt").innerHTML = `YouTube`; 
+		 document.getElementById("yt").innerHTML = `YouTube`;
 	};
 	axios.get(arg.icon, { responseType: 'arraybuffer' }).then(response => {
 		fs.writeFileSync(`${root}/images/${arg.videoId}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), Buffer.from(response.data, 'base64'));
@@ -910,16 +911,22 @@ ipcRenderer.on("ytcomplete", (event, arg) => {
 	}).catch(er => {})
 });
 
+function clearYT() {
+  document.getElementById("yt").innerHTML = `YouTube`;
+  ytQuery = [];
+}
 
 ipcRenderer.on("yterror", (event, arg) => {
-	ytQuery = ytQuery.filter(y => y !== arg.title);
+	ytQuery = ytQuery.filter(y => y.videoId != arg.videoId);
 	if (ytQuery.length > 0) {
-		document.getElementById("yt").innerHTML = `YouTube <i class="fas fa-download"></i> ${ytQuery.length}`;
+    let obj = ytQuery[0];
 	} else {
 		document.getElementById("yt").innerHTML = `YouTube`;
 	}
 	notify("Error", `${arg.title} cant find mp3 file :c`);
 });
+
+
 
 function parse_str(str) {
 	return str.split('&').reduce(function (params, param) {
