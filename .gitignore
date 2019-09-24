@@ -2,4 +2,7 @@
 /node_modules
 /node_modules_bak
 .vscode
+
+# locks
 package-lock.json
+yarn.lock
