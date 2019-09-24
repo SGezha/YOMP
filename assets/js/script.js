@@ -60,6 +60,7 @@ function clearDir(path) {
 };
 
 function clearPl() {
+	M.toast({html: 'Playlist cleared'})
 	clearDir(`${root}/images`);
 	clearDir(`${root}/full`);
 	clearDir(`${root}/youtube`);

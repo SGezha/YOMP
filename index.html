@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+    
     <head>
         <title>YOMP</title>
         <meta charset="UTF-8">
@@ -11,6 +12,7 @@
         <script src="assets/js/vue.js"></script>
         <script src="assets/js/axios.js"></script>
     </head>
+    
     <body>
         <div id="yomp">
             <div class="main">
@@ -138,7 +140,11 @@
                                             <i class="fas fa-volume-up ap--volume-on"></i>
                                             <i class="fas fa-volume-mute ap--volume-off"></i>
                                         </button>
-                                        <div class="ap-volume"><div class="ap-volume-progress"><div class="ap-volume-bar"></div></div></div>
+                                        <div class="ap-volume">
+                                            <div class="ap-volume-progress">
+                                                <div class="ap-volume-bar"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <button class="ap-controls ap-repeat-btn"><i class="fas fa-sync-alt"></i></button>
                                     <button class="ap-controls" onclick="random()"><i class="fas fa-random"></i></button>
@@ -347,13 +353,24 @@
             </div>
             <div id="load-music"><div class="text" id="load-progress"><span></span></div></div>
         </div>
-
-        <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
+        
+        <script>
+            if (typeof module === 'object') {
+                window.module = module;
+                module = undefined;
+            }
+        </script>
         <script src="assets/js/jquery.js"></script>
         <script src="assets/js/script.js"></script>
         <script src="assets/js/materialize.min.js"></script>
-        <script>$(document).ready(function(){$('.collapsible').collapsible();});</script>
-        <script>if (window.module) module = window.module;</script>
+        <script>
+            $(document).ready(function() {
+                $('.collapsible').collapsible();
+            });
+        </script>
+        <script>
+            if (window.module) module = window.module;
+        </script>
         <script>
             var app = new Vue({
                 el: '#app',
@@ -378,4 +395,5 @@
             })
         </script>
     </body>
+    
 </html>
