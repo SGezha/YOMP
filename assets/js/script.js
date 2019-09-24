@@ -877,29 +877,37 @@ function youtube(vid, title, icon) {
 			}
 			if (quality) {
 				notify('YouTube', `${title} added to download queue`, false);
-				let obj = { title: title, icon: icon, file: `${root}/youtube/${title}.mp3`, videoId: vid, loved: "false" };
-				ytQuery.push(title);
+				let obj = { url: stream.url, title: title, icon: icon, file: `${root}/youtube/${title}.mp3`, videoId: vid, loved: "false" };
+				if(ytQuery.length == 0) {
+					ipcRenderer.send("youtube", { url: stream.url, properties: { directory: `${root}/youtube`, filename: `${title}.mp3` }, obj });
+				}
+				ytQuery.push(obj);
 				document.getElementById("yt").innerHTML = `YouTube <i class="fas fa-download"></i> ${ytQuery.length}`;
-				ipcRenderer.send("youtube", { url: stream.url, properties: { directory: `${root}/youtube`, filename: `${title}.mp3` }, obj });
 			}
 		});
 	})
 }
 
 ipcRenderer.on("ytcomplete", (event, arg) => {
-	ytQuery = ytQuery.filter(y => y !== arg.title);
-	if (ytQuery.length > 0) { document.getElementById("yt").innerHTML = `YouTube <i class="fas fa-download"></i> ${ytQuery.length}`; } else { document.getElementById("yt").innerHTML = `YouTube`; };
+	ytQuery = ytQuery.filter(y => y.videoId != arg.videoId);
+	if (ytQuery.length > 0) { 
+		let obj = ytQuery[0];
+		ipcRenderer.send("youtube", { url: obj.url, properties: { directory: `${root}/youtube`, filename: `${obj.title}.mp3` }, obj });
+		document.getElementById("yt").innerHTML = `YouTube <i class="fas fa-download"></i> ${ytQuery.length}`; 
+	} else {
+		 document.getElementById("yt").innerHTML = `YouTube`; 
+	};
 	axios.get(arg.icon, { responseType: 'arraybuffer' }).then(response => {
-		fs.writeFileSync(`${root}/images/${arg.title}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), Buffer.from(response.data, 'base64'));
+		fs.writeFileSync(`${root}/images/${arg.videoId}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), Buffer.from(response.data, 'base64'));
 		db().insert('music', {
 			title: arg.title,
-			icon: `${root}/images/${arg.title}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""),
+			icon: `${root}/images/${arg.videoId}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""),
 			file: arg.file.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""),
-			videoId: arg.vid,
+			videoId: arg.videoId,
 			loved: "false"
 		});
 		notify("YouTube", `Download ${arg.title} complete :3`, true);
-	}).catch(er => { checkDir(ind + 1, mas, dir); })
+	}).catch(er => {})
 });
 
 

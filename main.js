@@ -97,7 +97,7 @@ app.on('activate', function () {
 	}
 });
 
-ipcMain.on("youtube", (event, arg, obj) => {
+ipcMain.on("youtube", (event, arg) => {
 	download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)
 	.then(dl => {
 		mainWindow.webContents.send("ytcomplete", arg.obj);
