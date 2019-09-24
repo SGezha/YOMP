@@ -1268,7 +1268,7 @@ input[type="checkbox"], label {
     height: 25px;
     width: 25px;
     position: absolute;
-    content: 'âœ“';
+    content: '✓';
     display: inline-block;
     font-size: 20px;
     text-align: center;
