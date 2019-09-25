@@ -5,15 +5,16 @@ if (!fs.existsSync(`${root}/youtube`)) fs.mkdirSync(`${root}/youtube`);
 if (!fs.existsSync(`${root}/full`)) fs.mkdirSync(`${root}/full`);
 
 const { shell, remote, ipcRenderer: ipc } = require('electron'),
-	ipcRenderer = require('electron').ipcRenderer,
-	db = require('better-sqlite3-helper'),
+  db = require('better-sqlite3-helper'),
+  child = require('child_process').execFile,
 	NodeID3 = require('node-id3'),
 	os = require('os');
 
 db({ path: `${root}/database.db`, memory: false, readonly: false, fileMustExist: false, migrate: false });
 
 let isLoaded = false,
-	loaded = 0,
+  loaded = 0,
+  musicStatus = {},
 	mini = false,
 	fullscreen = 0,
 	isLoved = false,
@@ -22,17 +23,13 @@ let isLoaded = false,
 
 window.onload = function () {
 	start();
-	ipcRenderer.send('ready');
+	ipc.send('ready');
 	loadSettings();
-	checkUpdate(true);
-	refresh();
+  checkUpdate(true);
+  if(db().query("SELECT * from status")[0].loved == "false") {refresh();} else {openloved();}
 	discordUpdate();
 	document.getElementById('pl').classList.remove("hide");
 };
-
-ipcRenderer.on("update complete", (event, arg) => {
-	notify("Update", `Download update complete :>`);
-});
 
 function checkUpdate(auto) {
 	let ver = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString()).version;
@@ -44,8 +41,20 @@ function checkUpdate(auto) {
 			notify("Update", `New version ${r.ver} started to download c:`);
 			let osp = os.platform(),
 				arch = os.arch().split("x").join("");
-			if (osp.indexOf("win") > -1) osp = "win";
-			ipcRenderer.send("update", { url: r[osp + arch], properties: { directory: `${root}/cache`, filename: `update.exe` } });
+      if (osp.indexOf("win") > -1) osp = "win";
+      remote.require("electron-download-manager").download({
+        url: r[osp + arch],
+        onProgress: (p) => {
+          document.getElementById("upda").innerHTML = `UPDATE ${p.progress.toFixed(0)}%`
+        }
+      }, function (error, info) {
+          if (error) {console.log(error);return;}
+          notify("Update", `Download update complete :>`);
+          child(info.filePath.toString().split("\\").join("/"), function (err, data) {
+            if (err) { console.error(err); return; }
+            window.close();
+          });
+      });
 		}
 	})
 }
@@ -60,12 +69,15 @@ function clearDir(path) {
 };
 
 function clearPl() {
-	M.toast({html: 'Playlist cleared'})
+	M.toast({html: 'Playlist cleared'});
 	clearDir(`${root}/images`);
 	clearDir(`${root}/full`);
 	clearDir(`${root}/youtube`);
-	db().run("DROP TABLE music");
-	db().run(`CREATE TABLE IF NOT EXISTS music(id INTEGER PRIMARY KEY, title VARCHAR(150), dir VARCHAR(150) , file VARCHAR(999) , icon VARCHAR(150) , full VARCHAR(150) , loved BOOLEAN , videoId VARCHAR(11));`);
+  db().run("DROP TABLE music");
+  db().run("DROP TABLE status");
+  db().run(`CREATE TABLE IF NOT EXISTS status(dataId INTEGER, realId INTEGER, volume INTEGER, loved VARCHAR(5));`);
+  db().run(`CREATE TABLE IF NOT EXISTS music(id INTEGER PRIMARY KEY, title VARCHAR(150), bmid VARCHAR(150), category VARCHAR(150), dir VARCHAR(150) , file VARCHAR(999) , icon VARCHAR(150) , full VARCHAR(150) , loved BOOLEAN , videoId VARCHAR(11));`);
+  db().run(`INSERT INTO status(dataId,realId,volume,loved) VALUES(0, 0, 10, "false");`);
 	refresh();
 }
 
@@ -73,6 +85,7 @@ function notify(title, body, bol) {
 	if (db().query("SELECT * from settings")[0].notiturn == "false") {
 		let icon = "assets/icons/icon.png";
 		if(title.toLocaleLowerCase().indexOf("now") > -1 && remote.getCurrentWindow().isFocused()) return;
+		if(title.toLocaleLowerCase().indexOf("loved") > -1 && remote.getCurrentWindow().isFocused()) return M.toast({html: `<i style="margin-right: 10px;" class="fas fa-heart owo ${title.split(" ")[0] == "Added" ? "fav" : ""}"></i> ${body}`});
 		if (db().query("SELECT * from settings")[0].notiloved == "true" && title.toLocaleLowerCase().indexOf("loved") > -1) return;
 		if (db().query("SELECT * from settings")[0].notiadd == "true" && title.toLocaleLowerCase().indexOf("success") > -1) return;
 		if (title.toLocaleLowerCase().indexOf("loved") > -1) icon = "assets/icons/notif-icon/i_loved.png";
@@ -144,7 +157,6 @@ document.getElementById("search").onchange = function (e) {
 		if (l > 0) {
 			for (var i = 0; i < base.length; i++) {
 				let title = base[i].title;
-				if (Array.isArray(base[i].title)) title = base[i].title[0];
 				if (title.toLowerCase().match(input.value.toLowerCase())) {
 					result.push(base[i]);
 				}
@@ -157,14 +169,14 @@ document.getElementById("search").onchange = function (e) {
 
 			document.getElementById('pl').classList.remove("hide");
 		} else {
-			refresh();
+      if(!isLoved) {refresh();} else {openloved();}
 			document.getElementById('pl').classList.remove("hide");
 		}
 	}
 };
 
 function winowClose() {
-	if (document.getElementsByClassName('pl-current')[0]) db().run(`UPDATE status set dataId='${parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('data-track'), 10)}', realid='${parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('real-id'), 10)}'`);
+	if (document.getElementsByClassName('pl-current')[0]) db().run(`UPDATE status set dataId='${parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('data-track'), 10)}', realid='${parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('real-id'), 10)}', volume='${musicStatus.volume ? musicStatus.volume / 100 : 0.1}', loved='${isLoved ? "true" : "false"}'`);
 	window.close();
 }
 
@@ -201,35 +213,39 @@ function searchbtn() {
 }
 
 async function addMusicFolder() {
-	let dir = await remote.dialog.showOpenDialog({ title: 'Select Music Folder', properties: ['openDirectory'] });
+  let dir = await remote.dialog.showOpenDialog({ title: 'Select Music Folder', properties: ['openDirectory'] });
+  if(!dir.filePaths[0]) return;
 	fs.readdir(dir.filePaths[0], function (err, items) {
 		loadMusic();
 		items.forEach((i, ind) => {
 			setTimeout(() => {
-				if (ind + 1 == items.length) loadMusic();
+				if (ind+1 == items.length) loadMusic();
 				if (i.toLocaleLowerCase().indexOf(".mp3") > -1) {
 					if (db().query(`SELECT * from music where file='${dir.filePaths[0]}/${i}'`).length == 0) {
-						let metadata = NodeID3.read(`${dir.filePaths[0]}/${i}`);
-						let obj = {};
-						obj.title = i.toLocaleLowerCase().split(".mp3");
-						obj.file = `${dir.filePaths[0]}/${i}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, "");
-						obj.loved = "false";
+            let metadata = NodeID3.read(`${dir.filePaths[0]}/${i}`);
+						let obj = {
+              title: i.toLocaleLowerCase().split(".mp3"),
+              file: `${dir.filePaths[0]}/${i}`.split("\\").join("/"),
+              loved: "false"
+            };
 						if (metadata.title != undefined && metadata.artist != undefined) obj.title = `${metadata.artist} - ${metadata.title}`;
 						if (metadata.image != undefined && metadata.image.imageBuffer != undefined) {
 							fs.writeFileSync(`${root}/images/${obj.title}.jpg`, metadata.image.imageBuffer, 'binary');
 							obj.icon = encodeURI(`${root}/images/${obj.title}.jpg`);
-						}
+            }
+            if(Array.isArray(obj.title)) obj.title = obj.title[0];
 						db().insert('music', obj);
 						document.getElementById("load-progress").innerHTML = `<div class="textload">${obj.title}</div> <span> ${ind + 1}/${items.length}</span>`;
 					}
 				}
-			}, 200 * ind)
+			}, 500 * ind)
 		})
 	});
 }
 
 async function addosu() {
-	let dir = await remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
+  let dir = await remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
+  if(!dir.filePaths[0]) return;
 	fs.readdir(dir.filePaths[0], function (err, items) {
 		checkDir(0, items, dir.filePaths[0])
 	});
@@ -238,7 +254,8 @@ async function addosu() {
 function checkDir(ind, mas, dir) {
 	if (ind + 1 == mas.length) {
 		document.getElementById("osu").innerHTML = `Import osu! songs`;
-		refresh();
+    refresh();
+    notify("Success", "Importing osu! songs completed :3")
 		document.getElementById('pl').classList.remove("hide");
 	} else {
 		let i = mas[ind].split("~").join("").split("'").join("").split("^").join("");
@@ -266,13 +283,12 @@ function parseOsu(ind, mas, dir, songFolder, f, i, files) {
 	let info = fs.readFileSync(`${dir}\\${songFolder}\\${f}`).toString(),
 		title = f.split(".osu").join(""),
 		bmid = songFolder.split(" ")[0],
-		full = "";
+    full = "";
 	if (info.indexOf("Artist:") > -1 && info.indexOf("Title:") > -1) title = `${info.split(`Artist:`)[1].split("\n")[0]} - ${info.split(`Title:`)[1].split("\n")[0]}`.replace(/(\r\n|\n|\r)/gm, "");
 	if (info.indexOf("BeatmapSetID") > -1) bmid = info.split(`BeatmapSetID:`)[1].split("\n")[0];
   files.forEach(img => { if (img.indexOf(".jpg") > -1 || img.indexOf(".png") > -1) { full = img; } });
-  console.log(info);
 	if(info.indexOf("AudioFilename: ") > -1) {
-		let obj = { title: title, icon: `${root}/images/${bmid}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), file: `${dir}/${songFolder}/${info.split(`AudioFilename: `)[1].split("\n")[0]}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), dir: `${dir}/${i}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), full: `${dir}/${songFolder}/${full}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), loved: "false" };
+		let obj = { bmid: bmid, title: title, icon: `${root}/images/${bmid}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), file: `${dir}/${songFolder}/${info.split(`AudioFilename: `)[1].split("\n")[0]}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), dir: `${dir}/${i}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), full: `${dir}/${songFolder}/${full}`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), loved: "false" };
 		saveOsu(obj, mas, dir, bmid, ind, i);
 	} else {checkDir(ind + 1, mas, dir);}
 }
@@ -356,7 +372,7 @@ function start() {
 			seeking = false,
 			rightClick = false,
 			apActive = false,
-			pl, plLi, settings = { volume: 0.1, autoPlay: false, notification: true, playList: []};
+			pl, plLi, settings = { volume: db().query("SELECT * from status")[0].volume ? db().query("SELECT * from status")[0].volume : 0.1, autoPlay: false, notification: true, playList: []};
 
 		function init(options) {
 			settings = extend(settings, options);
@@ -454,6 +470,7 @@ function start() {
 				if (target.className === 'fas fa-heart owo' || target.className === 'fas fa-heart owo fav' || target.className == 'right') return;
 				while (target.className !== pl.className) {
 					if (target.className === 'pl-remove' || target.className === 'pl-del' || target.className === 'right') {
+            M.toast({html: `<i style="margin-right: 10px;" class="fas fa-trash"></i> ${db().query("SELECT * from music WHERE id=" + parseInt(target.parentNode.getAttribute('real-id'), 10))[0].title}`});
 						db().run(`DELETE from music where id=${parseInt(target.parentNode.getAttribute('real-id'), 10)}`);
 						if (!isLoved) { refresh(); } else { openloved(); };
 						let isDel = parseInt(target.parentNode.getAttribute('data-track'), 10);
@@ -620,7 +637,10 @@ function start() {
 			if (buffered.length) {
 				var loaded = Math.round(100 * buffered.end(0) / audio.duration);
 				preloadBar.style.width = loaded + '%';
-			}
+      }
+      musicStatus.progress = barlength;
+      musicStatus.curTime = `${curMins}:${curSecs}`;
+      musicStatus.durTime = `${mins}:${secs}`;
 		}
 
 		function doEnd() {
@@ -742,6 +762,7 @@ function start() {
 		function setVolume(evt) {
 			volumeLength = volumeBar.css('height');
 			if (seeking && rightClick === false) {
+        musicStatus.volume = moveBar(evt, volumeBar.parentNode, 'vertical');
 				var value = moveBar(evt, volumeBar.parentNode, 'vertical') / 100;
 				if (value <= 0) {
 					audio.volume = 0;
@@ -878,55 +899,34 @@ function youtube(vid, title, icon) {
 			}
 			if (quality) {
 				notify('YouTube', `${title} added to download queue`, false);
-				let obj = { url: stream.url, title: title, icon: icon, file: `${root}/youtube/${title}.mp3`, videoId: vid, loved: "false" };
-				if(ytQuery.length == 0) {
-					ipcRenderer.send("youtube", { url: stream.url, properties: { directory: `${root}/youtube`, filename: `${title}.mp3` }, obj });
-				}
-				ytQuery.push(obj);
+        let obj = { title: title, icon: icon, file: `${root}/youtube/${title}.mp3`, videoId: vid, loved: "false" };
+        remote.require("electron-download-manager").download({
+            url: stream.url
+        }, function (error, info) {
+            ytQuery = ytQuery.filter(y => y.videoId != obj.videoId);
+            if (ytQuery.length > 0) {document.getElementById("yt").innerHTML = `YouTube <i onclick="clearYT()" class="fas fa-download"></i> ${ytQuery.length}`;} else { document.getElementById("yt").innerHTML = `YouTube`; };
+            if (error) {
+              notify('Error', 'Copyright or NOT FOUND');
+              return;
+            }
+            axios.get(obj.icon, { responseType: 'arraybuffer' }).then(response => {
+              fs.writeFileSync(`${root}/images/${obj.videoId}.jpg`.split("\\").join("/"), Buffer.from(response.data, 'base64'));
+              db().insert('music', {
+                title: obj.title,
+                icon: `${root}/images/${obj.videoId}.jpg`.split("\\").join("/"),
+                file: info.filePath.split("\\").join("/"),
+                videoId: obj.videoId,
+                loved: "false"
+              });
+              notify("YouTube", `Download ${obj.title} complete :3`, true);
+            }).catch(er => {})
+        });
+        ytQuery.push(obj);
         document.getElementById("yt").innerHTML = `YouTube <i onclick="clearYT()" class="fas fa-download"></i> ${ytQuery.length}`;
 			}
 		});
 	})
 }
-
-ipcRenderer.on("ytcomplete", (event, arg) => {
-	ytQuery = ytQuery.filter(y => y.videoId != arg.videoId);
-	if (ytQuery.length > 0) {
-		let obj = ytQuery[0];
-		ipcRenderer.send("youtube", { url: obj.url, properties: { directory: `${root}/youtube`, filename: `${obj.title}.mp3` }, obj });
-		document.getElementById("yt").innerHTML = `YouTube <i onclick="clearYT()" class="fas fa-download"></i> ${ytQuery.length}`;
-	} else {
-		 document.getElementById("yt").innerHTML = `YouTube`;
-	};
-	axios.get(arg.icon, { responseType: 'arraybuffer' }).then(response => {
-		fs.writeFileSync(`${root}/images/${arg.videoId}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), Buffer.from(response.data, 'base64'));
-		db().insert('music', {
-			title: arg.title,
-			icon: `${root}/images/${arg.videoId}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""),
-			file: arg.file.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""),
-			videoId: arg.videoId,
-			loved: "false"
-		});
-		notify("YouTube", `Download ${arg.title} complete :3`, true);
-	}).catch(er => {})
-});
-
-function clearYT() {
-  document.getElementById("yt").innerHTML = `YouTube`;
-  ytQuery = [];
-}
-
-ipcRenderer.on("yterror", (event, arg) => {
-	ytQuery = ytQuery.filter(y => y.videoId != arg.videoId);
-	if (ytQuery.length > 0) {
-    let obj = ytQuery[0];
-	} else {
-		document.getElementById("yt").innerHTML = `YouTube`;
-	}
-	notify("Error", `${arg.title} cant find mp3 file :c`);
-});
-
-
 
 function parse_str(str) {
 	return str.split('&').reduce(function (params, param) {
@@ -1094,18 +1094,30 @@ function openloved() {
 }
 
 function discordUpdate() {
+  let progress = "";
+  for(let i = 0; i < 10; i++) {
+    if(parseInt(musicStatus.progress / 10).toFixed(0) > i) {
+      progress += "-";
+    } else if(parseInt(musicStatus.progress / 10).toFixed(0) == i) {
+      progress += "●";
+    } else {
+      progress += "-"
+    }
+  }
 	if (document.getElementsByClassName('pl-current')[0]) {
 		ipc.send("rpc", {
 			status: "playing",
-			title: document.querySelector('.ap-title').innerHTML
+      title: document.querySelector('.ap-title').innerHTML,
+      progress: `${musicStatus.curTime} [${progress}] ${musicStatus.durTime}`
 		});
 	} else {
 		ipc.send("rpc", {
 			status: "paused",
-			title: document.querySelector('.ap-title').innerHTML
+      title: document.querySelector('.ap-title').innerHTML,
+      progress: `${musicStatus.curTime} [${progress}] ${musicStatus.durTime}`
 		});
 	}
-	setTimeout(() => {discordUpdate()}, 3000)
+	setTimeout(() => {discordUpdate()}, 1000);
 }
 
 function loadSettings() {

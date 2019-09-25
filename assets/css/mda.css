@@ -1813,7 +1813,7 @@ button.ap-active>i {
 #toast-container {
   position: fixed;
   display: block;
-  top: 15%;
+  top: 12%;
   right: 2%;
   max-width: 86%;
   z-index: 10000;

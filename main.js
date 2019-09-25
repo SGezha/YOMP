@@ -6,9 +6,12 @@ const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc } = require
   iconPath = path.join(__dirname, 'assets/icons/icon.png'),
   db = require('better-sqlite3-helper'),
   fs = require('fs'),
-  { download } = require("electron-dl"),
   rpc = new DiscordRPC.Client({ transport: 'ipc' }),
-  child = require('child_process').execFile;
+  DownloadManager = require("electron-download-manager");
+
+DownloadManager.register({
+    downloadFolder: root + "/youtube"
+});
 
 let mainWindow,
   notiWindow,
@@ -21,11 +24,11 @@ if (fs.existsSync(`${root}/database.db`)) {
   s = db().query(`SELECT * from settings`)[0];
 } else {
   db({path: `${root}/database.db`, memory: false, readonly: false, fileMustExist: false, migrate: false});
-  db().run(`CREATE TABLE IF NOT EXISTS music(id INTEGER PRIMARY KEY, title VARCHAR(150), dir VARCHAR(150) , file VARCHAR(999) , icon VARCHAR(150) , full VARCHAR(150) , loved BOOLEAN , videoId VARCHAR(11));`);
-  db().run(`CREATE TABLE IF NOT EXISTS status(dataId INTEGER, realId INTEGER);`);
+  db().run(`CREATE TABLE IF NOT EXISTS music(id INTEGER PRIMARY KEY, title VARCHAR(150), bmid VARCHAR(150), category VARCHAR(150), dir VARCHAR(150) , file VARCHAR(999) , icon VARCHAR(150) , full VARCHAR(150) , loved BOOLEAN , videoId VARCHAR(11));`);
+  db().run(`CREATE TABLE IF NOT EXISTS status(dataId INTEGER, realId INTEGER, volume INTEGER, loved VARCHAR(5));`);
   db().run(`CREATE TABLE IF NOT EXISTS settings( notiturn VARCHAR(5),notiloved VARCHAR(5) ,notiadd VARCHAR(5) ,keyplay VARCHAR(99) ,keyrandom VARCHAR(99) ,keylove VARCHAR(99) ,keynext VARCHAR(99) ,keyprev VARCHAR(99) ,keyfocus VARCHAR(99) ,keymini VARCHAR(99) ,keyvolumeup VARCHAR(99) ,keyvolumedown VARCHAR(99) ,keymute VARCHAR(99));`);
   db().run(`INSERT INTO settings(notiturn,notiloved,notiadd,keyplay,keyrandom,keylove,keynext,keyprev,keyfocus,keymini,keyvolumeup,keyvolumedown,keymute) VALUES('false','false','false','ctrl+Space','ctrl+r','ctrl+l','ctrl+Right','ctrl+Left','ctrl+Up','ctrl+Down','ctrl+=','ctrl+-','ctrl+0');`);
-  db().run(`INSERT INTO status(dataId,realId) VALUES(0, 0);`);
+  db().run(`INSERT INTO status(dataId,realId,volume,loved) VALUES(0, 0, 10, "false");`);
 }
 
 app.setAppUserModelId("YOMP");
@@ -97,28 +100,6 @@ app.on('activate', function () {
   }
 });
 
-ipcMain.on("youtube", (event, arg) => {
-	download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)
-	.then(dl => {
-		mainWindow.webContents.send("ytcomplete", arg.obj);
-	})
-	.catch(er => {
-		mainWindow.webContents.send("yterror", arg.obj);
-	})
-});
-
-ipcMain.on("update", (event, arg) => {
-  download(BrowserWindow.getFocusedWindow(), arg.url, arg.properties)
-    .then(dl => {
-      mainWindow.webContents.send("update complete");
-      child(arg.properties.directory + "/update.exe", function (err, data) {
-        if (err) { console.error(err); return; }
-        if (mainWindow) mainWindow.close();
-        mainWindow = null;
-      });
-    });
-})
-
 ipcMain.on("ready", (event, arg) => {
   if (preloader) preloader.close();
   preloader = null;
@@ -141,9 +122,9 @@ ipcMain.on("ready", (event, arg) => {
 function createActivity(data) {
   let act = {};
   if (data.status == "playing") {
-    act = { details: "Listen music", state: data.title, largeImageKey: "icon", largeImageText: "YOMP", smallImageKey: "play", smallImageText: "Playing" };
+    act = { details: "Listen music", state: data.title, largeImageKey: "icon", largeImageText: "YOMP", smallImageKey: "play", smallImageText: data.progress };
   } else if (data.status == "paused") {
-    act = { details: "Paused", state: data.title, largeImageKey: "icon", largeImageText: "YOMP", smallImageKey: "stop", smallImageText: "Paused" };
+    act = { details: "Paused", state: data.title, largeImageKey: "icon", largeImageText: "YOMP", smallImageKey: "stop", smallImageText: data.progress };
   }
   mainWindow.webContents.executeJavaScript(``);
   return act;
