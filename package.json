@@ -10,7 +10,7 @@
     "copyright": "Copyright © 2019 ${author}",
     "win": {
       "target": [
-        "NSIS",
+        "nsis",
         "portable"
       ],
       "icon": "assets/icons/icon.png"
@@ -19,7 +19,11 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "license": "license"
+      "license": "license",
+      "artifactName": "${productName} Setup ${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName} Portable ${version}.${ext}"
     }
   },
   "scripts": {
