@@ -77,7 +77,7 @@ function clearPl() {
   db().run("DROP TABLE status");
   db().run(`CREATE TABLE IF NOT EXISTS status(dataId INTEGER, realId INTEGER, volume INTEGER, loved VARCHAR(5));`);
   db().run(`CREATE TABLE IF NOT EXISTS music(id INTEGER PRIMARY KEY, title VARCHAR(150), bmid VARCHAR(150), category VARCHAR(150), dir VARCHAR(150) , file VARCHAR(999) , icon VARCHAR(150) , full VARCHAR(150) , loved BOOLEAN , videoId VARCHAR(11));`);
-  db().run(`INSERT INTO status(dataId,realId,volume,loved) VALUES(0, 0, 10, "false");`);
+  db().run(`INSERT INTO status(dataId,realId,volume,loved) VALUES(0, 0, 0.1, "false");`);
 	refresh();
 }
 
@@ -176,7 +176,7 @@ document.getElementById("search").onchange = function (e) {
 };
 
 function winowClose() {
-	if (document.getElementsByClassName('pl-current')[0]) db().run(`UPDATE status set dataId='${parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('data-track'), 10)}', realid='${parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('real-id'), 10)}', volume='${musicStatus.volume ? musicStatus.volume / 100 : 0.1}', loved='${isLoved ? "true" : "false"}'`);
+	if (document.getElementsByClassName('pl-current')[0]) db().run(`UPDATE status set dataId='${parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('data-track'), 10)}', realid='${parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('real-id'), 10)}', volume='${musicStatus.volume ? musicStatus.volume : 0.1}', loved='${isLoved ? "true" : "false"}'`);
 	window.close();
 }
 
@@ -762,7 +762,7 @@ function start() {
 		function setVolume(evt) {
 			volumeLength = volumeBar.css('height');
 			if (seeking && rightClick === false) {
-        musicStatus.volume = moveBar(evt, volumeBar.parentNode, 'vertical');
+        musicStatus.volume = moveBar(evt, volumeBar.parentNode, 'vertical') / 100;
 				var value = moveBar(evt, volumeBar.parentNode, 'vertical') / 100;
 				if (value <= 0) {
 					audio.volume = 0;
@@ -911,14 +911,17 @@ function youtube(vid, title, icon) {
             }
             axios.get(obj.icon, { responseType: 'arraybuffer' }).then(response => {
               fs.writeFileSync(`${root}/images/${obj.videoId}.jpg`.split("\\").join("/"), Buffer.from(response.data, 'base64'));
-              db().insert('music', {
-                title: obj.title,
-                icon: `${root}/images/${obj.videoId}.jpg`.split("\\").join("/"),
-                file: info.filePath.split("\\").join("/"),
-                videoId: obj.videoId,
-                loved: "false"
+              fs.rename(info.filePath, `${root}/youtube/${obj.videoId}.mp3`, function (err) {
+                if (err) throw err;
+                db().insert('music', {
+                  title: obj.title,
+                  icon: `${root}/images/${obj.videoId}.jpg`.split("\\").join("/"),
+                  file: `${root}/youtube/${obj.videoId}.mp3`,
+                  videoId: obj.videoId,
+                  loved: "false"
+                });
+                notify("YouTube", `Download ${obj.title} complete :3`, true);
               });
-              notify("YouTube", `Download ${obj.title} complete :3`, true);
             }).catch(er => {})
         });
         ytQuery.push(obj);
