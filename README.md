@@ -1,8 +1,8 @@
 <h2 id="yomp-youtube--osu-music-player">YOMP (YouTube &amp; osu! Music Player)</h2><img src="https://puu.sh/EkVK5.png" alt="icon">
-<p>Simple music player with the ability to listen to music from <strong>YouTube</strong>, <strong>osu!</strong> and <strong>local</strong>.</p>
+<p>Simple music player with the ability to play music from <strong>YouTube</strong>, <strong>osu!</strong> and <strong>local</strong>.</p>
 <h2 id="features">Features:</h2>
 <ul>
-<li><strong>Discord status</strong> (show in discord what song are you listening)</li>
+<li><strong>Discord Rich Presence</strong> (shows in Discord what song you are listening to)</li>
 <li><strong>YouTube download mp3</strong></li>
 <li><strong>Loved songs</strong></li>
 <li><strong>Auto update</strong></li>
