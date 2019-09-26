@@ -887,15 +887,9 @@ function youtube(vid, title, icon) {
 				itag = stream.itag * 1,
 				quality = false;
 			switch (itag) {
-				case 139:
-					quality = "48kbps";
-					break;
-				case 140:
-					quality = "128kbps";
-					break;
-				case 141:
-					quality = "256kbps";
-					break;
+				case 139:quality = "48kbps";break;
+				case 140:quality = "128kbps";break;
+				case 141:quality = "256kbps";break;
 			}
 			if (quality) {
 				notify('YouTube', `${title} added to download queue`, false);
