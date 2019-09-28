@@ -285,7 +285,7 @@ function saveOsu(obj, mas, dir, bmid, ind) {
         refresh();
       }
       if((ind/50).toString().indexOf(".") == -1) {
-        app.playlist = db().query("SELECT * from music");      
+        app.playlist = db().query("SELECT * from music");
         refresh();
       }
       db().insert('music', obj);
@@ -441,7 +441,7 @@ function start() {
       if (isLoaded == true) return;
       if (loaded == 0) loaded = 80;
       var isElViu = isElementInView($(`li[data-track="${loaded - 5}"]`), false);
-    
+
       if (isElViu) {
         isLoaded = true;
         for (let i = loaded; i < loaded + 50; i++) {
@@ -906,6 +906,11 @@ function youtube(vid, title, icon) {
       }
     });
   })
+}
+
+function clearYT() {
+  document.getElementById("yt").innerHTML = `YouTube`;
+  ytQuery =[];
 }
 
 function parse_str(str) {
