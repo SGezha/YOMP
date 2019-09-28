@@ -1,5 +1,4 @@
 const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc } = require('electron'),
-  ipcMain = require('electron').ipcMain,
   path = require('path'),
   root = app.getPath('userData'),
   DiscordRPC = require('discord-rpc'),
@@ -100,13 +99,13 @@ app.on('activate', function () {
   }
 });
 
-ipcMain.on("ready", (event, arg) => {
+ipc.on("ready", (event, arg) => {
   if (preloader) preloader.close();
   preloader = null;
   mainWindow.show();
 });
 
-// ipcMain.on("notification", (event, arg) => {
+// ipc.on("notification", (event, arg) => {
 //   fs.writeFileSync('notify.html', `<style>body{color: white;}</style><h1>${arg.title}</h1> <p>${arg.body}</p>`)
 //   if(!notiWindow) {
 //     var mainScreen = require('electron').screen.getPrimaryDisplay().workAreaSize;

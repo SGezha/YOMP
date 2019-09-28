@@ -1,14 +1,14 @@
-const fs = require("fs");
-let root = require('electron').remote.app.getPath('userData').split("\\").join("/");
-if (!fs.existsSync(`${root}/images`)) fs.mkdirSync(`${root}/images`);
-if (!fs.existsSync(`${root}/youtube`)) fs.mkdirSync(`${root}/youtube`);
-if (!fs.existsSync(`${root}/full`)) fs.mkdirSync(`${root}/full`);
-
 const { shell, remote, ipcRenderer: ipc } = require('electron'),
+	root = remote.app.getPath('userData').split("\\").join("/"),
   db = require('better-sqlite3-helper'),
   child = require('child_process').execFile,
 	NodeID3 = require('node-id3'),
-	os = require('os');
+	os = require('os'),
+	fs = require('fs');
+
+if (!fs.existsSync(`${root}/images`)) fs.mkdirSync(`${root}/images`);
+if (!fs.existsSync(`${root}/youtube`)) fs.mkdirSync(`${root}/youtube`);
+if (!fs.existsSync(`${root}/full`)) fs.mkdirSync(`${root}/full`);
 
 db({ path: `${root}/database.db`, memory: false, readonly: false, fileMustExist: false, migrate: false });
 
