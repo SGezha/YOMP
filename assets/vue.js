@@ -4,6 +4,7 @@ var app = new Vue({
     playlist: [],
     loved: [],
     youtuberesult: [],
+    osuimport: "Import osu! songs",
     status: {
       title: "",
       progress: "",

@@ -11,7 +11,7 @@
         <script src="assets/js/vue.js"></script>
         <script src="assets/js/axios.js"></script>
     </head>
-    
+
     <body>
         <div id="yomp">
             <div class="main">
@@ -60,7 +60,7 @@
                                         <li class="liactiver">
                                             <a onclick="addosu()" href="#">
                                                 <img class="osu" src="assets/icons/osu.svg" />
-                                                <span id="osu">Import osu! songs</span>
+                                                <span id="osu">{{ osuimport }}</span>
                                             </a>
                                         </li>
                                         <li class="liactiver">
@@ -373,7 +373,7 @@
             </div>
             <div id="load-music"><div class="text" id="load-progress"><span></span></div></div>
         </div>
-        
+
         <script>
             if (typeof module === 'object') {
                 window.module = module;

@@ -239,6 +239,7 @@ async function addosu() {
 function checkDir(ind, mas, dir) {
   if (ind + 1 == mas.length) {
     refresh();
+    app.osuimport = `Import osu! songs`;
     notify("Success", "Importing osu! songs completed :3")
   } else {
     let i = mas[ind].split("~").join("").split("'").join("").split("^").join("");
@@ -252,6 +253,7 @@ function checkDir(ind, mas, dir) {
             if (f.indexOf(".osu") > -1) {
               if (!already) {
                 already = true;
+                app.osuimport = `Importing ${ind+1}/${mas.length}`;
                 parseOsu(ind, mas, dir, songFolder, f, i, files);
               }
             }
@@ -283,7 +285,7 @@ function saveOsu(obj, mas, dir, bmid, ind) {
       if(ind < 50) {
         app.playlist.push(obj);
         refresh();
-      }
+      }      
       if((ind/50).toString().indexOf(".") == -1) {
         app.playlist = db().query("SELECT * from music");
         refresh();
