@@ -586,6 +586,11 @@ li.music-el>.pog>.center {
   display: block;
 }
 
+.pog:hover .right>fav>i {
+  display: block;
+}
+
+
 .pl-current .pl-count {
   display: none;
 }
@@ -608,13 +613,17 @@ li.music-el>.pog>.center {
   display: block;
 }
 
+.pl-current .right>fav>i {
+  display: block;
+}
+
 .right>.music-id {
   font-size: 14px;
   color: #a5a5a5;
   margin-right: 10px;
 }
 
-.right>i {
+.right>i, .right>fav>i {
   cursor: pointer;
   display: none;
   margin: 0 10px;

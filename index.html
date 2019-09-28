@@ -39,13 +39,13 @@
               <div class="links" style="height:100vh;">
                 <ul class="links-block">
                   <li class="ap-playlist-btn liactiver">
-                    <a onclick="refresh(); document.getElementById(`app`).style.display = 'none';" href="#">
+                    <a onclick="refresh();" href="#">
                       <svg class="btn-menu" fill="var(--text)" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none" /><path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" /></svg>
                       <span>Playlist</span>
                     </a>
                   </li>
                   <li class="liactiver">
-                    <a onclick="openloved(); document.getElementById(`app`).style.display = 'none';" href="#">
+                    <a onclick="openloved();" href="#">
                       <i class="fas fa-heart"></i>
                       <span>Loved</span>
                     </a>
@@ -87,9 +87,31 @@
             </div>
             <div onclick="openMenu()" class="shadow"></div>
           </div>
-          <div id="app">
+          <div id="pl" class="pl-container">
+            <ul class="pl-list">
+              <template v-for="(t, i) in playlist">
+                  <li v-if="t.hide" class="music-el" :real-id="t.id" :data-track="i">
+                      <div class="pog" :real-id="t.id" :data-track="i">
+                          <div class="left">
+                              <div class="pl-number">
+                                  <div class="pl-count" v-html="t.type"></div>
+                                  <div class="pl-playing"><img src="assets/icons/music.gif"></div>
+                              </div>
+                          </div>
+                          <div class="center" :real-id="t.id" :data-track="i">
+                              <div class="pl-title">{{ t.title }}</div>
+                          </div>
+                          <div class="right" :real-id="t.id" :data-track="i">
+                              <div class="music-id">{{ i+1 }}/{{ app.playlist.length }}</div><fav v-html="t.fav"></fav><i class="fas fa-trash pl-remove pl-del"></i></div>
+                          <div class="music-background" :style="{ background: `url('${t.icon}') center center / cover` }"></div>
+                      </div>
+                  </li>
+                </template>
+            </ul>
+          </div>
+          <div id="youtube">
             <div class="video-pl">
-              <template v-for="m in music">
+              <template v-for="m in youtuberesult">
                 <div @click="youtube(m.id.videoId, m.snippet.title, m.snippet.thumbnails.high.url)" class="video">
                   <div class="cssucks">
                     <div class="left">
@@ -122,8 +144,8 @@
               </div>
               <div class="ap-item ap--track">
                 <div class="ap-info">
-                  <div class="ap-title">Unknown</div>
-                  <div class="ap-time"><span class="ap-time--current">--</span><span>/</span><span class="ap-time--duration">--</span></div>
+                  <div class="ap-title" v-text="status.title"></div>
+                  <div class="ap-time"><span class="ap-time--current" v-text="status.progress"></span></div>
                   <div class="ap-progress-container">
                     <div class="ap-progress">
                       <div class="ap-bar"></div>
@@ -145,7 +167,7 @@
                   </div>
                 </div>
                 <button class="ap-controls ap-repeat-btn"><i class="fas fa-sync-alt"></i></button>
-                <button class="ap-controls" onclick="random()"><i class="fas fa-random"></i></button>
+                <button class="ap-controls randomToggle"><i class="fas fa-random"></i></button>
               </div>
             </div>
           </div>
@@ -164,7 +186,7 @@
         </div>
         <div class="log-nam">
           <div class="logo"><img src="assets/icons/icon.png" /></div>
-          <div class="name">YOMP <span>v1.0.3</span></div>
+          <div class="name">YOMP <span>v1.0.5</span></div>
           <div class="license">License: <span>GNU</span></div>
         </div>
         <div class="team">
@@ -359,6 +381,7 @@
     }
   </script>
   <script src="assets/js/jquery.js"></script>
+  <script src="assets/vue.js"></script>
   <script src="assets/js/script.js"></script>
   <script src="assets/js/materialize.min.js"></script>
   <script>
@@ -368,29 +391,6 @@
   </script>
   <script>
     if (window.module) module = window.module;
-  </script>
-  <script>
-    var app = new Vue({
-      el: '#app',
-      data: {
-        music: []
-      },
-      methods: {
-        search() {
-          if (document.getElementsByClassName('pl-container')[0].classList.length == 1) AP.plToggle();
-          axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + document.getElementById("search").value + "&maxResults=50&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs")
-            .then(res => {
-            if (document.getElementById('pl').classList.length == 1) document.getElementById('pl').classList.add("hide");
-            this.music = [];
-            res.data.items.forEach(v => {
-              if (v.id.kind == "youtube#video") {
-                this.music.push(v);
-              }
-            })
-          })
-        }
-      }
-    })
   </script>
 </body>
 </html>

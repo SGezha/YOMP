@@ -1,6 +1,6 @@
 {
   "name": "osu-youtube-music-player",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Enjoi listen music from osu! and youtube :3",
   "main": "main.js",
   "postinstall": "./node_modules/.bin/electron-builder install-app-deps",
