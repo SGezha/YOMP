@@ -19,6 +19,7 @@ let isLoaded = false,
   fullscreen = 0,
   isLoved = false,
   ytQuery = [],
+  first = true,
   ping = false;
 
 window.onload = function () {
@@ -285,7 +286,7 @@ function saveOsu(obj, mas, dir, bmid, ind) {
       if(ind < 50) {
         app.playlist.push(obj);
         refresh();
-      }      
+      }
       if((ind/50).toString().indexOf(".") == -1) {
         app.playlist = db().query("SELECT * from music");
         refresh();
@@ -363,6 +364,9 @@ function start() {
       pl = document.querySelector("#pl"), settings = { volume: db().query("SELECT * from status")[0].volume ? db().query("SELECT * from status")[0].volume : 0.1, autoPlay: false, notification: true, playList: [] };
 
     function init(options) {
+      for(let i = 0; i < document.querySelectorAll(".music-el").length; i++) {
+        if(document.querySelectorAll(".music-el")[i]) document.querySelectorAll(".music-el")[i].classList.remove('pl-current');
+      }
       settings = extend(settings, options);
       playList = settings.playList;
       renderPL();
@@ -429,14 +433,20 @@ function start() {
       setTimeout(() => {
         for (let i = 0; i < document.querySelectorAll('.music-el').length; i++) {
           document.querySelector("#pl").addEventListener('click', listHandler, false);
-          if (db().query("SELECT * from status")[0].dataId != 0 && db().query("SELECT * from status")[0].realId != 0) {
-            index = parseInt(document.querySelector(`.music-el[real-id='${db().query("SELECT * from status")[0].realId}']`).getAttribute("data-track"));
-            audio.src = playList[index].file;
-            audio.preload = 'auto';
-            app.status.title = playList[index].title;
+          let need = document.querySelectorAll(".pl-title")[i].innerHTML;
+          if(need == app.status.title) {
+            document.querySelectorAll(".music-el")[i].classList.add('pl-current');
+            AP.setIndex(i);
           }
         }
-      }, 1000)
+        if (first && db().query("SELECT * from status")[0].dataId != 0 && db().query("SELECT * from status")[0].realId != 0) {
+          first = false;
+          index = app.status.id = parseInt(document.querySelector(`.music-el[real-id='${db().query("SELECT * from status")[0].realId}']`).getAttribute("data-track"));
+          audio.src = playList[index].file;
+          audio.preload = 'auto';
+          app.status.title = playList[index].title;
+        }
+      }, 500)
     }
 
     document.getElementsByClassName("container")[0].onscroll = function () {
@@ -464,7 +474,8 @@ function start() {
       let aw = evt.target.className;
       if (aw == 'pl-title') {
         let current = parseInt(evt.target.parentNode.getAttribute('data-track'), 10);
-        index = current;
+        index = app.status.id = current;
+        app.status.id = parseInt(evt.target.parentNode.getAttribute('real-id'), 10);
         audio.readyState = 0;
         plActive();
         play();
@@ -517,7 +528,8 @@ function start() {
 
     function play() {
       index = (index > playList.length - 1) ? 0 : index;
-      if (index < 0) index = playList.length - 1;
+      app.status.id = index;
+      if (index < 0) index = app.status.id = playList.length - 1;
       if (isEmptyList()) {
         empty();
         return;
@@ -532,7 +544,7 @@ function start() {
 
     function prev() {
       if(random) return randomTrack();
-      index = index - 1;
+      index = app.status.id = index - 1;
       if (mini == true && ping > 1) {
         document.getElementById('hide-progres').style.width = `100%`;
         ping = 5;
@@ -543,7 +555,7 @@ function start() {
 
     function next() {
       if(random) return randomTrack();
-      index = index + 1;
+      index = app.status.id = index + 1;
       if (mini == true && ping > 1) {
         document.getElementById('hide-progres').style.width = `100%`;
         ping = 5;
@@ -553,7 +565,7 @@ function start() {
     }
 
     function randomTrack() {
-      index = getRandomInt(0, db().query("SELECT * from music").length);
+      index = app.status.id = getRandomInt(0, db().query("SELECT * from music").length);
       if (mini == true && ping > 1) {
         document.getElementById('hide-progres').style.width = `100%`;
         ping = 5;
@@ -647,18 +659,18 @@ function start() {
 
     function doEnd() {
       if(random) return randomTrack();
-      if (index === playList.length - 1) {
+      if (index = app.status.id == playList.length - 1) {
         if (!repeating) {
           audio.pause();
           plActive();
           playBtn.classList.remove('playing');
           return;
         } else {
-          index = 0;
+          index = app.status.id = 0;
           play();
         }
       } else {
-        if (!repeating) index = (index === playList.length - 1) ? 0 : index + 1;
+        if (!repeating) index = app.status.id (index === playList.length - 1) ? 0 : index + 1;
         let title = document.getElementsByClassName('pl-title')[index].innerHTML;
         notify(`Now playing`, title)
         play();
@@ -755,7 +767,7 @@ function start() {
     }
 
     function setIndex(value) {
-      idnex = value;
+      index = app.status.id = value;
     }
 
     function setVolume(evt) {
@@ -838,7 +850,7 @@ function start() {
       }
     };
 
-    return { listHandler: listHandler, init: init, destroy: destroy, playToggle: playToggle, next: next, prev: prev, random: randomTrack, plActive: plActive, mute: volumeToggle, volumeUp: volumeUp, volumeDown: volumeDown, setIndex: setIndex };
+    return { setIndex: setIndex, listHandler: listHandler, init: init, destroy: destroy, playToggle: playToggle, next: next, prev: prev, random: randomTrack, plActive: plActive, mute: volumeToggle, volumeUp: volumeUp, volumeDown: volumeDown};
   })();
 
   window.AP = AudioPlayer;
@@ -855,6 +867,7 @@ function refresh() {
   }
   loaded = 0;
   isLoved = false;
+
   if (document.getElementsByClassName("pl-container")[1] != undefined) {
     document.getElementsByClassName("pl-container")[1].parentNode.removeChild(document.getElementsByClassName("pl-container")[1]);
   }
@@ -1072,6 +1085,7 @@ function openloved() {
   });
 
   loaded = 0;
+
   if (document.querySelector('#youtube').style.display != "none") {
     document.querySelector('#youtube').style.display = "none";
     document.querySelector('#pl').classList.remove("hide");
