@@ -86,7 +86,7 @@ function notify(title, body, bol) {
   if (db().query("SELECT * from settings")[0].notiturn == "false") {
     let icon = "assets/icons/icon.png";
     if (title.toLocaleLowerCase().indexOf("now") > -1 && remote.getCurrentWindow().isFocused()) return;
-    if (title.toLocaleLowerCase().indexOf("loved") > -1 && remote.getCurrentWindow().isFocused()) return M.toast({ html: `<i style="margin-right: 10px;" class="fas fa-heart owo ${title.split(" ")[0] == "Added" ? "fav" : ""}"></i> ${body}` });
+    if (title.toLocaleLowerCase().indexOf("loved") > -1 && remote.getCurrentWindow().isFocused()) return M.toast({ html: `<i style="margin-right: 10px;" class="fas fa-heart owo ${title.split(" ")[0] == "Added" ? "fav" : ""}"></i> <span>${body}</span>` });
     if (db().query("SELECT * from settings")[0].notiloved == "true" && title.toLocaleLowerCase().indexOf("loved") > -1) return;
     if (db().query("SELECT * from settings")[0].notiadd == "true" && title.toLocaleLowerCase().indexOf("success") > -1) return;
     if (title.toLocaleLowerCase().indexOf("loved") > -1) icon = "assets/icons/notif-icon/i_loved.png";
@@ -471,7 +471,7 @@ function start() {
         if (target.className === 'fas fa-heart owo' || target.className === 'fas fa-heart owo fav' || target.className == 'right') return;
         while (target.className !== pl.className) {
           if (target.className === 'pl-remove' || target.className === 'pl-del' || target.className === 'right') {
-            M.toast({ html: `<i style="margin-right: 10px;" class="fas fa-trash"></i> ${db().query("SELECT * from music WHERE id=" + parseInt(target.parentNode.getAttribute('real-id'), 10))[0].title}` });
+            M.toast({ html: `<i style="margin-right: 10px;" class="fas fa-trash"></i> <span>${db().query("SELECT * from music WHERE id=" + parseInt(target.parentNode.getAttribute('real-id'), 10))[0].title}</span>` });
             db().run(`DELETE from music where id=${parseInt(target.parentNode.getAttribute('real-id'), 10)}`);
             if (!isLoved) { refresh(); } else { openloved(); };
             let isDel = parseInt(target.parentNode.getAttribute('data-track'), 10);

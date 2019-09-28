@@ -161,9 +161,9 @@ button {
   position: absolute;
   left: 0;
   border-top-left-radius: 5px;
-  width: 230px;
+  width: 260px;
   top: 0;
-  height: 90vh !important;
+  height: calc(100vh - 85px) !important;
   visibility: hidden;
   transform: translate(-100%);
   transition: all .2s;
@@ -212,7 +212,7 @@ button {
   content: '';
   position: absolute;
   top: 0;
-  left: 230px;
+  left: 260px;
   width: 100vw;
   display: none;
   height: 100vh;
@@ -1824,7 +1824,7 @@ button.ap-active>i {
   display: block;
   top: 12%;
   right: 2%;
-  max-width: 86%;
+  max-width: 25%;
   z-index: 10000;
 }
 
@@ -1841,10 +1841,34 @@ button.ap-active>i {
   height: auto;
   top: 35px;
   max-width: 100%;
-  min-height: 48px;
   margin-top: 10px;
-  padding: 0 20px;
+  padding: 10px 20px;
   line-height: 1.5em;
   background-color: var(--block-hover);
   border-radius: 15px;
+}
+.toast>span {
+    white-space: nowrap;
+    max-height: 48px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.aut {
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  font-size: 15px;
+  display: flex;
+  color: #929292;
+  width: 100%;
+  left: 0;
+  bottom: 25px;
+}
+.aut>.author {margin: 0 5px;}
+.aut>.author>i {
+  font-size: 15px !important;
+  margin-right: 8px;
+  background: -webkit-linear-gradient(#DA4453, #89216B);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
