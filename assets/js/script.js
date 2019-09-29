@@ -20,6 +20,7 @@ let isLoaded = false,
   isLoved = false,
   youtubeRadio = false,
   ytQuery = [],
+  radioPlayer,
   first = true,
   ping = false;
 
@@ -443,7 +444,7 @@ function start() {
         }
         if (first && db().query("SELECT * from status")[0].dataId != 0 && db().query("SELECT * from status")[0].realId != 0) {
           first = false;
-          index = app.status.id = parseInt(document.querySelector(`.music-el[real-id='${db().query("SELECT * from status")[0].realId}']`).getAttribute("data-track"));
+          index = parseInt(document.querySelector(`.music-el[real-id='${db().query("SELECT * from status")[0].realId}']`).getAttribute("data-track"));
           audio.src = playList[index].file;
           audio.preload = 'auto';
           app.status.title = playList[index].title;
@@ -477,8 +478,8 @@ function start() {
       let aw = evt.target.className;
       if (aw == 'pl-title') {
         let current = parseInt(evt.target.parentNode.getAttribute('data-track'), 10);
-        index = app.status.id = current;
-        app.status.id = parseInt(evt.target.parentNode.getAttribute('real-id'), 10);
+        index = current;
+        parseInt(evt.target.parentNode.getAttribute('real-id'), 10);
         audio.readyState = 0;
         plActive();
         play();
@@ -531,8 +532,8 @@ function start() {
 
     function play() {
       index = (index > playList.length - 1) ? 0 : index;
-      app.status.id = index;
-      if (index < 0) index = app.status.id = playList.length - 1;
+      index;
+      if (index < 0) index = playList.length - 1;
       if (isEmptyList()) {
         empty();
         return;
@@ -546,8 +547,9 @@ function start() {
     }
 
     function prev() {
+      youtubeRadio = false;
       if (random) return randomTrack();
-      index = app.status.id = index - 1;
+      index = index - 1;
       if (mini == true && ping > 1) {
         document.getElementById('hide-progres').style.width = `100%`;
         ping = 5;
@@ -557,8 +559,9 @@ function start() {
     }
 
     function next() {
+      youtubeRadio = false;
       if (random) return randomTrack();
-      index = app.status.id = index + 1;
+      index = index + 1;
       if (mini == true && ping > 1) {
         document.getElementById('hide-progres').style.width = `100%`;
         ping = 5;
@@ -568,7 +571,8 @@ function start() {
     }
 
     function randomTrack() {
-      index = app.status.id = getRandomInt(0, db().query("SELECT * from music").length);
+      youtubeRadio = false;
+      index = getRandomInt(0, db().query("SELECT * from music").length);
       if (mini == true && ping > 1) {
         document.getElementById('hide-progres').style.width = `100%`;
         ping = 5;
@@ -663,18 +667,18 @@ function start() {
 
     function doEnd() {
       if (random) return randomTrack();
-      if (index = app.status.id == playList.length - 1) {
+      if (index == playList.length - 1) {
         if (!repeating) {
           audio.pause();
           plActive();
           playBtn.classList.remove('playing');
           return;
         } else {
-          index = app.status.id = 0;
+          index = 0;
           play();
         }
       } else {
-        if (!repeating) index = app.status.id = (index === playList.length - 1) ? 0 : index + 1;
+        if (!repeating) index = (index === playList.length - 1) ? 0 : index + 1;
         let title = document.getElementsByClassName('pl-title')[index].innerHTML;
         notify(`Now playing`, title)
         play();
@@ -771,7 +775,7 @@ function start() {
     }
 
     function setIndex(value) {
-      index = app.status.id = value;
+      index = value;
     }
 
     function setVolume(evt) {
@@ -791,60 +795,74 @@ function start() {
     }
 
     function radio(id) {
-      youtubeRadio = true;
+      if (!id) {
+        $(".menu-left").removeClass('act-menu');
+        $(".shadow").hide();
+        document.querySelector(".radio-choise").classList.toggle("active");
+        return;
+      } 
+      id = id.split(`v=`)[1];
+      document.querySelector(".radio-choise").classList.toggle("active");
       if (!audio.paused) {
         audio.pause();
         playBtn.classList.remove('playing');
       }
       plActive();
       axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&&id=${id}&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs`)
-      .then(res => {
-        app.status.title = res.data.items[0].snippet.title;
-        app.status.progress = `<i class="fas red fa-broadcast-tower"></i>`;
-      })
+        .then(res => {
+          app.status.title = res.data.items[0].snippet.title;
+          app.status.progress = `<i class="fas red fa-broadcast-tower"></i>`;
+        })
+      youtubeRadio = true;
       document.querySelector(".ap--play").style.display = "none";
       document.querySelector(".ap--pause").style.display = "none";
       document.querySelector(".ap-progress-container").style.display = "none";
-      var e = document.getElementById("youtube-audio"),
-        t = document.createElement("img");
-      t.setAttribute("id", "youtube-icon"), t.style.cssText = "cursor:pointer;cursor:hand", e.appendChild(t);
-      var a = document.createElement("div");
-      a.setAttribute("id", "youtube-player"), e.appendChild(a);
-      var o = function (e) {
-        var a = e ? "IDzX9gL.png" : "quyUPXN.png";
-        t.setAttribute("src", "https://i.imgur.com/" + a)
-      };
-      e.onclick = function () {
-        r.getPlayerState() === YT.PlayerState.PLAYING || r.getPlayerState() === YT.PlayerState.BUFFERING ? (r.pauseVideo(), o(!1)) : (r.playVideo(), o(!0))
-      };
-      setInterval(() => {
-        if (!youtubeRadio && e.style.display != "none") {
-          e.style.display = "none";
-          app.status.progress = "";
-          document.querySelector(".ap--play").style.display = null;
-          document.querySelector(".ap--pause").style.display = null;
-          document.querySelector(".ap-progress-container").style.display = null;
-          r.pauseVideo();
-        }
-        r.setVolume(parseFloat(audio.volume) * 100);
-      }, 100)
-      let r = new YT.Player("youtube-player", {
-        height: "0",
-        width: "0",
-        videoId: id,
-        playerVars: {
-          autoplay: 1,
-          loop: 1
-        },
-        events: {
-          onReady: function (e) {
-            r.setPlaybackQuality("small"), o(r.getPlayerState() !== YT.PlayerState.CUED)
-          },
-          onStateChange: function (e) {
-            e.data === YT.PlayerState.ENDED && o(!1)
+      if (!document.getElementById("youtube-player")) {
+        var e = document.getElementById("youtube-audio"),
+          t = document.createElement("img");
+        t.setAttribute("id", "youtube-icon"), t.style.cssText = "cursor:pointer;cursor:hand", e.appendChild(t);
+        var a = document.createElement("div");
+        a.setAttribute("id", "youtube-player"), e.appendChild(a);
+        var o = function (e) {
+          var a = e ? "IDzX9gL.png" : "quyUPXN.png";
+          t.setAttribute("src", "https://i.imgur.com/" + a)
+        };
+        e.onclick = function () {
+          radioPlayer.getPlayerState() === YT.PlayerState.PLAYING || radioPlayer.getPlayerState() === YT.PlayerState.BUFFERING ? (radioPlayer.pauseVideo(), o(!1)) : (radioPlayer.playVideo(), o(!0))
+        };
+        setInterval(() => {
+          if (!youtubeRadio && e.style.display != "none") {
+            e.style.display = "none";
+            app.status.progress = "";
+            document.querySelector(".ap--play").style.display = null;
+            document.querySelector(".ap--pause").style.display = null;
+            document.querySelector(".ap-progress-container").style.display = null;
+            radioPlayer.pauseVideo();
           }
-        }
-      })
+          radioPlayer.setVolume(parseFloat(audio.volume) * 100);
+        }, 100)
+        radioPlayer = new YT.Player("youtube-player", {
+          height: "0",
+          width: "0",
+          videoId: id,
+          playerVars: {
+            autoplay: 1,
+            loop: 1
+          },
+          events: {
+            onReady: function (e) {
+              radioPlayer.setPlaybackQuality("small"), o(radioPlayer.getPlayerState() !== YT.PlayerState.CUED)
+            },
+            onStateChange: function (e) {
+              e.data === YT.PlayerState.ENDED && o(!1)
+            }
+          }
+        })
+      } else {
+        document.getElementById("youtube-audio").style.display = null;
+        radioPlayer.loadVideoById(id);
+        radioPlayer.playVideo();
+      }
     }
 
     function destroy() {

@@ -1277,7 +1277,7 @@ input[type="checkbox"], label {
   height: 25px;
   width: 25px;
   position: absolute;
-  content: 'âœ“';
+  content: '✓';
   display: inline-block;
   font-size: 20px;
   text-align: center;
@@ -1925,6 +1925,7 @@ div#youtube-audio {display: flex;justify-content: center;align-items: center;}
     justify-content: center;
     align-items: center;
     display: flex;
+    border-radius: 10px 10px 0px 0px;
     padding: 15px 20px;
     background: var(--block);
 }
