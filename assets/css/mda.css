@@ -53,6 +53,8 @@ i {
 }
 
 button {
+  font-family: 'Torus', sans-serif !important;
+  font-size: 14px;
   margin: 0;
   padding: 0;
   border: 0;
@@ -640,6 +642,7 @@ i.far.fa-trash-alt.pl-remove:hover {
 }
 
 .bottom {
+  position: relative;
   width: 100vw;
   height: 50px;
   border-radius: 0px 0px 7px 7px;
@@ -651,8 +654,9 @@ i.far.fa-trash-alt.pl-remove:hover {
   justify-content: center;
   align-items: center;
   position: relative;
-  z-index: 0;
+  z-index: 1;
   display: flex;
+  box-shadow: 0 0 10px black;
 }
 
 .ap {
@@ -674,7 +678,6 @@ i.far.fa-trash-alt.pl-remove:hover {
   justify-content: center;
   align-items: center;
   display: flex;
-  min-height: 25px;
   -ms-flex: 0 0 220px;
   flex: 0 0 220px;
   max-width: 220px;
@@ -693,30 +696,32 @@ i.far.fa-trash-alt.pl-remove:hover {
   font-size: 15px;
   width: 100%;
   position: relative;
-  align-self: flex-start;
-  padding: 5px 0 0;
+  /* display: flex; */
+  /* align-items: center; */
 }
 
 .ap-title {
   position: relative;
   overflow: hidden;
-  padding-right: 80px;
   text-align: left;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: 90vw;
+  -ms-flex: 0 0 calc(100% - 100px);
+  flex: 0 0 calc(100% - 100px);
+  max-width: calc(100% - 100px);
 }
 
 .ap-time {
-  position: absolute;
-  top: 5px;
-  right: 0;
+  text-align: right;
   color: var(--text);
-  opacity: 0.7;
+  opacity: 1;
+  -ms-flex: 0 0 100px;
+  flex: 0 0 100px;
+  max-width: 100px;
 }
 
 .ap-progress-container {
-  padding: 5px 0 10px;
+  padding: 5px 0 0 0;
   cursor: pointer;
 }
 
@@ -812,9 +817,7 @@ i.far.fa-trash-alt.pl-remove:hover {
   cursor: pointer;
 }
 
-.ap-panel i:hover {
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-}
+.ap-panel i:hover:after {transform: scale(1, 1);}
 
 .ap-panel i {
   position: relative;
@@ -1274,7 +1277,7 @@ input[type="checkbox"], label {
   height: 25px;
   width: 25px;
   position: absolute;
-  content: '✓';
+  content: 'âœ“';
   display: inline-block;
   font-size: 20px;
   text-align: center;
@@ -1889,12 +1892,87 @@ button.ap-active>i {
 }
 
 .red {
-  background: -webkit-linear-gradient(rgb(241, 28, 50), rgb(175, 18, 71));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  text-align: center;
+  color: white;
   font-size: 15px !important;
+  background: -webkit-linear-gradient(rgb(241, 28, 50), rgb(175, 18, 71));
+  width: 30px;
+  padding: 5px;
+  border-radius: 50px;
 }
 
 #youtube-icon {
-  width: 32px;
+  width: 28px;
+  filter: invert(1);
+}
+.ap-panel i:after {content: '';position: absolute;height: 2px;left: -10px;right: -10px;bottom: -10px;background: white;border-radius: 80px;transition: all .3s;transform: scale(0, 1);}
+
+div#youtube-audio {display: flex;justify-content: center;align-items: center;}
+.radio-choise {
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    display: flex;
+    top: -59px;
+    left: 0;
+    right: 0;
+    transform: translateY(100%);
+    transition: all .5s;
+    z-index: 0;
+}
+
+.radio-container {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    padding: 15px 20px;
+    background: var(--block);
+}
+
+.radio-name {justify-content: center;align-items: center;display: flex;}
+
+.radio-name i {
+    margin-right: 10px;
+}
+
+.radio-input {
+    margin: 0 20px;
+}
+
+.radio-input input {
+    color: white;
+    padding: 5px 10px;
+    margin: 0;
+    background: var(--block-hover);
+    border: 2px solid var(--block-hover);
+    border-radius: 100px;
+    transition: all .2s;
+}
+
+.radio-input input:focus {
+    outline: 0;
+    border: 2px solid #4e4e4e;
+}
+
+.radio-button {}
+
+.radio-button button {
+    cursor: pointer;
+    color: white;
+    padding: 6px 15px;
+    background: linear-gradient(45deg, #DA4453, #89216B);
+    border-radius: 20px 20px 0 20px;
+    transition: all .2s;
+}
+
+.radio-button button:hover {
+    border-radius: 20px 0 20px 20px;
+}
+.radio-choise.active {
+    transform: translateY(0%);
+}
+.ap-info1 {
+    justify-content: center;
+    align-items: center;
+    display: flex;
 }
