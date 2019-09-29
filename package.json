@@ -1,7 +1,7 @@
 {
   "name": "osu-youtube-music-player",
   "version": "1.0.6",
-  "description": "Enjoi listen music from osu! and youtube :3",
+  "description": "Enjoy listening to music from osu! and youtube :3",
   "main": "main.js",
   "build": {
     "productName": "YOMP",
