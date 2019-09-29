@@ -843,7 +843,7 @@ function start() {
             loop: 1
           },
           events: {
-            onReady: function (e) {
+            onReady: function (ee) {
               setInterval(() => {
                 if (!youtubeRadio && e.style.display != "none") {
                   e.style.display = "none";
