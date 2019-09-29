@@ -674,10 +674,12 @@ i.far.fa-trash-alt.pl-remove:hover {
   justify-content: center;
   align-items: center;
   display: flex;
+  min-height: 25px;
   -ms-flex: 0 0 220px;
   flex: 0 0 220px;
   max-width: 220px;
 }
+
 
 .ap--track {
   -ms-flex: 0 0 calc(100% - 440px);
@@ -1884,6 +1886,13 @@ button.ap-active>i {
   background: -webkit-linear-gradient(#DA4453, #89216B);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.red {
+  background: -webkit-linear-gradient(rgb(241, 28, 50), rgb(175, 18, 71));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 15px !important;
 }
 
 #youtube-icon {

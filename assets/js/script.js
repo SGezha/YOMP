@@ -792,10 +792,7 @@ function start() {
 
     function radio(id) {
       youtubeRadio = true;
-      if (audio.paused) {
-        audio.play();
-        playBtn.classList.add('playing');
-      } else {
+      if (!audio.paused) {
         audio.pause();
         playBtn.classList.remove('playing');
       }
@@ -803,7 +800,7 @@ function start() {
       axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&&id=${id}&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs`)
       .then(res => {
         app.status.title = res.data.items[0].snippet.title;
-        app.status.progress = "●";
+        app.status.progress = `<i class="fas red fa-broadcast-tower"></i>`;
       })
       document.querySelector(".ap--play").style.display = "none";
       document.querySelector(".ap--pause").style.display = "none";
