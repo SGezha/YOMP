@@ -31,6 +31,7 @@ window.onload = function () {
   checkUpdate(true);
   if (db().query("SELECT * from status")[0].loved == "false") { refresh(); } else { openloved(); }
   discordUpdate();
+  app.ver = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString()).version;
 };
 
 function checkUpdate(auto) {
