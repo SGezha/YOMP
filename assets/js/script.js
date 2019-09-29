@@ -286,14 +286,6 @@ function saveOsu(obj, mas, dir, bmid, ind) {
   if (db().query(`SELECT * from music where dir='${obj.dir}'`).length == 0) {
     axios.get(`https://assets.ppy.sh/beatmaps/${bmid}/covers/card.jpg`, { responseType: 'arraybuffer' }).then(response => {
       fs.writeFileSync(`${root}/images/${bmid}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), Buffer.from(response.data, 'base64'));
-      if (ind < 50) {
-        app.playlist.push(obj);
-        refresh();
-      }
-      if ((ind / 50).toString().indexOf(".") == -1) {
-        app.playlist = db().query("SELECT * from music");
-        refresh();
-      }
       db().insert('music', obj);
       checkDir(ind + 1, mas, dir);
     }).catch(er => { checkDir(ind + 1, mas, dir); })
@@ -804,7 +796,7 @@ function start() {
         $(".shadow").hide();
         document.querySelector(".radio-choise").classList.toggle("active");
         return;
-      } 
+      }
       id = id.split(`v=`)[1];
       document.querySelector(".radio-choise").classList.toggle("active");
       if (!audio.paused) {
@@ -979,7 +971,9 @@ function youtube(vid, title, icon) {
           url: stream.url
         }, function (error, info) {
           ytQuery = ytQuery.filter(y => y.videoId != obj.videoId);
-          if (ytQuery.length > 0) { document.getElementById("yt").innerHTML = `YouTube <i onclick="clearYT()" class="fas fa-download"></i> ${ytQuery.length}`; } else { document.getElementById("yt").innerHTML = `YouTube`; };
+          let text = "";
+          ytQuery.forEach((r, ind) => { text += `${ind + 1}. ${r.title}\n`; });
+          if (ytQuery.length > 0) { document.getElementById("yt").innerHTML = `YouTube <i onclick="clearYT()" title="${text}" class="fas tooltipped fa-download"></i> ${ytQuery.length}`; } else { document.getElementById("yt").innerHTML = `YouTube`; };
           if (error) {
             notify('Error', 'Copyright or NOT FOUND');
             return;
@@ -1000,7 +994,9 @@ function youtube(vid, title, icon) {
           }).catch(er => { })
         });
         ytQuery.push(obj);
-        document.getElementById("yt").innerHTML = `YouTube <i onclick="clearYT()" class="fas fa-download"></i> ${ytQuery.length}`;
+        let text = "";
+        ytQuery.forEach((r, ind) => { text += `${ind + 1}. ${r.title}\n`; });
+        if (ytQuery.length > 0) { document.getElementById("yt").innerHTML = `YouTube <i onclick="clearYT()" title="${text}" class="fas tooltipped fa-download"></i> ${ytQuery.length}`; } else { document.getElementById("yt").innerHTML = `YouTube`; };
       }
     });
   })
@@ -1131,6 +1127,7 @@ function loadMusic() {
     document.getElementById('pl').style.display = "none";
     document.getElementById('youtube').style.display = "none";
     document.getElementById('ap').style.display = "none";
+    document.querySelector(".radio-choise").style.display = "none";
     document.getElementById("settings").classList.remove("openSettings");
     document.getElementById('load-music').style.display = "block";
     document.getElementById('yomp').style.background = "var(--bg)";
@@ -1146,6 +1143,7 @@ function loadMusic() {
     document.getElementById('youtube').style.display = null;
     document.getElementById('ap').style.display = null;
     document.getElementById('load-music').style.display = null;
+    document.querySelector(".radio-choise").style.display = null;
     document.getElementById('yomp').style.background = null;
     document.getElementsByClassName('main')[0].style.height = null;
     document.getElementsByClassName('maximize')[0].style.opacity = null;
