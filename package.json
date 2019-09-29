@@ -7,6 +7,13 @@
     "productName": "YOMP",
     "appId": "YOMP",
     "copyright": "Copyright © 2019 ${author}",
+    "linux": {
+      "target": [
+        "snap",
+        "deb"
+      ],
+      "icon": "assets/icons/icon.png"
+    },
     "win": {
       "target": [
         "nsis",
