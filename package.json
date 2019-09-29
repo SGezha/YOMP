@@ -1,9 +1,8 @@
 {
   "name": "osu-youtube-music-player",
-  "version": "1.0.4",
-  "description": "Enjoi listen music from osu! and youtube :3",
+  "version": "1.0.6",
+  "description": "Enjoy listening to music from osu! and youtube :3",
   "main": "main.js",
-  "postinstall": "./node_modules/.bin/electron-builder install-app-deps",
   "build": {
     "productName": "YOMP",
     "appId": "YOMP",
@@ -31,7 +30,8 @@
     "rebuild": "./node_modules/.bin/electron-rebuild.cmd",
     "install": "./node_modules/.bin/electron-builder install-app-deps",
     "build": "./node_modules/.bin/electron-builder build",
-    "build32": "./node_modules/.bin/electron-builder build --ia32"
+    "build32": "./node_modules/.bin/electron-builder build --ia32",
+    "postinstall": "./node_modules/.bin/electron-builder install-app-deps"
   },
   "author": "4FuN",
   "repository": {
