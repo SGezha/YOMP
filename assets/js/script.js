@@ -792,14 +792,22 @@ function start() {
 
     function radio(id) {
       youtubeRadio = true;
+      if (audio.paused) {
+        audio.play();
+        playBtn.classList.add('playing');
+      } else {
+        audio.pause();
+        playBtn.classList.remove('playing');
+      }
+      plActive();
       axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&&id=${id}&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs`)
       .then(res => {
         app.status.title = res.data.items[0].snippet.title;
+        app.status.progress = "●";
       })
       document.querySelector(".ap--play").style.display = "none";
       document.querySelector(".ap--pause").style.display = "none";
       document.querySelector(".ap-progress-container").style.display = "none";
-      app.status.progress = "--/--";
       var e = document.getElementById("youtube-audio"),
         t = document.createElement("img");
       t.setAttribute("id", "youtube-icon"), t.style.cssText = "cursor:pointer;cursor:hand", e.appendChild(t);
@@ -813,7 +821,7 @@ function start() {
         r.getPlayerState() === YT.PlayerState.PLAYING || r.getPlayerState() === YT.PlayerState.BUFFERING ? (r.pauseVideo(), o(!1)) : (r.playVideo(), o(!0))
       };
       setInterval(() => {
-        if (!youtubeRadio) {
+        if (!youtubeRadio && e.style.display != "none") {
           e.style.display = "none";
           app.status.progress = "";
           document.querySelector(".ap--play").style.display = null;
