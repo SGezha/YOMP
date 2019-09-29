@@ -1,5 +1,5 @@
 const { shell, remote, ipcRenderer: ipc } = require('electron'),
-	root = remote.app.getPath('userData').split("\\").join("/"),
+  root = remote.app.getPath('userData').split("\\").join("/"),
   db = require('better-sqlite3-helper'),
   fs = require("fs"),
   child = require('child_process').exec,
@@ -254,7 +254,7 @@ function checkDir(ind, mas, dir) {
             if (f.indexOf(".osu") > -1) {
               if (!already) {
                 already = true;
-                app.osuimport = `Importing ${ind+1}/${mas.length}`;
+                app.osuimport = `Importing ${ind + 1}/${mas.length}`;
                 parseOsu(ind, mas, dir, songFolder, f, i, files);
               }
             }
@@ -283,11 +283,11 @@ function saveOsu(obj, mas, dir, bmid, ind) {
   if (db().query(`SELECT * from music where dir='${obj.dir}'`).length == 0) {
     axios.get(`https://assets.ppy.sh/beatmaps/${bmid}/covers/card.jpg`, { responseType: 'arraybuffer' }).then(response => {
       fs.writeFileSync(`${root}/images/${bmid}.jpg`.split("\\").join("/").replace(/(\r\n|\n|\r)/gm, ""), Buffer.from(response.data, 'base64'));
-      if(ind < 50) {
+      if (ind < 50) {
         app.playlist.push(obj);
         refresh();
       }
-      if((ind/50).toString().indexOf(".") == -1) {
+      if ((ind / 50).toString().indexOf(".") == -1) {
         app.playlist = db().query("SELECT * from music");
         refresh();
       }
@@ -364,8 +364,8 @@ function start() {
       pl = document.querySelector("#pl"), settings = { volume: db().query("SELECT * from status")[0].volume ? db().query("SELECT * from status")[0].volume : 0.1, autoPlay: false, notification: true, playList: [] };
 
     function init(options) {
-      for(let i = 0; i < document.querySelectorAll(".music-el").length; i++) {
-        if(document.querySelectorAll(".music-el")[i]) document.querySelectorAll(".music-el")[i].classList.remove('pl-current');
+      for (let i = 0; i < document.querySelectorAll(".music-el").length; i++) {
+        if (document.querySelectorAll(".music-el")[i]) document.querySelectorAll(".music-el")[i].classList.remove('pl-current');
       }
       settings = extend(settings, options);
       playList = settings.playList;
@@ -434,7 +434,7 @@ function start() {
         for (let i = 0; i < document.querySelectorAll('.music-el').length; i++) {
           document.querySelector("#pl").addEventListener('click', listHandler, false);
           let need = document.querySelectorAll(".pl-title")[i].innerHTML;
-          if(need == app.status.title) {
+          if (need == app.status.title) {
             document.querySelectorAll(".music-el")[i].classList.add('pl-current');
             AP.setIndex(i);
           }
@@ -513,7 +513,7 @@ function start() {
 
     function plActive() {
       if (audio.paused) {
-        if(document.querySelector(".pl-current")) document.querySelectorAll('.music-el')[index].classList.remove('pl-current');
+        if (document.querySelector(".pl-current")) document.querySelectorAll('.music-el')[index].classList.remove('pl-current');
         return;
       }
       for (var i = 0, len = document.querySelectorAll('.music-el').length; len > i; i++) {
@@ -543,7 +543,7 @@ function start() {
     }
 
     function prev() {
-      if(random) return randomTrack();
+      if (random) return randomTrack();
       index = app.status.id = index - 1;
       if (mini == true && ping > 1) {
         document.getElementById('hide-progres').style.width = `100%`;
@@ -554,7 +554,7 @@ function start() {
     }
 
     function next() {
-      if(random) return randomTrack();
+      if (random) return randomTrack();
       index = app.status.id = index + 1;
       if (mini == true && ping > 1) {
         document.getElementById('hide-progres').style.width = `100%`;
@@ -658,7 +658,7 @@ function start() {
     }
 
     function doEnd() {
-      if(random) return randomTrack();
+      if (random) return randomTrack();
       if (index = app.status.id == playList.length - 1) {
         if (!repeating) {
           audio.pause();
@@ -670,7 +670,7 @@ function start() {
           play();
         }
       } else {
-        if (!repeating) index = app.status.id (index === playList.length - 1) ? 0 : index + 1;
+        if (!repeating) index = app.status.id(index === playList.length - 1) ? 0 : index + 1;
         let title = document.getElementsByClassName('pl-title')[index].innerHTML;
         notify(`Now playing`, title)
         play();
@@ -850,7 +850,7 @@ function start() {
       }
     };
 
-    return { setIndex: setIndex, listHandler: listHandler, init: init, destroy: destroy, playToggle: playToggle, next: next, prev: prev, random: randomTrack, plActive: plActive, mute: volumeToggle, volumeUp: volumeUp, volumeDown: volumeDown};
+    return { setIndex: setIndex, listHandler: listHandler, init: init, destroy: destroy, playToggle: playToggle, next: next, prev: prev, random: randomTrack, plActive: plActive, mute: volumeToggle, volumeUp: volumeUp, volumeDown: volumeDown };
   })();
 
   window.AP = AudioPlayer;
@@ -925,7 +925,7 @@ function youtube(vid, title, icon) {
 
 function clearYT() {
   document.getElementById("yt").innerHTML = `YouTube`;
-  ytQuery =[];
+  ytQuery = [];
 }
 
 function parse_str(str) {
