@@ -18,6 +18,7 @@ let isLoaded = false,
   mini = false,
   fullscreen = 0,
   isLoved = false,
+  youtubeRadio = false,
   ytQuery = [],
   first = true,
   ping = false;
@@ -370,6 +371,7 @@ function start() {
       settings = extend(settings, options);
       playList = settings.playList;
       renderPL();
+      youtubeRadio = false;
       if (!('classList' in document.documentElement)) return false;
       if (apActive || player === null) return;
       playBtn = player.querySelector('.ap-toggle-btn');
@@ -470,6 +472,7 @@ function start() {
     };
 
     function listHandler(evt) {
+      youtubeRadio = false;
       evt.preventDefault();
       let aw = evt.target.className;
       if (aw == 'pl-title') {
@@ -589,6 +592,7 @@ function start() {
 
     function playToggle() {
       if (isEmptyList()) return;
+      if (youtubeRadio) return;
       if (audio.paused) {
         audio.play();
         playBtn.classList.add('playing');
@@ -670,7 +674,7 @@ function start() {
           play();
         }
       } else {
-        if (!repeating) index = app.status.id(index === playList.length - 1) ? 0 : index + 1;
+        if (!repeating) index = app.status.id = (index === playList.length - 1) ? 0 : index + 1;
         let title = document.getElementsByClassName('pl-title')[index].innerHTML;
         notify(`Now playing`, title)
         play();
@@ -786,6 +790,58 @@ function start() {
       }
     }
 
+    function radio(id) {
+      youtubeRadio = true;
+      axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&&id=${id}&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs`)
+      .then(res => {
+        app.status.title = res.data.items[0].snippet.title;
+      })
+      document.querySelector(".ap--play").style.display = "none";
+      document.querySelector(".ap--pause").style.display = "none";
+      document.querySelector(".ap-progress-container").style.display = "none";
+      app.status.progress = "--/--";
+      var e = document.getElementById("youtube-audio"),
+        t = document.createElement("img");
+      t.setAttribute("id", "youtube-icon"), t.style.cssText = "cursor:pointer;cursor:hand", e.appendChild(t);
+      var a = document.createElement("div");
+      a.setAttribute("id", "youtube-player"), e.appendChild(a);
+      var o = function (e) {
+        var a = e ? "IDzX9gL.png" : "quyUPXN.png";
+        t.setAttribute("src", "https://i.imgur.com/" + a)
+      };
+      e.onclick = function () {
+        r.getPlayerState() === YT.PlayerState.PLAYING || r.getPlayerState() === YT.PlayerState.BUFFERING ? (r.pauseVideo(), o(!1)) : (r.playVideo(), o(!0))
+      };
+      setInterval(() => {
+        if (!youtubeRadio) {
+          e.style.display = "none";
+          app.status.progress = "";
+          document.querySelector(".ap--play").style.display = null;
+          document.querySelector(".ap--pause").style.display = null;
+          document.querySelector(".ap-progress-container").style.display = null;
+          r.pauseVideo();
+        }
+        r.setVolume(parseFloat(audio.volume) * 100);
+      }, 100)
+      let r = new YT.Player("youtube-player", {
+        height: "0",
+        width: "0",
+        videoId: id,
+        playerVars: {
+          autoplay: 1,
+          loop: 1
+        },
+        events: {
+          onReady: function (e) {
+            r.setPlaybackQuality("small"), o(r.getPlayerState() !== YT.PlayerState.CUED)
+          },
+          onStateChange: function (e) {
+            e.data === YT.PlayerState.ENDED && o(!1)
+          }
+        }
+      })
+    }
+
     function destroy() {
       if (!apActive) return;
       playBtn.removeEventListener('click', playToggle, false);
@@ -850,7 +906,7 @@ function start() {
       }
     };
 
-    return { setIndex: setIndex, listHandler: listHandler, init: init, destroy: destroy, playToggle: playToggle, next: next, prev: prev, random: randomTrack, plActive: plActive, mute: volumeToggle, volumeUp: volumeUp, volumeDown: volumeDown };
+    return { radio: radio, setIndex: setIndex, listHandler: listHandler, init: init, destroy: destroy, playToggle: playToggle, next: next, prev: prev, random: randomTrack, plActive: plActive, mute: volumeToggle, volumeUp: volumeUp, volumeDown: volumeDown };
   })();
 
   window.AP = AudioPlayer;

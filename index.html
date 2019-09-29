@@ -61,6 +61,12 @@
                     </a>
                   </li>
                   <li class="liactiver">
+                    <a onclick="AP.radio('hHW1oY26kxQ')" href="#">
+                      <i class="fas fa-broadcast-tower"></i>
+                      <span id="yt">YouTube Radio</span>
+                    </a>
+                  </li>
+                  <li class="liactiver">
                     <a onclick="addosu()" href="#">
                       <img class="osu" src="assets/icons/osu.svg" />
                       <span id="osu">{{ osuimport }}</span>
@@ -142,6 +148,7 @@
               <div class="ap-item ap--playback">
                 <button class="ap-controls ap-prev-btn"><i class="fas fa-step-backward"></i></button>
                 <button class="ap-controls ap-toggle-btn">
+                  <div id="youtube-audio"></div>
                   <i class="fas fa-play ap--play"></i>
                   <i class="fas fa-pause ap--pause"></i>
                 </button>
@@ -398,6 +405,7 @@
       module = undefined;
     }
   </script>
+  <script src="https://www.youtube.com/iframe_api"></script>
   <script src="assets/js/jquery.js"></script>
   <script src="assets/vue.js"></script>
   <script src="assets/js/script.js"></script>

@@ -1885,3 +1885,7 @@ button.ap-active>i {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+#youtube-icon {
+  width: 32px;
+}
