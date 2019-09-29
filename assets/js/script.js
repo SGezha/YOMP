@@ -596,7 +596,10 @@ function start() {
 
     function playToggle() {
       if (isEmptyList()) return;
-      if (youtubeRadio) return;
+      if (youtubeRadio) {
+        radioPlayer.getPlayerState() === YT.PlayerState.PLAYING || radioPlayer.getPlayerState() === YT.PlayerState.BUFFERING ? radioPlayer.pauseVideo() : radioPlayer.playVideo();
+        return;
+      };
       if (audio.paused) {
         audio.play();
         playBtn.classList.add('playing');
@@ -830,17 +833,6 @@ function start() {
         e.onclick = function () {
           radioPlayer.getPlayerState() === YT.PlayerState.PLAYING || radioPlayer.getPlayerState() === YT.PlayerState.BUFFERING ? (radioPlayer.pauseVideo(), o(!1)) : (radioPlayer.playVideo(), o(!0))
         };
-        setInterval(() => {
-          if (!youtubeRadio && e.style.display != "none") {
-            e.style.display = "none";
-            app.status.progress = "";
-            document.querySelector(".ap--play").style.display = null;
-            document.querySelector(".ap--pause").style.display = null;
-            document.querySelector(".ap-progress-container").style.display = null;
-            radioPlayer.pauseVideo();
-          }
-          radioPlayer.setVolume(parseFloat(audio.volume) * 100);
-        }, 100)
         radioPlayer = new YT.Player("youtube-player", {
           height: "0",
           width: "0",
@@ -851,6 +843,17 @@ function start() {
           },
           events: {
             onReady: function (e) {
+              setInterval(() => {
+                if (!youtubeRadio && e.style.display != "none") {
+                  e.style.display = "none";
+                  app.status.progress = "";
+                  document.querySelector(".ap--play").style.display = null;
+                  document.querySelector(".ap--pause").style.display = null;
+                  document.querySelector(".ap-progress-container").style.display = null;
+                  radioPlayer.pauseVideo();
+                }
+                radioPlayer.setVolume(parseFloat(audio.volume) * 100);
+              }, 100)
               radioPlayer.setPlaybackQuality("small"), o(radioPlayer.getPlayerState() !== YT.PlayerState.CUED)
             },
             onStateChange: function (e) {
