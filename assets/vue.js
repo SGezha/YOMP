@@ -3,6 +3,7 @@ var app = new Vue({
   data: {
     playlist: [],
     loved: [],
+    ver: 0,
     youtuberesult: [],
     osuimport: "Import osu! songs",
     status: {
