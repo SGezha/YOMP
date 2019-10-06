@@ -1,12 +1,15 @@
 {
   "name": "yomp",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Enjoy listening to music from osu! and youtube :3",
   "main": "main.js",
   "build": {
     "productName": "YOMP",
     "appId": "YOMP",
     "copyright": "Copyright © 2019 ${author}",
+    "linux": {
+      "icon": "assets/icons/icon.png"
+    },
     "win": {
       "target": [
         "nsis",

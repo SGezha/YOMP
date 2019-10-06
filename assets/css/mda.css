@@ -1912,7 +1912,7 @@ div#youtube-audio {display: flex;justify-content: center;align-items: center;}
     justify-content: center;
     align-items: center;
     position: absolute;
-    display: flex;
+    display: none;
     top: -59px;
     left: 0;
     right: 0;
@@ -1955,8 +1955,6 @@ div#youtube-audio {display: flex;justify-content: center;align-items: center;}
     border: 2px solid #4e4e4e;
 }
 
-.radio-button {}
-
 .radio-button button {
     cursor: pointer;
     color: white;
@@ -1976,4 +1974,12 @@ div#youtube-audio {display: flex;justify-content: center;align-items: center;}
     justify-content: center;
     align-items: center;
     display: flex;
+}
+
+#settings {
+  display: none;
+}
+
+#info {
+  display: none;
 }

@@ -8,10 +8,6 @@ const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc } = require
   rpc = new DiscordRPC.Client({ transport: 'ipc' }),
   DownloadManager = require("electron-download-manager");
 
-DownloadManager.register({
-    downloadFolder: root + "/youtube"
-});
-
 let mainWindow,
   notiWindow,
   preloader,
@@ -65,8 +61,12 @@ function createWindow() {
   ]);
   appIcon.setToolTip('YT music player');
   appIcon.on('click', () => {
-    mainWindow.webContents.executeJavaScript("miniPlayerOff();");
-    mainWindow.show();
+    if(mainWindow.isFocused()) {
+      mainWindow.hide();
+    } else {
+      mainWindow.webContents.executeJavaScript("miniPlayerOff();");
+      mainWindow.show();
+    }
   });
   appIcon.setContextMenu(contextMenu);
 
@@ -84,6 +84,7 @@ function createWindow() {
 app.on('ready', createWindow);
 
 app.on('window-all-closed', function () {
+  mainWindow.webContents.executeJavaScript("winowClose()");
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -120,18 +121,22 @@ ipc.on("ready", (event, arg) => {
 
 function createActivity(data) {
   let act = {};
+  if(data.title == "") {
+    act = { details: "Idle", state: "Chill", largeImageKey: "icon", largeImageText: "YOMP", smallImageKey: "stop", smallImageText: "┬┴┬┴┤( ͡° ͜ʖ├┬┴┬┴" };
+    return act;
+  }
   if (data.status == "playing") {
     act = { details: "Listen music", state: data.title, largeImageKey: "icon", largeImageText: "YOMP", smallImageKey: "play", smallImageText: data.progress };
   } else if (data.status == "paused") {
     act = { details: "Paused", state: data.title, largeImageKey: "icon", largeImageText: "YOMP", smallImageKey: "stop", smallImageText: data.progress };
   }
-  mainWindow.webContents.executeJavaScript(``);
   return act;
 }
 
 rpc.login({ clientId: "555381698192474133" }).catch(console.error);
 
 ipc.on("rpc", (event, data) => {
+  if(!data) return;
   mainWindow.webContents.executeJavaScript(``);
   let activity = createActivity(data);
   rpc.setActivity(activity).then((data) => {
@@ -141,4 +146,8 @@ ipc.on("rpc", (event, data) => {
 
 ipc.on("kek", (a) => {
   app.exit(0);
+});
+
+DownloadManager.register({
+  downloadFolder: root + "/youtube"
 });
