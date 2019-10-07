@@ -53,7 +53,6 @@ function createWindow() {
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     event.preventDefault();
-    console.log(url);
     Object.assign(options, {
       modal: true,
       parent: mainWindow,
