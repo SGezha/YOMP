@@ -29,13 +29,41 @@ function setsSave() {
 }
 
 function setsToggle() {
-  document.querySelector(`#settings`).style.display = document.querySelector(`#settings`).style.display == "block" ? "none" : "block";
-  setTimeout(() => {
+  if(document.querySelector(`#settings`).style.display == "block") {
     $("#settings").toggleClass('openmodal');
     $(".menu-left").removeClass('act-menu');
     $(".shadow").hide();
-  }, 100)
+    setTimeout(() => {
+      document.querySelector(`#settings`).style.display = "none";
+    }, 500)
+  } else {
+    document.querySelector(`#settings`).style.display = "block";
+    setTimeout(() => {
+      $("#settings").toggleClass('openmodal');
+      $(".menu-left").removeClass('act-menu');
+      $(".shadow").hide();
+    }, 100)
+  }
 }
+
+function infoToggle() {
+  if(document.querySelector(`#info`).style.display == "block") {
+    $("#info").toggleClass('openmodal');
+    $(".menu-left").removeClass('act-menu');
+    $(".shadow").hide();
+    setTimeout(() => {
+      document.querySelector(`#info`).style.display = "none";
+    }, 500)
+  } else {
+    document.querySelector(`#info`).style.display = "block";
+    setTimeout(() => {
+      $("#info").toggleClass('openmodal');
+      $(".menu-left").removeClass('act-menu');
+      $(".shadow").hide();
+    }, 100)
+  }
+}
+
 
 function offKey(el) { document.getElementById(el.getAttribute('dlya')).value = ""; }
 

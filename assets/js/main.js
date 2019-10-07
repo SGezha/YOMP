@@ -739,12 +739,3 @@ $(document).on('click', 'a[href^="http"]', function (event) {
   event.preventDefault();
   shell.openExternal(this.href);
 });
-
-function infoToggle() {
-  document.querySelector(`#info`).style.display = document.querySelector(`#info`).style.display == "block" ? "none" : "block";
-  setTimeout(() => {
-    $("#info").toggleClass('openmodal');
-    $(".menu-left").removeClass('act-menu');
-    $(".shadow").hide();
-  }, 100)
-}

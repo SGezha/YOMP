@@ -52,7 +52,7 @@ function checkDir(ind, mas, dir) {
     let songFolder = i;
     if (i.indexOf(".") == -1) {
       fs.readdir(`${dir}/${i}`, function (err, files) {
-        if (files) {
+        if (files && db().query(`SELECT * from music where dir='${obj.dir}'`).length == 0) {
           if (files.toString().indexOf(".osu") == -1) return checkDir(ind + 1, mas, dir);
           let already = false;
           files.forEach(f => {
