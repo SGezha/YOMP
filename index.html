@@ -106,6 +106,7 @@
             <div id="pl" class="pl-container">
               <ul class="pl-list">
                 <template v-for="(t, i) in playlist">
+                  <iframe v-if="(i/50).toString().indexOf('.') == -1 && t.hide && i != 0" data-aa="1254797" src="https://acceptable.a-ads.com/1254797" scrolling="no" style="border-radius: 10px; border:0px; margin: 0px 5px; padding:0; width: 100%; height: 60px; overflow:hidden" allowtransparency="true"></iframe>
                   <li v-if="t.hide" class="music-el" :real-id="t.id" :data-track="i">
                     <div class="pog" :real-id="t.id" :data-track="i">
                       <div class="left">

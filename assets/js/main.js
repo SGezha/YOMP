@@ -12,8 +12,7 @@ if (!fs.existsSync(`${root}/full`)) fs.mkdirSync(`${root}/full`);
 
 db({ path: `${root}/database.db`, memory: false, readonly: false, fileMustExist: false, migrate: false });
 
-let isLoaded = false,
-  loaded = 0,
+let loaded = 0,
   musicStatus = {},
   mini = false,
   fullscreen = 0,
@@ -131,12 +130,8 @@ function start() {
     }
 
     document.getElementsByClassName("container")[0].onscroll = function () {
-      if (isLoaded == true) return;
       if (loaded == 0) loaded = 80;
-      var isElViu = isElementInView($(`li[data-track="${loaded - 5}"]`), false);
-
-      if (isElViu) {
-        isLoaded = true;
+      if (this.scrollTop > this.scrollHeight - this.clientHeight - 100) {
         for (let i = loaded; i < loaded + 50; i++) {
           if (app.playlist[i] && app.playlist[i].hide == false) app.playlist[i].hide = true;
         }
@@ -144,7 +139,7 @@ function start() {
           document.querySelector("#pl").addEventListener('click', listHandler, false);
         }
         setTimeout(() => {
-          isLoaded = false
+          // document.querySelector(`.pl-container`).innerHTML += ` <iframe data-aa="1254797" src="https://acceptable.a-ads.com/1254797" scrolling="no" style="border-radius: 10px; border:0px; margin: 0px 5px; padding:0; width: 100%; height: 60px; overflow:hidden" allowtransparency="true"></iframe>`;
         }, 500);
         loaded = loaded + 50;
       }
@@ -717,19 +712,6 @@ function maxsize() {
     remote.getCurrentWindow().unmaximize();
     fullscreen = 0;
     document.getElementsByClassName("maximize")[0].innerHTML = `<i style="color: var(--text);" class="far fa-square"></i>`;
-  }
-}
-
-function isElementInView(element, fullyInView) {
-  var pageTop = $(window).scrollTop();
-  var pageBottom = pageTop + $(window).height();
-  var elementTop = $(element).offset().top;
-  var elementBottom = elementTop + $(element).height();
-
-  if (fullyInView === true) {
-    return ((pageTop < elementTop) && (pageBottom > elementBottom));
-  } else {
-    return ((elementTop <= pageBottom) && (elementBottom >= pageTop));
   }
 }
 

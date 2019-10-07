@@ -49,6 +49,20 @@ function createWindow() {
     webContents.setZoomFactor(1);
     webContents.setVisualZoomLevelLimits(1, 1);
     webContents.setLayoutZoomLevelLimits(0, 0);
+  });
+
+  mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
+    event.preventDefault();
+    console.log(url);
+    Object.assign(options, {
+      modal: true,
+      parent: mainWindow,
+      frame: true,
+      width: 600,
+      height: 480
+    })
+    event.newGuest = new BrowserWindow(options)
+    event.newGuest.loadURL(url);
   })
 
   appIcon = new Tray(iconPath);
