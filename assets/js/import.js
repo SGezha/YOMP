@@ -72,7 +72,7 @@ function checkDir(ind, mas, dir) {
 }
 
 function parseOsu(ind, mas, dir, songFolder, f, i, files) {
-  let info = fs.readFileSync(`${dir}\\${songFolder}\\${f}`).toString(),
+  let info = fs.readFileSync(`${dir}\\${songFolder}\\${f}`.split("\\").join("/")).toString(),
     title = f.split(".osu").join(""),
     bmid = songFolder.split(" ")[0],
     full = "";

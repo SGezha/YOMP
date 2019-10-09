@@ -8,6 +8,10 @@
     "appId": "YOMP",
     "copyright": "Copyright © 2019 ${author}",
     "linux": {
+      "target": [
+        "snap"
+      ],
+      "category": "Audio",
       "icon": "assets/icons/icon.png"
     },
     "win": {
@@ -37,9 +41,11 @@
     "postinstall": "./node_modules/.bin/electron-builder install-app-deps"
   },
   "author": "4FuN",
+  "email": "Dr.uma228@gmail.com",
+  "url" : "https://github.com/SGezha/yomp",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SGezha/osu-youtube-music-player.git"
+    "url": "https://github.com/SGezha/yomp.git"
   },
   "devDependencies": {
     "electron": "^6.0.10",
