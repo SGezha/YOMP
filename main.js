@@ -153,8 +153,8 @@ ipc.on("rpc", (event, data) => {
   mainWindow.webContents.executeJavaScript(``);
   let activity = createActivity(data);
   rpc.setActivity(activity).then((data) => {
-    mainWindow.webContents.executeJavaScript(``);
-  }).catch((err) => { mainWindow.webContents.executeJavaScript(`console.log('${err}')`); });
+    // mainWindow.webContents.executeJavaScript(`console.log('${JSON.stringify(data)}');`);
+  }).catch((err) => { mainWindow.webContents.executeJavaScript(`console.log('${err}');`); console.log(err); });
 });
 
 ipc.on("kek", (a) => {

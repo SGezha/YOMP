@@ -10,6 +10,8 @@ if (!fs.existsSync(`${root}/images`)) fs.mkdirSync(`${root}/images`);
 if (!fs.existsSync(`${root}/youtube`)) fs.mkdirSync(`${root}/youtube`);
 if (!fs.existsSync(`${root}/full`)) fs.mkdirSync(`${root}/full`);
 
+console.log(root);
+
 db({ path: `${root}/database.db`, memory: false, readonly: false, fileMustExist: false, migrate: false });
 
 let loaded = 0,

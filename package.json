@@ -8,9 +8,6 @@
     "appId": "YOMP",
     "copyright": "Copyright © 2019 ${author}",
     "linux": {
-      "target": [
-        "snap"
-      ],
       "category": "Audio",
       "icon": "assets/icons/icon.png"
     },
@@ -36,13 +33,13 @@
     "start": "electron .",
     "rebuild": "./node_modules/.bin/electron-rebuild.cmd",
     "build": "./node_modules/.bin/electron-builder build",
-    "linux": "./node_modules/.bin/electron-builder build --linux",
+    "linux": "./node_modules/.bin/electron-builder build --linux snap",
     "build32": "./node_modules/.bin/electron-builder build --ia32",
     "postinstall": "./node_modules/.bin/electron-builder install-app-deps"
   },
   "author": "4FuN",
   "email": "Dr.uma228@gmail.com",
-  "url" : "https://github.com/SGezha/yomp",
+  "url": "https://github.com/SGezha/yomp",
   "repository": {
     "type": "git",
     "url": "https://github.com/SGezha/yomp.git"

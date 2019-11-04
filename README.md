@@ -4,6 +4,7 @@
 <ul>
 <li><strong>Discord Rich Presence</strong> (shows in Discord what song you are listening to)</li>
 <li><strong>YouTube download mp3</strong></li>
+<li><strong>YouTube Radio</strong></li>
 <li><strong>Loved songs</strong></li>
 <li><strong>Auto update</strong></li>
 <li><strong>Mini mode</strong></li>
