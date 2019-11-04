@@ -1,6 +1,6 @@
 {
   "name": "YOMP",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Enjoy listening to music from osu! and youtube :3",
   "main": "main.js",
   "build": {
