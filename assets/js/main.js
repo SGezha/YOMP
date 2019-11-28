@@ -357,8 +357,8 @@ function start() {
         }
       } else {
         if (!repeating) index = (index === playList.length - 1) ? 0 : index + 1;
-        let title = document.getElementsByClassName('pl-title')[index].innerHTML;
-        notify(`Now playing`, title)
+        let title = app.playlist[index].title;
+        notify(`Now playing`, title);
         play();
       }
     }
