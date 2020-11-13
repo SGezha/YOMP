@@ -9,7 +9,7 @@ function miniPlayer() {
   }
   document.getElementById('pl').style.display = "none";
   document.getElementsByClassName('center')[0].style.display = "none";
-  document.getElementsByClassName('top')[0].style.display = "none";
+  document.getElementsByClassName('top')[0].style.transform = "scale(0)";
   document.getElementsByClassName('main')[0].style.background = "transparent";
   document.getElementsByClassName('bottom')[0].style.position = "absolute";
   document.getElementsByClassName('bottom')[0].style.bottom = "0";
@@ -47,7 +47,7 @@ function miniPlayerOff() {
   document.getElementById('pl').style.display = "block";
   document.getElementById('hide-progres').style.display = "none";
   document.getElementsByClassName('center')[0].style.display = null;
-  document.getElementsByClassName('top')[0].style.display = "flex";
+  document.getElementsByClassName('top')[0].style.transform = "scale(1)";
   document.getElementsByClassName('main')[0].style.background = "var(--bg)";
   document.getElementsByClassName('bottom')[0].style.position = null;
   document.getElementsByClassName('bottom')[0].style.bottom = null;

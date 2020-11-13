@@ -3,12 +3,13 @@ const { shell, remote, ipcRenderer: ipc } = require('electron'),
   db = require('better-sqlite3-helper'),
   fs = require("fs"),
   child = require('child_process').exec,
-  NodeID3 = require('node-id3'),
   os = require('os');
 
 if (!fs.existsSync(`${root}/images`)) fs.mkdirSync(`${root}/images`);
-if (!fs.existsSync(`${root}/youtube`)) fs.mkdirSync(`${root}/youtube`);
 if (!fs.existsSync(`${root}/full`)) fs.mkdirSync(`${root}/full`);
+if (!fs.existsSync(`${root}/youtube`)) fs.mkdirSync(`${root}/youtube`);
+if (!fs.existsSync(`${root}/redio.txt`)) fs.writeFileSync(`${root}/radio.txt`, "https://www.youtube.com/watch?v=oJ5tiq4DBNY");
+if (!fs.existsSync(`${root}/redio.txt`)) fs.writeFileSync(`${root}/ffmpeg.txt`, "C:/ffmpeg");
 
 console.log(root);
 
@@ -17,6 +18,7 @@ db({ path: `${root}/database.db`, memory: false, readonly: false, fileMustExist:
 let loaded = 0,
   musicStatus = {},
   mini = false,
+  ffmpeg = "C:/ffmpeg",
   fullscreen = 0,
   isLoved = false,
   youtubeRadio = false,
@@ -28,9 +30,12 @@ let loaded = 0,
 window.onload = function () {
   start();
   ipc.send('ready');
+  refresh();
   loadSettings();
-  checkUpdate(true);
-  if (db().query("SELECT * from status")[0].loved == "false") { refresh(); } else { openloved(); }
+  // checkUpdate(true);
+  document.querySelector('#radio-id').value = fs.readFileSync(`${root}/radio.txt`).toString();
+  ffmpeg = fs.readFileSync(`${root}/ffmpeg.txt`).toString();
+  // if (db().query("SELECT * from status")[0].loved == false) { refresh(); } else { openloved(); }
   discordUpdate();
   app.ver = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString()).version;
   $('.collapsible').collapsible();
@@ -624,10 +629,6 @@ function refresh() {
     playList: db().query("SELECT * from music")
   });
 
-  if (document.querySelector('#youtube').style.display != "none") {
-    document.querySelector('#youtube').style.display = "none";
-    document.querySelector('#pl').classList.remove("hide");
-  }
   loaded = 0;
   isLoved = false;
 }
@@ -679,11 +680,6 @@ function openloved() {
   });
 
   loaded = 0;
-
-  if (document.querySelector('#youtube').style.display != "none") {
-    document.querySelector('#youtube').style.display = "none";
-    document.querySelector('#pl').classList.remove("hide");
-  }
 }
 
 function openMenu() {

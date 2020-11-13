@@ -1,3 +1,4 @@
+const mm = require('music-metadata');
 async function addMusicFolder() {
   let dir = await remote.dialog.showOpenDialog({ title: 'Select Music Folder', properties: ['openDirectory'] });
   if (!dir.filePaths[0]) return;
@@ -9,21 +10,27 @@ async function addMusicFolder() {
         if (i.toLocaleLowerCase().indexOf(".mp3") > -1) {
           let fiph = `${dir.filePaths[0]}/${i}`.split("\\").join("/");
           if (db().query(`SELECT * from music where file='${fiph}'`).length == 0) {
-            let metadata = NodeID3.read(`${dir.filePaths[0]}/${i}`);
-            let obj = {
-              title: i.toLocaleLowerCase().split(".mp3"),
-              file: fiph,
-              loved: "false"
-            };
-            if (metadata.title != undefined && metadata.artist != undefined) obj.title = `${metadata.artist} - ${metadata.title}`;
-            if (metadata.image != undefined && metadata.image.imageBuffer != undefined) {
-              fs.writeFileSync(`${root}/images/${obj.title}.jpg`, metadata.image.imageBuffer, 'binary');
-              obj.icon = encodeURI(`${root}/images/${obj.title}.jpg`);
-            }
-            if (Array.isArray(obj.title)) obj.title = obj.title[0];
-            obj.title = obj.title.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
-            db().insert('music', obj);
-            document.getElementById("load-progress").innerHTML = `<div class="textload">${obj.title}</div> <span> ${ind + 1}/${items.length}</span>`;
+            // let metadata = NodeID3.read(`${dir.filePaths[0]}/${i}`);
+            mm.parseFile(`${dir.filePaths[0]}/${i}`)
+              .then(metadata => {
+                metadata = metadata.common;
+                console.log(metadata)
+                let obj = {
+                  title: i.split(".mp3").join(""),
+                  file: fiph,
+                  loved: "false"
+                };
+                obj.title = obj.title.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "");
+                if (metadata.picture) {
+                  fs.writeFileSync(`${root}/images/${obj.title}.jpg`, metadata.picture[0].data, 'binary');
+                  obj.icon = encodeURI(`${root}/images/${obj.title}.jpg`);
+                }
+                db().insert('music', obj);
+                document.getElementById("load-progress").innerHTML = `<div class="textload">${obj.title}</div> <span> ${ind + 1}/${items.length}</span>`;
+              })
+              .catch(err => {
+                console.error(err.message);
+              });            
           } else {
             document.getElementById("load-progress").innerHTML = `<div class="textload">${i.toLocaleLowerCase().split(".mp3")}</div> <span> ${ind + 1}/${items.length}</span>`;
           }
@@ -102,7 +109,6 @@ function loadMusic() {
     document.getElementsByClassName('menu-left')[0].classList.remove('act-menu');
     document.getElementsByClassName('shadow')[0].style.display = "none";
     document.getElementById('pl').style.display = "none";
-    document.getElementById('youtube').style.display = "none";
     document.getElementById('ap').style.display = "none";
     document.querySelector(".radio-choise").style.display = "none";
     document.getElementById("settings").classList.remove("openSettings");
@@ -117,7 +123,6 @@ function loadMusic() {
     refresh();
     remote.getCurrentWindow().focus();
     document.getElementById('pl').style.display = null;
-    document.getElementById('youtube').style.display = null;
     document.getElementById('ap').style.display = null;
     document.getElementById('load-music').style.display = null;
     document.querySelector(".radio-choise").style.display = null;

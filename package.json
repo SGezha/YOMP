@@ -1,12 +1,12 @@
 {
   "name": "YOMP",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Enjoy listening to music from osu! and youtube :3",
   "main": "main.js",
   "build": {
     "productName": "YOMP",
     "appId": "YOMP",
-    "copyright": "Copyright © 2019 ${author}",
+    "copyright": "Copyright © 2020 ${author}",
     "linux": {
       "category": "Audio",
       "icon": "assets/icons/icon.png"
@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "electron": "^6.0.10",
-    "electron-builder": "^20.44.4",
+    "electron-builder": "^22.9.1",
     "electron-rebuild": "^1.8.6",
     "register-scheme": "0.0.2"
   },
@@ -54,7 +54,8 @@
     "better-sqlite3-helper": "^2.1.1",
     "discord-rpc": "^3.1.0",
     "electron-download-manager": "^2.1.2",
+    "music-metadata": "^7.5.0",
     "node-gyp": "^6.0.1",
-    "node-id3": "^0.1.11"
+    "yt-dl-playlist": "^2.1.0"
   }
 }

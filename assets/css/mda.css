@@ -1921,6 +1921,19 @@ div#youtube-audio {display: flex;justify-content: center;align-items: center;}
     z-index: 0;
 }
 
+.youtube-choise {
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  display: none;
+  top: -59px;
+  left: 0;
+  right: 0;
+  transform: translateY(100%);
+  transition: all .5s;
+  z-index: 0;
+}
+
 .radio-container {
     justify-content: center;
     align-items: center;
@@ -1969,6 +1982,9 @@ div#youtube-audio {display: flex;justify-content: center;align-items: center;}
 }
 .radio-choise.active {
     transform: translateY(0%);
+}
+.youtube-choise.active {
+  transform: translateY(0%);
 }
 .ap-info1 {
     justify-content: center;
