@@ -30,7 +30,7 @@ function getText() {
         if (text.find(a => Number(a._attributes.start).toFixed(0) == audio.currentTime.toFixed(0)) != undefined) stroka = text.find(a => Number(a._attributes.start).toFixed(0) == audio.currentTime.toFixed(0))._text;
 
         if (stroka != undefined && lastStroka != stroka) {
-            x.innerText = stroka.split("\n").join(" ").replace(/[^\p{Alpha}\p{M}\p{Nd}\p{Pc}\p{Join_C} ’ " ` : - .]/gu, "").replace(/[0-9]/g, '');
+            x.innerText = stroka.split("\n").join(" ").replace(/( |<([^>]+)>)/ig, " ").replace(/[^\p{Alpha}\p{M}\p{Nd}\p{Pc}\p{Join_C} ’ " ` : - .]/gu, "").replace(/[0-9]/g, '');
             lastStroka = stroka;
             x.classList.add("show");
             animText(text.find(a => Number(a._attributes.start).toFixed(0) == audio.currentTime.toFixed(0))._attributes.dur);
