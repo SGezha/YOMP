@@ -25,6 +25,7 @@ let loaded = 0,
   ytQuery = [],
   radioPlayer,
   first = true,
+  audio,
   ping = false;
 
 window.onload = function () {
@@ -44,7 +45,7 @@ window.onload = function () {
 function start() {
   var AudioPlayer = (function () {
     var player = document.getElementById('ap'),
-      playBtn, prevBtn, nextBtn, plBtn, repeatBtn, volumeBtn, progressBar, preloadBar, curTime, durTime, trackTitle, audio, index = 0,
+      playBtn, prevBtn, nextBtn, plBtn, repeatBtn, volumeBtn, progressBar, preloadBar, curTime, durTime, trackTitle, index = 0,
       playList, volumeBar, volumeLength, repeating = false, random = false, seeking = false, rightClick = false, apActive = false,
       pl = document.querySelector("#pl"), settings = { volume: db().query("SELECT * from status")[0].volume ? db().query("SELECT * from status")[0].volume : 0.1, autoPlay: false, notification: true, playList: [] };
 
@@ -223,6 +224,7 @@ function start() {
       document.title = app.status.title = playList[index].title;
       audio.play();
       playBtn.classList.add('playing');
+      getText();
       plActive();
     }
 
@@ -239,6 +241,7 @@ function start() {
     }
 
     function next() {
+      getText();
       youtubeRadio = false;
       if (random) return randomTrack();
       index = index + 1;
@@ -251,6 +254,7 @@ function start() {
     }
 
     function randomTrack() {
+      getText();
       youtubeRadio = false;
       index = getRandomInt(0, app.playlist.length);
       if (mini == true && ping > 1) {
@@ -276,6 +280,7 @@ function start() {
 
     function playToggle() {
       if (isEmptyList()) return;
+      getText();
       if (youtubeRadio) {
         radioPlayer.getPlayerState() === YT.PlayerState.PLAYING || radioPlayer.getPlayerState() === YT.PlayerState.BUFFERING ? radioPlayer.pauseVideo() : radioPlayer.playVideo();
         return;
