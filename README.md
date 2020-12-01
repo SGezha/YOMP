@@ -1,5 +1,8 @@
 <h2 id="yomp-youtube--osu-music-player">YOMP (YouTube &amp; osu! Music Player)</h2><img src="https://puu.sh/EkVK5.png" alt="icon">
 <p>Simple music player with the ability to play music from <strong>YouTube</strong>, <strong>osu!</strong> and <strong>local storage</strong>.</p>
+<a href="https://sourceforge.net/projects/youtube-osu-music-player/files/latest/download"><img alt="Download YOMP" src="https://a.fsdn.com/con/app/sf-download-button" width=276 height=48 srcset="https://a.fsdn.com/con/app/sf-download-button?button_size=2x 2x"></a>
+<img alt="GitHub all releases" src="https://img.shields.io/github/downloads/SGezha/YOMP/total">
+<a href="https://sourceforge.net/projects/youtube-osu-music-player/files/latest/download"><img alt="Download YOMP" src="https://img.shields.io/sourceforge/dt/youtube-osu-music-player.svg" ></a>
 <h2 id="features">Features:</h2>
 <ul>
 <li><strong>Discord Rich Presence</strong> (shows in Discord what song you are listening to)</li>
