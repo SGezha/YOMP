@@ -45,8 +45,8 @@ window.onload = function () {
 function start() {
   var AudioPlayer = (function () {
     var player = document.getElementById('ap'),
-      playBtn, prevBtn, nextBtn, plBtn, repeatBtn, volumeBtn, progressBar, preloadBar, curTime, durTime, trackTitle, index = 0,
-      playList, volumeBar, volumeLength, repeating = false, random = false, seeking = false, rightClick = false, apActive = false,
+      playBtn, prevBtn, nextBtn, plBtn, repeatBtn, volumeBtn, progressBar, preloadBar, curTime, durTime, trackTitle, index = 0, wave = false,
+      playList, volumeBar, volumeLength, repeating = false, random = false, seeking = false, rightClick = false, apActive = false, caption = false,
       pl = document.querySelector("#pl"), settings = { volume: db().query("SELECT * from status")[0].volume ? db().query("SELECT * from status")[0].volume : 0.1, autoPlay: false, notification: true, playList: [] };
 
     function init(options) {
@@ -62,7 +62,7 @@ function start() {
       playBtn = player.querySelector('.ap-toggle-btn');
       prevBtn = player.querySelector('.ap-prev-btn');
       nextBtn = player.querySelector('.ap-next-btn');
-      repeatBtn = player.querySelector('.ap-repeat-btn');
+      captionsBtn = player.querySelector('.captions');
       volumeBtn = player.querySelector('.ap-volume-btn');
       plBtn = document.querySelector('.ap-playlist-btn');
       curTime = player.querySelector('.ap-time--current');
@@ -73,7 +73,7 @@ function start() {
       volumeBar = player.querySelector('.ap-volume-bar');
       playBtn.addEventListener('click', playToggle, false);
       volumeBtn.addEventListener('click', volumeToggle, false);
-      repeatBtn.addEventListener('click', repeatToggle, false);
+      captionsBtn.addEventListener('click', captionsToggle, false);
       document.querySelector(".randomToggle").addEventListener('click', randomToggle, false);
       progressBar.parentNode.parentNode.addEventListener('mousedown', handlerBar, false);
       progressBar.parentNode.parentNode.addEventListener('mousemove', seek, false);
@@ -204,7 +204,7 @@ function start() {
       for (var i = 0, len = document.querySelectorAll('.music-el').length; len > i; i++) {
         document.querySelectorAll('.music-el')[i].classList.remove('pl-current');
       }
-      if(document.querySelectorAll('.music-el')[index]) document.querySelectorAll('.music-el')[index].classList.add('pl-current');
+      if (document.querySelectorAll('.music-el')[index]) document.querySelectorAll('.music-el')[index].classList.add('pl-current');
     }
 
     function error() {
@@ -212,6 +212,7 @@ function start() {
     }
 
     function play() {
+      if(wave) wave.destroy();
       index = (index > playList.length - 1) ? 0 : index;
       index;
       if (index < 0) index = playList.length - 1;
@@ -222,9 +223,20 @@ function start() {
       audio.src = playList[index].file;
       audio.preload = 'auto';
       document.title = app.status.title = playList[index].title;
-      audio.play();
+      if(caption) {
+        getText();
+        wave = new CircularAudioWave(document.getElementById('chart-container'));
+        wave.loadAudio(playList[index].file).then(res => {
+          document.querySelector(`#chart-container`).style.backgroundImage = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${app._data.playlist[AP.getIndex()].icon}')`;
+          wave.play();
+          audio.play();
+        }).catch(er => {
+          audio.play();
+        });
+      } else {
+        audio.play();
+      }
       playBtn.classList.add('playing');
-      getText();
       plActive();
     }
 
@@ -241,7 +253,6 @@ function start() {
     }
 
     function next() {
-      getText();
       youtubeRadio = false;
       if (random) return randomTrack();
       index = index + 1;
@@ -254,7 +265,6 @@ function start() {
     }
 
     function randomTrack() {
-      getText();
       youtubeRadio = false;
       index = getRandomInt(0, app.playlist.length);
       if (mini == true && ping > 1) {
@@ -280,15 +290,27 @@ function start() {
 
     function playToggle() {
       if (isEmptyList()) return;
-      getText();
       if (youtubeRadio) {
         radioPlayer.getPlayerState() === YT.PlayerState.PLAYING || radioPlayer.getPlayerState() === YT.PlayerState.BUFFERING ? radioPlayer.pauseVideo() : radioPlayer.playVideo();
         return;
       };
       if (audio.paused) {
-        audio.play();
+        if(caption) {
+          getText();
+          wave = new CircularAudioWave(document.getElementById('chart-container'));
+          wave.loadAudio(playList[index].file).then(res => {
+            document.querySelector(`#chart-container`).style.backgroundImage = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${app._data.playlist[AP.getIndex()].icon}')`;
+            wave.play();
+            audio.play();
+          }).catch(er => {
+            audio.play();
+          });
+        } else {
+          audio.play();
+        }
         playBtn.classList.add('playing');
       } else {
+        wave.destroy();
         audio.pause();
         playBtn.classList.remove('playing');
       }
@@ -329,6 +351,29 @@ function start() {
       } else {
         random = true;
         document.querySelector(".randomToggle").classList.add('ap-active');
+      }
+    }
+
+    function captionsToggle() {
+      var randomel = document.querySelector(".captions").classList;
+      if (randomel.contains('ap-active')) {
+        caption = false;
+        wave.destroy();
+        document.querySelector(`#snackbar`).style.display = "none";
+        document.querySelector(`#chart-container`).style.opacity = "0";
+        document.querySelector(`.trail`).style.zIndex = -999;
+        document.querySelector(`.trail`).style.display = "none";
+        document.querySelector(`#chart-container`).style.zIndex = -100;
+        document.querySelector(".captions").classList.remove('ap-active');
+      } else {
+        caption = true;
+        play();
+        document.querySelector(`#snackbar`).style.display = "block";
+        document.querySelector(`#chart-container`).style.zIndex = 10;
+        document.querySelector(`.trail`).style.zIndex = 11;
+        document.querySelector(`.trail`).style.display = "block";
+        document.querySelector(`#chart-container`).style.opacity = "1";
+        document.querySelector(".captions").classList.add('ap-active');
       }
     }
 
@@ -639,7 +684,7 @@ function refresh() {
 }
 
 function lovethis() {
-  if(document.getElementsByClassName('pl-current')[0]) {
+  if (document.getElementsByClassName('pl-current')[0]) {
     love(parseInt(document.getElementsByClassName('pl-current')[0].getAttribute('real-id'), 10), document.getElementsByClassName('owo')[document.getElementsByClassName('pl-current')[0].getAttribute('data-track')]);
   } else {
     love(app.playlist.filter(y => y.dataId == AP.getIndex())[0].id);
@@ -661,12 +706,12 @@ function love(id, el) {
   let track = db().query(`SELECT * from music where id=${id}`)[0];
   if (track.loved == true) {
     db().run(`UPDATE music SET loved=false WHERE id=${id};`);
-    if(el) el.classList.remove("fav");
+    if (el) el.classList.remove("fav");
     notify('Removed from loved :c', `${track.title}`);
     if (isLoved == true) openloved();
   } else {
     notify('Added to loved :3', `${track.title}`);
-    if(el) el.classList.add("fav");
+    if (el) el.classList.add("fav");
     db().run(`UPDATE music SET loved=true WHERE id=${id};`);
   }
 }

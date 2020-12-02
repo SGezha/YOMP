@@ -12,10 +12,12 @@
   <link rel="stylesheet" href="assets/css/subtitles.css">
   <script src="assets/modules/vue.js"></script>
   <script src="assets/modules/axios.js"></script>
+  <script src="assets/modules/circular-audio-wave.min.js"></script>
 </head>
 
 <body>
   <div id="yomp">
+    <canvas id="canvas" class="trail canvas" width="1280px" height="800px" style="width: 100%; height: 100%;"></canvas>
     <div class="main">
       <div class="top">
         <div class="title-text"><img class="loged" src="assets/icons/head.png"> Music Player</div>
@@ -36,7 +38,8 @@
         </div>
       </div>
       <div class="center">
-        <div id="snackbar" class="mast__text js-spanize">Some text some message..</div>
+        <div id="chart-container" style="opacity: 0; width: 100%; height: 100%;"></div>
+        <div id="snackbar" style="display: none;" class="mast__text js-spanize">Some text some message..</div>
         <div class="mini-field">
           <div class="menu-icon"><i onclick="openMenu()" class="fas fa-bars"></i></div>
           <div class="search">
@@ -197,8 +200,8 @@
                     </div>
                   </div>
                 </div>
-                <button class="ap-controls ap-repeat-btn"><i class="fas fa-sync-alt"></i></button>
                 <button class="ap-controls randomToggle"><i class="fas fa-random"></i></button>
+                <button class="ap-controls captions"><i class="fas fa-closed-captioning"></i></button>
               </div>
             </div>
           </div>
@@ -456,6 +459,7 @@
   <script src="assets/js/settings.js" defer></script>
   <script src="assets/js/youtube.js" defer></script>
   <script src="assets/js/subtitles.js" defer></script>
+  <script src="assets/js/trail.js" defer></script>
 
 </body>
 

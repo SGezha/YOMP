@@ -107,6 +107,7 @@ button {
   height: 35px;
   background-color: var(--block);
   overflow: hidden;
+  z-index: 100;
 }
 
 .top>.title-text {
@@ -651,6 +652,7 @@ i.far.fa-trash-alt.pl-remove:hover {
   width: 100vw;
   height: 50px;
   border-radius: 0px 0px 7px 7px;
+  z-index: 999;
 }
 
 .bottom>.ap {
@@ -2002,5 +2004,27 @@ div#youtube-audio {display: flex;justify-content: center;align-items: center;}
 }
 
 #info {
+  display: none;
+}
+
+#chart-container {
+  background-image: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6));
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  transition: opacity 0.5s ease;
+  transition: background-image 0.5s ease;
+  position: absolute;
+  z-index: -100;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.trail {
+  position: absolute;
+  z-index: -999;
   display: none;
 }
