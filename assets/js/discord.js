@@ -22,5 +22,5 @@ function discordUpdate() {
       progress: `${musicStatus.curTime} [${progress}] ${musicStatus.durTime}`
     });
   }
-  setTimeout(() => { discordUpdate() }, 1000);
+  setTimeout(() => { discordUpdate() }, 5000);
 }

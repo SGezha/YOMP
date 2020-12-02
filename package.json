@@ -45,7 +45,7 @@
     "url": "https://github.com/SGezha/yomp.git"
   },
   "devDependencies": {
-    "electron": "^6.0.10",
+    "electron": "^6.1.12",
     "electron-builder": "^22.9.1",
     "electron-rebuild": "^1.8.6",
     "register-scheme": "0.0.2"
@@ -53,9 +53,7 @@
   "dependencies": {
     "better-sqlite3-helper": "^2.1.1",
     "discord-rpc": "^3.1.0",
-    "electron-download-manager": "^2.1.2",
     "music-metadata": "^7.5.0",
-    "node-gyp": "^6.0.1",
     "xml-js": "^1.6.11",
     "yt-dl-playlist": "^2.1.0"
   }

@@ -5,6 +5,7 @@ let text;
 let NowVideoId
 
 function getText() {
+    if(!caption) return TextStop();
     TextStop();
     text = [];
     let stroka = "";

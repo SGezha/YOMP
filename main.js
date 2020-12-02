@@ -5,8 +5,7 @@ const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc } = require
   iconPath = path.join(__dirname, 'assets/icons/icon.png'),
   db = require('better-sqlite3-helper'),
   fs = require('fs'),
-  rpc = new DiscordRPC.Client({ transport: 'ipc' }),
-  DownloadManager = require("electron-download-manager");
+  rpc = new DiscordRPC.Client({ transport: 'ipc' });
 
 let mainWindow,
   notiWindow,
@@ -45,11 +44,11 @@ function createWindow() {
   });
 
   let webContents = mainWindow.webContents;
-  webContents.on('did-finish-load', () => {
-    webContents.setZoomFactor(1);
-    webContents.setVisualZoomLevelLimits(1, 1);
-    webContents.setLayoutZoomLevelLimits(0, 0);
-  });
+  // webContents.on('did-finish-load', () => {
+  //   webContents.setZoomFactor(1);
+  //   webContents.setVisualZoomLevelLimits(1, 1);
+  //   webContents.setLayoutZoomLevelLimits(0, 0);
+  // });
 
   mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     event.preventDefault();
@@ -154,13 +153,9 @@ ipc.on("rpc", (event, data) => {
   let activity = createActivity(data);
   rpc.setActivity(activity).then((data) => {
     // mainWindow.webContents.executeJavaScript(`console.log('${JSON.stringify(data)}');`);
-  }).catch((err) => { mainWindow.webContents.executeJavaScript(`console.log('${err}');`); console.log(err); });
+  }).catch((err) => { });
 });
 
 ipc.on("kek", (a) => {
   app.exit(0);
-});
-
-DownloadManager.register({
-  downloadFolder: root + "/youtube"
 });

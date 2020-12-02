@@ -26,11 +26,11 @@ let loaded = 0,
   radioPlayer,
   first = true,
   audio,
+  caption = false,
   ping = false;
 
 window.onload = function () {
   start();
-  ipc.send('ready');
   refresh();
   loadSettings();
   // checkUpdate(true);
@@ -40,13 +40,14 @@ window.onload = function () {
   discordUpdate();
   app.ver = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString()).version;
   $('.collapsible').collapsible();
+  ipc.send('ready');
 };
 
 function start() {
   var AudioPlayer = (function () {
     var player = document.getElementById('ap'),
       playBtn, prevBtn, nextBtn, plBtn, repeatBtn, volumeBtn, progressBar, preloadBar, curTime, durTime, trackTitle, index = 0, wave = false,
-      playList, volumeBar, volumeLength, repeating = false, random = false, seeking = false, rightClick = false, apActive = false, caption = false,
+      playList, volumeBar, volumeLength, repeating = false, random = false, seeking = false, rightClick = false, apActive = false,
       pl = document.querySelector("#pl"), settings = { volume: db().query("SELECT * from status")[0].volume ? db().query("SELECT * from status")[0].volume : 0.1, autoPlay: false, notification: true, playList: [] };
 
     function init(options) {
@@ -109,7 +110,7 @@ function start() {
         if (item.file.indexOf("osu") > -1) item.type = `<img class="pl-img" src="assets/icons/osu.svg">`;
         if (item.videoId != undefined) item.type = `<i class="fab fa-youtube"></i>`;
         item.dataId = i;
-        if (i < 80) {
+        if (i < 30) {
           item.hide = true;
           html.push(item);
         } else {
@@ -146,9 +147,6 @@ function start() {
         for (let i = 0; i < document.querySelectorAll('.music-el').length; i++) {
           document.querySelector("#pl").addEventListener('click', listHandler, false);
         }
-        setTimeout(() => {
-          // document.querySelector(`.pl-container`).innerHTML += ` <iframe data-aa="1254797" src="https://acceptable.a-ads.com/1254797" scrolling="no" style="border-radius: 10px; border:0px; margin: 0px 5px; padding:0; width: 100%; height: 60px; overflow:hidden" allowtransparency="true"></iframe>`;
-        }, 500);
         loaded = loaded + 50;
       }
     };
@@ -296,6 +294,7 @@ function start() {
       };
       if (audio.paused) {
         if(caption) {
+          if(wave) wave.destroy();
           getText();
           wave = new CircularAudioWave(document.getElementById('chart-container'));
           wave.loadAudio(playList[index].file).then(res => {
@@ -310,7 +309,7 @@ function start() {
         }
         playBtn.classList.add('playing');
       } else {
-        wave.destroy();
+        if(wave) wave.destroy();
         audio.pause();
         playBtn.classList.remove('playing');
       }
@@ -358,11 +357,9 @@ function start() {
       var randomel = document.querySelector(".captions").classList;
       if (randomel.contains('ap-active')) {
         caption = false;
-        wave.destroy();
+        if(wave) wave.destroy();
         document.querySelector(`#snackbar`).style.display = "none";
         document.querySelector(`#chart-container`).style.opacity = "0";
-        document.querySelector(`.trail`).style.zIndex = -999;
-        document.querySelector(`.trail`).style.display = "none";
         document.querySelector(`#chart-container`).style.zIndex = -100;
         document.querySelector(".captions").classList.remove('ap-active');
       } else {
@@ -370,8 +367,6 @@ function start() {
         play();
         document.querySelector(`#snackbar`).style.display = "block";
         document.querySelector(`#chart-container`).style.zIndex = 10;
-        document.querySelector(`.trail`).style.zIndex = 11;
-        document.querySelector(`.trail`).style.display = "block";
         document.querySelector(`#chart-container`).style.opacity = "1";
         document.querySelector(".captions").classList.add('ap-active');
       }
