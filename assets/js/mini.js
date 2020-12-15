@@ -17,7 +17,7 @@ function miniPlayer() {
   document.querySelector('.ap--track').style.flex = '0 0 280px';
   document.querySelector('.bottom').style.height = '40px';
   document.querySelector('.ap').style.borderRadius = '7px 0 0 0';
-  document.querySelector('.ap').style.boxShadow = '0';
+  document.querySelector('.ap').style.boxShadow = 'none';
   remote.getCurrentWindow().setSize(400, 40);
   remote.getCurrentWindow().setAlwaysOnTop(true);
   remote.getCurrentWindow().setPosition(screen.availWidth - 400, screen.availHeight - 40);
