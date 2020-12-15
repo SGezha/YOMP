@@ -47,7 +47,7 @@ function start() {
   var AudioPlayer = (function () {
     var player = document.getElementById('ap'),
       playBtn, prevBtn, nextBtn, plBtn, repeatBtn, volumeBtn, progressBar, preloadBar, curTime, durTime, trackTitle, index = 0, wave = false,
-      playList, volumeBar, volumeLength, repeating = false, random = false, seeking = false, rightClick = false, apActive = false,
+      playList, volumeBar, volumeLength, repeating = false, random = false, seeking = false, rightClick = false, apActive = false, plHtml = [],
       pl = document.querySelector("#pl"), settings = { volume: db().query("SELECT * from status")[0].volume ? db().query("SELECT * from status")[0].volume : 0.1, autoPlay: false, notification: true, playList: [] };
 
     function init(options) {
@@ -84,6 +84,7 @@ function start() {
       document.documentElement.addEventListener('mouseup', seekingFalse, false);
       prevBtn.addEventListener('click', prev, false);
       nextBtn.addEventListener('click', next, false);
+      document.querySelector('.ap').addEventListener("mousewheel", volumeWheel, false);
       audio = new Audio();
       audio.volume = settings.volume;
       if (isEmptyList()) {
@@ -101,6 +102,16 @@ function start() {
       }
     }
 
+    let volumeWheel = function (e) {
+      e = window.event || e;
+      let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+
+      if(delta== 1) volumeUp();
+      if(delta== -1) volumeDown();
+
+      e.preventDefault();
+  };
+
     function renderPL() {
       var html = [];
       playList.reverse().forEach(function (item, i) {
@@ -110,7 +121,7 @@ function start() {
         if (item.file.indexOf("osu") > -1) item.type = `<img class="pl-img" src="assets/icons/osu.svg">`;
         if (item.videoId != undefined) item.type = `<i class="fab fa-youtube"></i>`;
         item.dataId = i;
-        if (i < 30) {
+        if (i < 100) {
           item.hide = true;
           html.push(item);
         } else {
@@ -195,14 +206,15 @@ function start() {
     }
 
     function plActive() {
+      plHtml = document.querySelectorAll('.music-el');
       if (audio.paused) {
-        if (document.querySelector(".pl-current")) document.querySelectorAll('.music-el')[index].classList.remove('pl-current');
+        if (document.querySelector(".pl-current")) plHtml[index].classList.remove('pl-current');
         return;
       }
-      for (var i = 0, len = document.querySelectorAll('.music-el').length; len > i; i++) {
-        document.querySelectorAll('.music-el')[i].classList.remove('pl-current');
+      for (var i = 0, len = plHtml.length; len > i; i++) {
+        plHtml[i].classList.remove('pl-current');
       }
-      if (document.querySelectorAll('.music-el')[index]) document.querySelectorAll('.music-el')[index].classList.add('pl-current');
+      if (plHtml[index]) plHtml[index].classList.add('pl-current');
     }
 
     function error() {
@@ -221,13 +233,15 @@ function start() {
       audio.src = playList[index].file;
       audio.preload = 'auto';
       document.title = app.status.title = playList[index].title;
+      document.querySelector(`.ap`).style.background = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${app._data.playlist[AP.getIndex()].icon}') center center / cover`;
       if(caption) {
         getText();
         wave = new CircularAudioWave(document.getElementById('chart-container'));
         wave.loadAudio(playList[index].file).then(res => {
-          document.querySelector(`#chart-container`).style.backgroundImage = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${app._data.playlist[AP.getIndex()].icon}')`;
+          // document.querySelector(`#chart-container`).style.background = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${app._data.playlist[AP.getIndex()].icon}') center center / cover`;
           wave.play();
           audio.play();
+          if (plHtml[index]) plHtml[index].classList.add('pl-current');
         }).catch(er => {
           audio.play();
         });
@@ -282,7 +296,7 @@ function start() {
       audio.src = '';
       app.status.title = 'Playlist is empty';
       app.status.progress = ``;
-      // pl.innerHTML = '<div class="pl-empty"><img src="https://image.flaticon.com/icons/svg/1679/1679882.svg" class="emss" /> PlayList is empty</div>';
+      pl.innerHTML = '<div class="pl-empty"><img src="https://image.flaticon.com/icons/svg/1679/1679882.svg" class="emss" /> PlayList is empty</div>';
     }
 
 
@@ -293,6 +307,7 @@ function start() {
         return;
       };
       if (audio.paused) {
+        document.querySelector(`.ap`).style.background = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${app._data.playlist[AP.getIndex()].icon}') center center / cover`;
         if(caption) {
           if(wave) wave.destroy();
           getText();
@@ -429,54 +444,56 @@ function start() {
       }
     }
 
+    let timer;
+
     function volumeUp(value) {
-      if (mini == true) {
-        miniPlayer();
-        document.getElementsByClassName('ap-volume')[0].style.height = "120px";
-        document.getElementsByClassName('ap-volume')[0].style.visibility = "visible";
-        document.getElementsByClassName('ap-volume-container')[0].style.background = 'var(--block)';
-      } else {
-        document.getElementsByClassName('ap-volume')[0].style.height = "120px";
-        document.getElementsByClassName('ap-volume')[0].style.visibility = "visible";
-        document.getElementsByClassName('ap-volume-container')[0].style.background = 'var(--block)';
-        setTimeout(() => {
-          if (document.getElementsByClassName('ap-volume')[0].style.height == "120px") {
-            document.getElementsByClassName('ap-volume')[0].style.height = null;
-            document.getElementsByClassName('ap-volume')[0].style.visibility = null;
-            document.getElementsByClassName('ap-volume-container')[0].style.background = null;
-          }
-        }, 3000)
-      }
       value = audio.volume * 100 + 2;
       if (value > 100) value = 100;
       if (value < 0) value = 0;
       volumeBar.style.height = value + '%';
       audio.volume = Number(value / 100);
-    }
-
-    function volumeDown(value) {
       if (mini == true) {
-        miniPlayer();
-        document.getElementsByClassName('ap-volume')[0].style.height = "120px";
-        document.getElementsByClassName('ap-volume')[0].style.visibility = "visible";
-        document.getElementsByClassName('ap-volume-container')[0].style.background = 'var(--block)';
+        app.status.title = `Volume: ${value.toFixed(0)}%`;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          app.status.title = playList[index].title;
+        }, 750)
       } else {
         document.getElementsByClassName('ap-volume')[0].style.height = "120px";
         document.getElementsByClassName('ap-volume')[0].style.visibility = "visible";
-        document.getElementsByClassName('ap-volume-container')[0].style.background = 'var(--block)';
-        setTimeout(() => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
           if (document.getElementsByClassName('ap-volume')[0].style.height == "120px") {
             document.getElementsByClassName('ap-volume')[0].style.height = null;
             document.getElementsByClassName('ap-volume')[0].style.visibility = null;
-            document.getElementsByClassName('ap-volume-container')[0].style.background = null;
           }
-        }, 3000)
+        }, 1000)
       }
+    }
+
+    function volumeDown(value) {
       value = audio.volume * 100 - 2;
       if (value > 100) value = 100;
       if (value < 0) value = 0;
       volumeBar.style.height = value + '%';
       audio.volume = Number(value / 100);
+      if (mini == true) {
+        app.status.title = `Volume: ${value.toFixed(0)}%`;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          app.status.title = playList[index].title;
+        }, 750)
+      } else {
+        document.getElementsByClassName('ap-volume')[0].style.height = "120px";
+        document.getElementsByClassName('ap-volume')[0].style.visibility = "visible";
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          if (document.getElementsByClassName('ap-volume')[0].style.height == "120px") {
+            document.getElementsByClassName('ap-volume')[0].style.height = null;
+            document.getElementsByClassName('ap-volume')[0].style.visibility = null;
+          }
+        }, 1000)
+      }
     }
 
     function handlerBar(evt) {

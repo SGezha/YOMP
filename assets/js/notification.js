@@ -1,7 +1,7 @@
 function notify(title, body, bol) {
   if (db().query("SELECT * from settings")[0].notiturn == "false") {
     let icon = "assets/icons/icon.png";
-    if (title.toLocaleLowerCase().indexOf("now") > -1 && remote.getCurrentWindow().isFocused()) return;
+    if ((title.toLocaleLowerCase().indexOf("now") > -1 && remote.getCurrentWindow().isFocused()) || mini == true) return;
     if (title.toLocaleLowerCase().indexOf("loved") > -1 && remote.getCurrentWindow().isFocused()) return M.toast({ html: `<i style="margin-right: 10px;" class="fas fa-heart owo ${title.split(" ")[0] == "Added" ? "fav" : ""}"></i> <span>${body}</span>` });
     if (db().query("SELECT * from settings")[0].notiloved == "true" && title.toLocaleLowerCase().indexOf("loved") > -1) return;
     if (db().query("SELECT * from settings")[0].notiadd == "true" && title.toLocaleLowerCase().indexOf("success") > -1) return;

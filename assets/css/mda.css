@@ -40,7 +40,7 @@ html, body {
   color: var(--text);
   background: none;
   overflow: hidden;
-  background: var(--bg);
+  /* background: var(--bg); */
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
@@ -96,7 +96,8 @@ button {
   grid-template-rows: 35px calc(100% - 85px) 50px;
   grid-template-areas: "." "." ".";
   background-color: var(--bg);
-  border-radius: 0px 0px 7px 7px;
+  border-radius: 7px;
+  overflow: hidden;
 }
 
 .top {
@@ -598,14 +599,6 @@ li.music-el>.pog>.center {
   display: block;
 }
 
-.pl-current .pl-count {
-  display: none;
-}
-
-.pl-current .pl-playing {
-  display: block;
-}
-
 .pl-current .music-background {
   opacity: 0.5 !important;
   transform: scale(1.05);
@@ -667,8 +660,10 @@ i.far.fa-trash-alt.pl-remove:hover {
 }
 
 .ap {
-  background: var(--block) !important;
+  background: var(--block);
   font-size: 19px;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .ap-inner {
@@ -676,7 +671,7 @@ i.far.fa-trash-alt.pl-remove:hover {
 }
 
 .ap-panel {
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   display: flex;
 }
@@ -807,7 +802,7 @@ i.far.fa-trash-alt.pl-remove:hover {
 .ap-volume {
   position: absolute;
   right: 10%;
-  bottom: 40px;
+  bottom: 45px;
   overflow: hidden;
   width: 80%;
   height: 0;
@@ -840,11 +835,11 @@ i.far.fa-trash-alt.pl-remove:hover {
 }
 
 .ap-volume-container:hover {
-  background: var(--block);
+  /* background: var(--block); */
 }
 
 .ap-volume-container:hover {
-  background: var(--block);
+  /* background: var(--block); */
 }
 
 .ap-volume-container:hover .ap-volume {
@@ -870,10 +865,6 @@ i.far.fa-trash-alt.pl-remove:hover {
   background: linear-gradient(180deg, #DA4453, #89216B);
   height: 50%;
   border-radius: 3px;
-}
-
-.pl-current .pl-count {
-  display: none;
 }
 
 .pl-current .pl-playing {
@@ -1284,7 +1275,7 @@ input[type="checkbox"], label {
   height: 25px;
   width: 25px;
   position: absolute;
-  content: '✓';
+  content: 'ÃƒÂ¢Ã…â€œÃ¢â‚¬Å“';
   display: inline-block;
   font-size: 20px;
   text-align: center;
@@ -1347,7 +1338,9 @@ input[type="checkbox"], label {
   right: 0;
   bottom: 0;
   background: var(--bg);
+  opacity: 0.95;
   border-radius: 7px;
+  overflow: hidden;
   z-index: 99999;
   -webkit-app-region: drag;
 }

@@ -28,12 +28,12 @@ if (fs.existsSync(`${root}/database.db`)) {
 app.setAppUserModelId("YOMP");
 function createWindow() {
   preloader = new BrowserWindow({
-    show: true, backgroundColor: "#1b1b1b", frame: false, width: 250, height: 300, minWidth: 250, icon: "icon.png"
+    show: true, transparent: true, frame: false, width: 250, height: 300, minWidth: 250, icon: "icon.png"
   });
   preloader.loadFile('preloader.html');
 
   mainWindow = new BrowserWindow({
-    show: false, backgroundColor: "#1b1b1b", frame: false, width: 1000, height: 700, minWidth: 500, icon: "icon.png", webPreferences: { nodeIntegration: true }
+    show: false, transparent: true, frame: false, width: 1000, height: 700, minWidth: 400, icon: "icon.png", webPreferences: { nodeIntegration: true }
   });
   mainWindow.loadFile('index.html');
   mainWindow.on('closed', function () {
