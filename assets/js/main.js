@@ -34,7 +34,7 @@ window.onload = function () {
   refresh();
   loadSettings();
   // checkUpdate(true);
-  document.querySelector('#radio-id').value = fs.readFileSync(`${root}/radio.txt`).toString();
+  document.querySelector('#radio-id').value = `https://www.youtube.com/watch?v=5qap5aO4i9A`;
   ffmpeg = fs.readFileSync(`${root}/ffmpeg.txt`).toString();
   // if (db().query("SELECT * from status")[0].loved == false) { refresh(); } else { openloved(); }
   discordUpdate();
@@ -106,11 +106,11 @@ function start() {
       e = window.event || e;
       let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
 
-      if(delta== 1) volumeUp();
-      if(delta== -1) volumeDown();
+      if (delta == 1) volumeUp();
+      if (delta == -1) volumeDown();
 
       e.preventDefault();
-  };
+    };
 
     function renderPL() {
       var html = [];
@@ -222,7 +222,7 @@ function start() {
     }
 
     function play() {
-      if(wave) wave.destroy();
+      if (wave) wave.destroy();
       index = (index > playList.length - 1) ? 0 : index;
       index;
       if (index < 0) index = playList.length - 1;
@@ -234,7 +234,7 @@ function start() {
       audio.preload = 'auto';
       document.title = app.status.title = playList[index].title;
       document.querySelector(`.ap`).style.background = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${app._data.playlist[AP.getIndex()].icon}') center center / cover`;
-      if(caption) {
+      if (caption) {
         getText();
         wave = new CircularAudioWave(document.getElementById('chart-container'));
         wave.loadAudio(playList[index].file).then(res => {
@@ -308,8 +308,8 @@ function start() {
       };
       if (audio.paused) {
         document.querySelector(`.ap`).style.background = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${app._data.playlist[AP.getIndex()].icon}') center center / cover`;
-        if(caption) {
-          if(wave) wave.destroy();
+        if (caption) {
+          if (wave) wave.destroy();
           getText();
           wave = new CircularAudioWave(document.getElementById('chart-container'));
           wave.loadAudio(playList[index].file).then(res => {
@@ -324,7 +324,7 @@ function start() {
         }
         playBtn.classList.add('playing');
       } else {
-        if(wave) wave.destroy();
+        if (wave) wave.destroy();
         audio.pause();
         playBtn.classList.remove('playing');
       }
@@ -372,7 +372,7 @@ function start() {
       var randomel = document.querySelector(".captions").classList;
       if (randomel.contains('ap-active')) {
         caption = false;
-        if(wave) wave.destroy();
+        if (wave) wave.destroy();
         document.querySelector(`#snackbar`).style.display = "none";
         document.querySelector(`#chart-container`).style.opacity = "0";
         document.querySelector(`#chart-container`).style.zIndex = -100;
@@ -562,6 +562,7 @@ function start() {
       axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&&id=${id}&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs`)
         .then(res => {
           app.status.title = res.data.items[0].snippet.title;
+          document.querySelector(`.ap`).style.background = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${res.data.items[0].snippet.thumbnails.maxres.url}') center center / cover`;
           app.status.progress = `<i class="fas red fa-broadcast-tower"></i>`;
         })
       youtubeRadio = true;
