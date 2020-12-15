@@ -17,6 +17,7 @@ function miniPlayer() {
   document.querySelector('.ap--track').style.flex = '0 0 280px';
   document.querySelector('.bottom').style.height = '40px';
   document.querySelector('.ap').style.borderRadius = '7px 0 0 0';
+  document.querySelector('.ap').style.boxShadow = '0';
   remote.getCurrentWindow().setSize(400, 40);
   remote.getCurrentWindow().setAlwaysOnTop(true);
   remote.getCurrentWindow().setPosition(screen.availWidth - 400, screen.availHeight - 40);
@@ -42,6 +43,7 @@ function miniPlayerOff() {
   document.querySelector('.ap--track').style.flex = null;
   document.querySelector('.bottom').style.height = null;
   document.querySelector('.ap').style.borderRadius = null;
+  document.querySelector('.ap').style.boxShadow = null;
   remote.getCurrentWindow().setAlwaysOnTop(false);
   remote.getCurrentWindow().setSize(1000, 700);
   remote.getCurrentWindow().center();
