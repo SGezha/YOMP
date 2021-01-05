@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>YOMP</title>
+  <link rel="stylesheet" href="assets/icons/fontawsome/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/mda.css">
+  <style>
+    #player {
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      border-radius: 7px;
+      overflow: hidden;
+    }
+    #block {
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 90%;
+      height: 90%;
+      -webkit-app-region: drag;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="player"></div>
+  <div id="block">
+  </div>
+
+  <script>
+    const fs = require('fs');
+    let json = JSON.parse(fs.readFileSync("now.json").toString());
+    let lastId = json.id;
+    var tag = document.createElement('script');
+
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        videoId: json.id,
+        playerVars: {
+          'controls': 0,
+          'autoplay': 1,
+          'iv_load_policy': 0,
+          'showinfo': 0,
+          'modestbranding': 0,
+          'start': json.start
+        },
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+
+    // 4. The API will call this function when the video player is ready.
+    function onPlayerReady(event) {
+      event.target.setVolume(0);
+      event.target.playVideo();
+      getData();
+    }
+
+    function onPlayerStateChange(event) {
+
+    }
+
+
+    function getData() {
+      setTimeout(() => {
+        getData();
+      }, 1000)
+      let now = player.getMediaReferenceTime() ? player.getMediaReferenceTime() : 0;
+      let temp = JSON.parse(fs.readFileSync("now.json").toString());
+      if (temp.id != lastId) {
+        lastId = temp.id;
+        player.loadVideoById({
+          'videoId': temp.id,
+          'startSeconds': temp.start
+        });
+      }
+      if((temp.start - now) > 0.3 || (temp.start - now) < -0.3) {
+        player.seekTo(temp.start + 0.3);
+      }
+      console.log(now, temp.start);
+    }
+  </script>
+
+</body>
+
+</html>

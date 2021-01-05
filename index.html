@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="assets/css/subtitles.css">
   <script src="assets/modules/vue.js"></script>
   <script src="assets/modules/axios.js"></script>
-  <script src="assets/modules/circular-audio-wave.min.js"></script>
 </head>
 
 <body>
@@ -37,7 +36,6 @@
         </div>
       </div>
       <div class="center">
-        <div id="chart-container" style="opacity: 0; width: 100%; height: 100%;"></div>
         <div id="snackbar" style="display: none;" class="mast__text js-spanize"></div>
         <div class="mini-field">
           <div class="menu-icon"><i onclick="openMenu()" class="fas fa-bars"></i></div>
@@ -126,7 +124,7 @@
                     <div class="center" :real-id="t.id" :data-track="i">
                       <div class="pl-title">{{ t.title }}</div>
                     </div>
-                    <div class="right" :real-id="t.id" :data-track="i">
+                    <div class="right" v-if="t.id != -0" :real-id="t.id" :data-track="i">
                       <div class="music-id">{{ i+1 }}/{{ app.playlist.length }}</div>
                       <fav v-html="t.fav"></fav>
                       <i class="fas fa-trash pl-remove pl-del"></i>
@@ -198,7 +196,8 @@
                   </div>
                 </div>
                 <button class="ap-controls randomToggle"><i class="fas fa-random"></i></button>
-                <button class="ap-controls captions"><i class="fas fa-closed-captioning"></i></button>
+                <button class="ap-controls video"><i class="fas fa-photo-video"></i></button>
+                <button class="ap-controls subtitles"><i class="fas fa-closed-captioning"></i></button>
               </div>
             </div>
           </div>
@@ -448,7 +447,6 @@
   <script src="assets/js/main.js" defer></script>
   <script src="assets/js/mvue.js" defer></script>
   <script src="assets/js/discord.js" defer></script>
-  <script src="assets/js/autoupdater.js" defer></script>
   <script src="assets/js/mini.js" defer></script>
   <script src="assets/js/export.js" defer></script>
   <script src="assets/js/import.js" defer></script>

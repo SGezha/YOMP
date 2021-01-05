@@ -24,9 +24,9 @@ let loaded = 0,
   youtubeRadio = false,
   ytQuery = [],
   radioPlayer,
+  subtitles = false,
   first = true,
   audio,
-  caption = false,
   ping = false;
 
 window.onload = function () {
@@ -46,8 +46,8 @@ window.onload = function () {
 function start() {
   var AudioPlayer = (function () {
     var player = document.getElementById('ap'),
-      playBtn, prevBtn, nextBtn, plBtn, repeatBtn, volumeBtn, progressBar, preloadBar, curTime, durTime, trackTitle, index = 0, wave = false,
-      playList, volumeBar, volumeLength, repeating = false, random = false, seeking = false, rightClick = false, apActive = false, plHtml = [],
+      playBtn, prevBtn, video = false, nextBtn, plBtn, repeatBtn, volumeBtn, subtitlesBtn, progressBar, preloadBar, curTime, durTime, trackTitle, index = 0, wave = false,
+      playList, volumeBar, videoBtn, volumeLength, repeating = false, random = false, seeking = false, rightClick = false, apActive = false, plHtml = [],
       pl = document.querySelector("#pl"), settings = { volume: db().query("SELECT * from status")[0].volume ? db().query("SELECT * from status")[0].volume : 0.1, autoPlay: false, notification: true, playList: [] };
 
     function init(options) {
@@ -63,7 +63,8 @@ function start() {
       playBtn = player.querySelector('.ap-toggle-btn');
       prevBtn = player.querySelector('.ap-prev-btn');
       nextBtn = player.querySelector('.ap-next-btn');
-      captionsBtn = player.querySelector('.captions');
+      subtitlesBtn = player.querySelector('.subtitles');
+      videoBtn = player.querySelector('.video');
       volumeBtn = player.querySelector('.ap-volume-btn');
       plBtn = document.querySelector('.ap-playlist-btn');
       curTime = player.querySelector('.ap-time--current');
@@ -74,7 +75,8 @@ function start() {
       volumeBar = player.querySelector('.ap-volume-bar');
       playBtn.addEventListener('click', playToggle, false);
       volumeBtn.addEventListener('click', volumeToggle, false);
-      captionsBtn.addEventListener('click', captionsToggle, false);
+      videoBtn.addEventListener('click', videoToggle, false);
+      subtitlesBtn.addEventListener('click', subtitlesToggle, false);
       document.querySelector(".randomToggle").addEventListener('click', randomToggle, false);
       progressBar.parentNode.parentNode.addEventListener('mousedown', handlerBar, false);
       progressBar.parentNode.parentNode.addEventListener('mousemove', seek, false);
@@ -120,6 +122,10 @@ function start() {
         item.type = '<svg fill="#fff" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">' + '<path d="M0 0h24v24H0z" fill="none"/>' + '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>' + '</svg>';
         if (item.file.indexOf("osu") > -1) item.type = `<img class="pl-img" src="assets/icons/osu.svg">`;
         if (item.videoId != undefined) item.type = `<i class="fab fa-youtube"></i>`;
+        if (item.need != undefined) {
+          item.type = `<i class="fas fa-download" style="cursor: pointer; z-index:99999;" onclick="downloadFromSearch('${item.videoId}')"></i>`;
+          item.fav = "";
+        }
         item.dataId = i;
         if (i < 100) {
           item.hide = true;
@@ -222,6 +228,7 @@ function start() {
     }
 
     function play() {
+      getText();
       if (wave) wave.destroy();
       index = (index > playList.length - 1) ? 0 : index;
       index;
@@ -234,20 +241,7 @@ function start() {
       audio.preload = 'auto';
       document.title = app.status.title = playList[index].title;
       document.querySelector(`.ap`).style.background = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${app._data.playlist[AP.getIndex()].icon}') center center / cover`;
-      if (caption) {
-        getText();
-        wave = new CircularAudioWave(document.getElementById('chart-container'));
-        wave.loadAudio(playList[index].file).then(res => {
-          // document.querySelector(`#chart-container`).style.background = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${app._data.playlist[AP.getIndex()].icon}') center center / cover`;
-          wave.play();
-          audio.play();
-          if (plHtml[index]) plHtml[index].classList.add('pl-current');
-        }).catch(er => {
-          audio.play();
-        });
-      } else {
-        audio.play();
-      }
+      audio.play();
       playBtn.classList.add('playing');
       plActive();
     }
@@ -308,20 +302,7 @@ function start() {
       };
       if (audio.paused) {
         document.querySelector(`.ap`).style.background = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${app._data.playlist[AP.getIndex()].icon}') center center / cover`;
-        if (caption) {
-          if (wave) wave.destroy();
-          getText();
-          wave = new CircularAudioWave(document.getElementById('chart-container'));
-          wave.loadAudio(playList[index].file).then(res => {
-            document.querySelector(`#chart-container`).style.backgroundImage = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${app._data.playlist[AP.getIndex()].icon}')`;
-            wave.play();
-            audio.play();
-          }).catch(er => {
-            audio.play();
-          });
-        } else {
-          audio.play();
-        }
+        audio.play();
         playBtn.classList.add('playing');
       } else {
         if (wave) wave.destroy();
@@ -357,6 +338,25 @@ function start() {
       }
     }
 
+    let sync = null;
+
+    function videoToggle() {
+      var elem = document.querySelector(".video").classList;
+      require('electron').ipcRenderer.send("embed");
+      if (elem.contains('ap-active')) {
+        video = false;
+        elem.remove('ap-active');
+        clearInterval(sync);
+      } else {
+        sync = setInterval(() => {
+          fs.writeFileSync("now.json", JSON.stringify({ volume: audio.volume * 100, id: app._data.playlist[AP.getIndex()].videoId, start: audio.currentTime }));
+        }, 100)
+        video = true;
+        elem.add('ap-active');
+      }
+    }
+
+
     function randomToggle() {
       var randomel = document.querySelector(".randomToggle").classList;
       if (randomel.contains('ap-active')) {
@@ -368,23 +368,17 @@ function start() {
       }
     }
 
-    function captionsToggle() {
-      var randomel = document.querySelector(".captions").classList;
-      if (randomel.contains('ap-active')) {
-        caption = false;
-        if (wave) wave.destroy();
+    function subtitlesToggle() {
+      if (document.querySelector(".subtitles").classList.contains('ap-active')) {
+        subtitles = false;
         document.querySelector(`#snackbar`).style.display = "none";
-        document.querySelector(`#chart-container`).style.opacity = "0";
-        document.querySelector(`#chart-container`).style.zIndex = -100;
-        document.querySelector(".captions").classList.remove('ap-active');
+        document.querySelector(".subtitles").classList.remove('ap-active');
       } else {
-        caption = true;
-        play();
+        subtitles = true;
         document.querySelector(`#snackbar`).style.display = "block";
-        document.querySelector(`#chart-container`).style.zIndex = 10;
-        document.querySelector(`#chart-container`).style.opacity = "1";
-        document.querySelector(".captions").classList.add('ap-active');
+        document.querySelector(".subtitles").classList.add('ap-active');
       }
+      getText();
     }
 
     function update() {

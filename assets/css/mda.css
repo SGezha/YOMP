@@ -671,7 +671,7 @@ i.far.fa-trash-alt.pl-remove:hover {
 }
 
 .ap-panel {
-  /* justify-content: center; */
+  justify-content: center;
   align-items: center;
   display: flex;
 }
@@ -681,8 +681,9 @@ i.far.fa-trash-alt.pl-remove:hover {
   align-items: center;
   display: flex;
   -ms-flex: 0 0 220px;
-  flex: 0 0 220px;
-  max-width: 220px;
+  /* flex: 0 0 170px; */
+  width: 100%;
+  flex: auto;
 }
 
 
@@ -2020,4 +2021,15 @@ canvas {
   position: absolute;
   z-index: -999;
   display: none;
+}
+
+.ap-item.ap--settings {
+    margin-left: 10px;
+    max-width: 180px;
+    justify-content: center;
+    display: flex;
+}
+
+.ap-item.ap--playback {
+    max-width: 180px;
 }

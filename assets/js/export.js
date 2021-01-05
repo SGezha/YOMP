@@ -1,3 +1,5 @@
+const NodeID3 = require('node-id3')
+
 async function exportLoved() {
   let dir = await remote.dialog.showOpenDialog({ title: 'Select osu!/songs Folder', properties: ['openDirectory'] });
   let exportLoved = [];
@@ -24,13 +26,11 @@ function exportProces(id, mas, dir) {
   document.getElementById("load-progress").innerHTML = `<div class="textload">${e.title}</div> <span> ${id + 1}/${mas.length}</span>`;
   fs.copyFile(e.file, `${dir.filePaths[0]}/${e.title}.mp3`, (err) => {
     if (err) throw err;
-    if (e.full) {
-      let metadata = {
-        title: e.title.split(" - ")[1],
-        artist: e.title.split(" - ")[0],
-        APIC: e.full
-      }
-      NodeID3.update(metadata, `${dir.filePaths[0]}/${e.title}.mp3`, function (err, buffer) { exportProces(id + 1, mas, dir); })
-    } else { exportProces(id + 1, mas, dir); }
+    let metadata = {
+      title: e.title.split(" - ")[1],
+      artist: e.title.split(" - ")[0],
+      APIC: e.full ? decodeURI(e.full) : decodeURI(e.icon)
+    }
+    NodeID3.update(metadata, `${dir.filePaths[0]}/${e.title}.mp3`, function (err, buffer) { exportProces(id + 1, mas, dir); })
   });
 }

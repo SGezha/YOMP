@@ -16,7 +16,8 @@ function openYoutube() {
 }
 let obj;
 function youtube(vid, title, icon) {
-  vid = vid.split(`v=`)[1].split("&")[0];
+  if(vid.indexOf('v=') > -1) vid = vid.split(`v=`)[1].split("&")[0];
+  console.log(vid);
   if (db().query(`SELECT * from music where videoId='${vid}'`).length > 0) return notify('Error', 'Song already in playlist :3');
   const downloader = new DownloadYTFile({
     outputPath: `${root}/youtube/`,
@@ -76,4 +77,11 @@ function youtube(vid, title, icon) {
     };
   })
   downloader.on('error', (fileInfo) => console.log(fileInfo.error))
+}
+
+
+function downloadFromSearch(id) {
+  openYoutube();
+  document.querySelector('#youtube-id').value = id;
+  youtube(id);
 }

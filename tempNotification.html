@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>YOMP</title>
+  <link rel="stylesheet" href="assets/icons/fontawsome/css/all.min.css">
+  <!-- <link rel="stylesheet" href="assets/css/mda.css"> -->
+  <style>
+    @font-face {
+      font-family: Torus;
+      font-weight: 400;
+      src: url(../fonts/torus/39F3E3_2_0.eot);
+      src: url(../fonts/torus/39F3E3_2_0.eot?#iefix) format("embedded-opentype"), url(../fonts/torus/39F3E3_2_0.woff2) format("woff2"), url(../fonts/torus/39F3E3_2_0.woff) format("woff"), url(../fonts/torus/39F3E3_2_0.ttf) format("truetype");
+    }
+
+    :root {
+      --bg: #1b1b1b;
+      --block: #2b2b2b;
+      --block-hover: #3b3b3b;
+      --line: #565656;
+      --btn: rgb(190, 190, 190);
+      --btn-hover: #3e3e3e;
+      --text: #fff;
+      --ap-acive: rgba(0, 0, 0, .1);
+      --pl-lead: #333;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    *::selection,
+    .menu::selection,
+    i::selection {
+      background: transparent !important;
+    }
+
+    input::selection,
+    .pl-title::selection,
+    .ap-title::selection {
+      background: #DA4453 !important;
+    }
+
+    html,
+    body {
+      font-family: 'Torus', sans-serif !important;
+      font-size: 20px;
+      color: var(--text);
+      background: none;
+      overflow: hidden;
+      /* background: var(--bg); */
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .notification {
+      opacity: 0;
+      display: flex;
+      /* justify-content: center; */
+      align-items: center;
+      overflow: hidden;
+      width: 300px;
+      height: 80px;
+      background: linear-gradient(rgba(0, 0, 0, .8), rgba(0, 0, 0, .8)),
+      url('{{img}}') center center / cover;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      border-radius: 7px;
+      transform: translateX(-300px);
+      transition: ease 0.5s;
+    }
+
+    img.notification-img {
+      position: absolute;
+      display: none;
+    }
+
+    .noti-artist {
+      margin: 0px;
+      overflow: hidden;
+      font-size: 16px;
+      height: 80px;
+      line-height: 20px;
+      text-align: center;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h5 {
+      display: flex;
+      overflow: unset;
+      width: 50px;
+      margin: 10px;
+      padding: 0;
+      height: 100%;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="notification">
+    <h5>Now playing</h5>
+    <h1 class="noti-artist mast__text">{{title}}</h1>
+  </div>
+  <script>
+    window.onload = () => {
+      document.querySelector(".notification").style.transform = 'translateX(0)';
+      document.querySelector(".notification").style.opacity = '0.8';
+      setTimeout(() => {
+        document.querySelector(".notification").style.transform = 'translateX(-400px)';
+      }, 2000)
+    }
+  </script>
+</body>
+
+</html>
