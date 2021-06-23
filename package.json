@@ -1,6 +1,6 @@
 {
   "name": "YOMP",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Enjoy listening to music from osu! and youtube :3",
   "main": "main.js",
   "build": {
@@ -48,14 +48,14 @@
     "electron": "^6.1.12",
     "electron-builder": "^22.9.1",
     "electron-rebuild": "^1.8.6",
-    "register-scheme": "0.0.2"
+    "register-scheme": "0.0.2",
+    "yt-dl-playlist": "^2.1.0"
   },
   "dependencies": {
     "better-sqlite3-helper": "^2.1.1",
     "discord-rpc": "^3.1.0",
     "music-metadata": "^7.5.0",
     "node-id3": "^0.2.2",
-    "xml-js": "^1.6.11",
-    "yt-dl-playlist": "^2.1.0"
+    "xml-js": "^1.6.11"
   }
 }
