@@ -45,6 +45,7 @@ window.onload = function () {
 
 function start() {
   var AudioPlayer = (function () {
+    app.status.title = 'Select song...';
     var player = document.getElementById('ap'),
       playBtn, prevBtn, video = false, nextBtn, plBtn, repeatBtn, volumeBtn, subtitlesBtn, progressBar, preloadBar, curTime, durTime, trackTitle, index = 0, wave = false,
       playList, volumeBar, videoBtn, volumeLength, repeating = false, random = false, seeking = false, rightClick = false, apActive = false, plHtml = [],
