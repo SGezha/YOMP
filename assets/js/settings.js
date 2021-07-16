@@ -14,10 +14,14 @@ function clearPl() {
   clearDir(`${root}/youtube`);
   db().run("DROP TABLE music");
   db().run("DROP TABLE status");
-  db().run(`CREATE TABLE IF NOT EXISTS status(dataId INTEGER, realId INTEGER, volume INTEGER, loved VARCHAR(5));`);
   db().run(`CREATE TABLE IF NOT EXISTS music(id INTEGER PRIMARY KEY, title VARCHAR(150), bmid VARCHAR(150), category VARCHAR(150), dir VARCHAR(150) , file VARCHAR(999) , icon VARCHAR(150) , full VARCHAR(150) , loved BOOLEAN , videoId VARCHAR(11));`);
-  db().run(`INSERT INTO status(dataId,realId,volume,loved) VALUES(0, 0, 0.1, "false");`);
+  db().run(`CREATE TABLE IF NOT EXISTS status(dataId INTEGER, realId INTEGER, volume INTEGER, loved VARCHAR(5));`);
+  db().run(`CREATE TABLE IF NOT EXISTS settings( notiturn VARCHAR(5),notiloved VARCHAR(5) ,notiadd VARCHAR(5) ,keyplay VARCHAR(99) ,keyrandom VARCHAR(99) ,keylove VARCHAR(99) ,keynext VARCHAR(99) ,keyprev VARCHAR(99) ,keyfocus VARCHAR(99) ,keymini VARCHAR(99) ,keyvolumeup VARCHAR(99) ,keyvolumedown VARCHAR(99) ,keymute VARCHAR(99));`);
+  db().run(`INSERT INTO settings(notiturn,notiloved,notiadd,keyplay,keyrandom,keylove,keynext,keyprev,keyfocus,keymini,keyvolumeup,keyvolumedown,keymute) VALUES('false','false','false','ctrl+Space','ctrl+r','ctrl+l','ctrl+Right','ctrl+Left','ctrl+Up','ctrl+Down','ctrl+=','ctrl+-','ctrl+0');`);
+  db().run(`INSERT INTO status(dataId,realId,volume,loved) VALUES(0, 0, 0.1, false);`);
   refresh();
+  remote.app.relaunch();
+  remote.app.exit();
 }
 
 function setsSave() {

@@ -93,6 +93,7 @@ function start() {
         empty();
         return;
       } else {
+        if (playList[index].need) return;
         apActive = true;
         audio.src = playList[index].file;
         audio.preload = 'auto';
@@ -123,7 +124,7 @@ function start() {
         if (item.file.indexOf("osu") > -1) item.type = `<img class="pl-img" src="assets/icons/osu.svg">`;
         if (item.videoId != undefined) item.type = `<i class="fab fa-youtube"></i>`;
         if (item.need != undefined) {
-          item.type = `<i class="fas fa-download" style="cursor: pointer; z-index:99999;" onclick="downloadFromSearch('${item.videoId}')"></i>`;
+          item.type = `<i class="fas fa-download" title="Click to download!" style="cursor: pointer; z-index:99999;" onclick="downloadFromSearch('${item.videoId}')"></i>`;
           item.fav = "";
         }
         item.dataId = i;
@@ -175,6 +176,10 @@ function start() {
       if (aw == 'pl-title') {
         let current = parseInt(evt.target.parentNode.getAttribute('data-track'), 10);
         index = current;
+        if (playList[index].need) {
+          require('electron').shell.openExternal(`https://www.youtube.com/watch?v=${playList[index].videoId}`)
+          return;
+        }
         parseInt(evt.target.parentNode.getAttribute('real-id'), 10);
         audio.readyState = 0;
         plActive();
@@ -186,6 +191,13 @@ function start() {
           if (target.className === 'pl-remove' || target.className === 'pl-del' || target.className === 'right') {
             M.toast({ html: `<i style="margin-right: 10px;" class="fas fa-trash"></i> <span>${db().query("SELECT * from music WHERE id=" + parseInt(target.parentNode.getAttribute('real-id'), 10))[0].title}</span>` });
             db().run(`DELETE from music where id=${parseInt(target.parentNode.getAttribute('real-id'), 10)}`);
+            console.log(app.playlist[parseInt(target.parentNode.getAttribute('data-track'), 10)]);
+            try {
+              fs.unlinkSync(app.playlist[parseInt(target.parentNode.getAttribute('data-track'), 10)].file)
+              //file removed
+            } catch (err) {
+              console.error(err)
+            }
             if (!isLoved) { refresh(); } else { openloved(); };
             let isDel = parseInt(target.parentNode.getAttribute('data-track'), 10);
             if (!audio.paused) {
@@ -237,7 +249,7 @@ function start() {
         empty();
         return;
       }
-      audio.src = playList[index].file;
+      if (playList[index].file) audio.src = playList[index].file;
       audio.preload = 'auto';
       document.title = app.status.title = playList[index].title;
       document.querySelector(`.ap`).style.background = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${app._data.playlist[AP.getIndex()].icon}') center center / cover`;
@@ -266,18 +278,19 @@ function start() {
         document.getElementById('hide-progres').style.width = `100%`;
         ping = 5;
       }
-      notify(`Now playing`, app.playlist[index].title)
+      if (app.playlist[index].title) notify(`Now playing`, app.playlist[index].title)
       play();
     }
 
     function randomTrack() {
       youtubeRadio = false;
+      if (app.playlist.length <= 1) return;
       index = getRandomInt(0, app.playlist.length);
       if (mini == true && ping > 1) {
         document.getElementById('hide-progres').style.width = `100%`;
         ping = 5;
       }
-      notify(`Now playing`, app.playlist[index].title)
+      if(app.playlist[index]) notify(`Now playing`, app.playlist[index].title)
       play();
     }
 
@@ -290,7 +303,7 @@ function start() {
       audio.src = '';
       app.status.title = 'Playlist is empty';
       app.status.progress = ``;
-      pl.innerHTML = '<div class="pl-empty"><img src="https://image.flaticon.com/icons/svg/1679/1679882.svg" class="emss" /> PlayList is empty</div>';
+      //pl.innerHTML = '<div class="pl-empty"><img src="https://image.flaticon.com/icons/svg/1679/1679882.svg" class="emss" /> PlayList is empty</div>';
     }
 
 
@@ -546,6 +559,7 @@ function start() {
         return;
       }
       id = id.split(`v=`)[1];
+      console.log(id);
       document.querySelector(".radio-choise").classList.toggle("active");
       setTimeout(() => { document.querySelector(".radio-choise").style.display = "none"; }, 100)
       if (!audio.paused) {
@@ -555,6 +569,7 @@ function start() {
       plActive();
       axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&&id=${id}&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs`)
         .then(res => {
+          console.log(res.data)
           app.status.title = res.data.items[0].snippet.title;
           document.querySelector(`.ap`).style.background = `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${res.data.items[0].snippet.thumbnails.maxres.url}') center center / cover`;
           app.status.progress = `<i class="fas red fa-broadcast-tower"></i>`;
