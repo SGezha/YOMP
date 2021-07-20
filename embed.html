@@ -5,39 +5,143 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>YOMP</title>
+  <title>YouTube Player</title>
   <link rel="stylesheet" href="assets/icons/fontawsome/css/all.min.css">
   <link rel="stylesheet" href="assets/css/mda.css">
   <style>
+    body {
+      border-radius: 7px;
+      overflow: hidden;
+    }
+
+    .top {
+      width: 100vw;
+      padding: 0;
+      margin: 0;
+      left: 0;
+      position: absolute;
+      border-top-left-radius: 7px;
+      border-top-right-radius: 7px;
+      overflow: hidden;
+      background: rgba(43, 43, 43, .3);
+      top: 0;
+    }
+
+    .top>.title-text {
+      width: calc(100% - 219px);
+    }
+
+    .title-controls {
+      max-width: 209px;
+    }
+
+
     #player {
       margin: 0;
       padding: 0;
       position: absolute;
       width: 100vw;
-      height: 100vh;
+      height: calc(100vh - 1px);
       top: 0;
       left: 0;
-      border-radius: 7px;
       overflow: hidden;
+      border-radius: 7px;
+      z-index: -1;
     }
-    #block {
+
+    .top>.title-controls>button:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .block {
       position: absolute;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 90%;
-      height: 90%;
-      -webkit-app-region: drag;
+      width: 100vw;
+      height: 100vw;
+      padding: 0;
+      margin: 0;
+      top: 0;
+      left: 0;
+    }
+
+    .pin {
+      fill: black;
     }
   </style>
 </head>
 
 <body>
+  <div class="block">
+    <div class="top" style="width: 100vw;">
+      <div class="title-text"></div>
+      <div class="title-controls">
+        <button onclick="pin()" title="Pin" class="ui-btn minimize"><svg version="1.1" id="Capa_1"
+            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+            viewBox="0 0 193.826 193.826" style="enable-background:new 0 0 193.826 193.826;" xml:space="preserve">
+            <path class="pin" d="M191.495,55.511L137.449,1.465c-1.951-1.953-5.119-1.953-7.07,0l-0.229,0.229c-3.314,3.313-5.14,7.72-5.14,12.406
+         c0,3.019,0.767,5.916,2.192,8.485l-56.55,48.533c-4.328-3.868-9.852-5.985-15.703-5.985c-6.305,0-12.232,2.455-16.689,6.913
+         l-0.339,0.339c-1.953,1.952-1.953,5.118,0,7.07l32.378,32.378l-31.534,31.533c-0.631,0.649-15.557,16.03-25.37,28.27
+         c-9.345,11.653-11.193,13.788-11.289,13.898c-1.735,1.976-1.639,4.956,0.218,6.822c0.973,0.977,2.256,1.471,3.543,1.471
+         c1.173,0,2.349-0.41,3.295-1.237c0.083-0.072,2.169-1.885,13.898-11.289c12.238-9.813,27.619-24.74,28.318-25.421l31.483-31.483
+         l30.644,30.644c0.976,0.977,2.256,1.465,3.535,1.465s2.56-0.488,3.535-1.465l0.339-0.339c4.458-4.457,6.913-10.385,6.913-16.689
+         c0-5.851-2.118-11.375-5.985-15.703l48.533-56.55c2.569,1.425,5.466,2.192,8.485,2.192c4.687,0,9.093-1.825,12.406-5.14l0.229-0.229
+         C193.448,60.629,193.448,57.463,191.495,55.511z" />
+          </svg>
+        </button>
+        <button onclick="hidetray()" class="ui-btn minimize"><svg x="0px" y="0px" viewBox="0 0 10.2 1">
+            <rect fill="var(--text)" x="0" y="50%" width="10.2" height="1"></rect>
+          </svg>
+        </button>
+        <button onclick="maxsize()" class="ui-btn maximize"><i class="far fa-square" style="color: var(--text);"></i>
+        </button>
+        <button onclick="winowClose()" class="ui-btn close"><svg viewBox="0 0 10 10">
+            <polygon fill="var(--text)"
+              points="10.2,0.7 9.5,0 5.1,4.4 0.7,0 0,0.7 4.4,5.1 0,9.5 0.7,10.2 5.1,5.8 9.5,10.2 10.2,9.5 5.8,5.1">
+            </polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
   <div id="player"></div>
-  <div id="block">
   </div>
 
   <script>
+    const { shell, remote, ipcRenderer: ipc } = require('electron');
+    let fullscreen = 0;
+    let pinStatus = 0;
+
+    function hidetray() {
+      remote.getCurrentWindow().minimize();
+    }
+
+    function winowClose() {
+      require('electron').ipcRenderer.send("embed");
+    }
+
+    function pin() {
+      if (pinStatus == 0) {
+        remote.getCurrentWindow().setAlwaysOnTop(true);
+        pinStatus++;
+        document.getElementsByClassName("pin")[0].style.fill = "white";
+      } else {
+        remote.getCurrentWindow().setAlwaysOnTop(false);
+        pinStatus = 0;
+        document.getElementsByClassName("pin")[0].style.fill = "black";
+      }
+    }
+
+    function maxsize() {
+      if (fullscreen == 0) {
+        remote.getCurrentWindow().maximize();
+        fullscreen++;
+        document.getElementsByClassName("maximize")[0].innerHTML = `<i style="color: var(--text);" class="fas fa-square"></i>`;
+      } else {
+        remote.getCurrentWindow().unmaximize();
+        fullscreen = 0;
+        document.getElementsByClassName("maximize")[0].innerHTML = `<i style="color: var(--text);" class="far fa-square"></i>`;
+      }
+    }
+
     const fs = require('fs');
     let json = JSON.parse(fs.readFileSync("now.json").toString());
     let lastId = json.id;
@@ -77,7 +181,6 @@
 
     }
 
-
     function getData() {
       setTimeout(() => {
         getData();
@@ -91,7 +194,7 @@
           'startSeconds': temp.start
         });
       }
-      if((temp.start - now) > 0.3 || (temp.start - now) < -0.3) {
+      if ((temp.start - now) > 0.3 || (temp.start - now) < -0.3) {
         player.seekTo(temp.start + 0.3);
       }
       console.log(now, temp.start);

@@ -14,6 +14,9 @@ function getText() {
   let now = app._data.playlist[AP.getIndex()];
   if (now.videoId == null) return console.log("No text");
   axios.get(`http://video.google.com/timedtext?type=track&v=${now.videoId}&id=0&lang=en`).then(res => {
+    if(res.data == "") {
+      document.querySelector(".subtitles").classList.remove('ap-active');
+    }
     if (res.data != false) text = JSON.parse(convert.xml2json(res.data, { compact: true, spaces: 4 })).transcript.text;
     if (text.length == 0) {
       axios.get(`http://video.google.com/timedtext?type=track&v=${now.videoId}&id=0&lang=ru`).then(res => {

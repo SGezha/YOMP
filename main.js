@@ -4,12 +4,12 @@ const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain: ipc } = require
   DiscordRPC = require('discord-rpc'),
   iconPath = path.join(__dirname, 'assets/icons/icon.png'),
   db = require('better-sqlite3-helper'),
-  fs = require('fs'),
-  rpc = new DiscordRPC.Client({ transport: 'ipc' });
+  fs = require('fs');
 
 let mainWindow,
   notiWindow,
   preloader,
+  rpc = new DiscordRPC.Client({ transport: 'ipc' }),
   embedWindow,
   appIcon = null,
   s = { keyplay: `ctrl+Space`, keyrandom: `ctrl+r`, keylove: `ctrl+l`, keynext: `ctrl+Right`, keyprev: `ctrl+Left`, keyfocus: `ctrl+Up`, keymini: `ctrl+Down`, keyvolumeup: `ctrl+=`, keyvolumedown: `ctrl+-`, keymute: `ctrl+-` };
@@ -73,8 +73,9 @@ function createWindow() {
     { label: 'Prev track', click: function () { mainWindow.webContents.executeJavaScript(`AP.prev();`); } },
     {
       label: 'Quit', click: function () {
-        mainWindow.close(); if (embedWindow) embedWindow.close();
-        embedWindow = null;
+        mainWindow.close(); 
+        if (embedWindow) embedWindow.close();
+        if(embedWindow) embedWindow = null;
       }
     }
   ]);
@@ -156,12 +157,18 @@ ipc.on("embed", (event, arg) => {
   if (!embedWindow) {
     var mainScreen = require('electron').screen.getPrimaryDisplay().workAreaSize;
     embedWindow = new BrowserWindow({
-      alwaysOnTop: true, skipTaskbar: true, x: mainScreen.width - 370, y: mainScreen.height - 210, transparent: true, frame: false, width: 360, height: 200, webPreferences: { nodeIntegration: true }
+      x: mainScreen.width - 365, y: mainScreen.height - 210, transparent: true, frame: false, width: 355, height: 200, webPreferences: { nodeIntegration: true }
     });
     embedWindow.loadFile('embed.html');
+
+    embedWindow.on('closed', function(){
+        embedWindow = null;
+        mainWindow.webContents.executeJavaScript("AP.videoOff();");
+    });
   } else {
     if (embedWindow) embedWindow.close();
-    embedWindow = null;
+    if (embedWindow) embedWindow = null;
+    mainWindow.webContents.executeJavaScript("AP.videoOff();");
   }
 })
 
@@ -179,7 +186,16 @@ function createActivity(data) {
   return act;
 }
 
-rpc.login({ clientId: "555381698192474133" }).catch(console.error);
+DiscordLogin();
+function DiscordLogin() {
+  rpc = new DiscordRPC.Client({ transport: 'ipc' });
+  rpc.login({ clientId: "555381698192474133" }).catch(er => {
+    console.log('Reconnect to Discord!');
+    setTimeout(() => {
+      DiscordLogin();
+    }, 5000)
+  });
+}
 
 ipc.on("rpc", (event, data) => {
   if (!data) return;

@@ -35,7 +35,7 @@ async function addMusicFolder() {
             document.getElementById("load-progress").innerHTML = `<div class="textload">${i.toLocaleLowerCase().split(".mp3")}</div> <span> ${ind + 1}/${items.length}</span>`;
           }
         }
-      }, 500 * ind)
+      }, 20 * ind)
     })
   });
 }

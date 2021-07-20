@@ -257,6 +257,16 @@ function start() {
       audio.play();
       playBtn.classList.add('playing');
       plActive();
+      if (app._data.playlist[AP.getIndex()].videoId == null) {
+        axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + app._data.playlist[AP.getIndex()].title + "&type=video&maxResults=1&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs&videoEmbeddable=true")
+          .then(res => {
+            res.data.items.forEach(v => {
+              if (v.id.kind == "youtube#video") {
+                app._data.playlist[AP.getIndex()].videoId = v.id.videoId;
+              }
+            })
+          })
+      }
     }
 
     function prev() {
@@ -291,7 +301,7 @@ function start() {
         document.getElementById('hide-progres').style.width = `100%`;
         ping = 5;
       }
-      if(app.playlist[index]) notify(`Now playing`, app.playlist[index].title)
+      if (app.playlist[index]) notify(`Now playing`, app.playlist[index].title)
       play();
     }
 
@@ -368,6 +378,14 @@ function start() {
         video = true;
         elem.add('ap-active');
       }
+    }
+
+    function videoOff() {
+      console.log('test')
+      var elem = document.querySelector(".video").classList;
+      video = false;
+      elem.remove('ap-active');
+      clearInterval(sync);
     }
 
 
@@ -691,7 +709,7 @@ function start() {
       }
     };
 
-    return { getIndex: getIndex, radio: radio, setIndex: setIndex, listHandler: listHandler, init: init, destroy: destroy, playToggle: playToggle, next: next, prev: prev, random: randomTrack, plActive: plActive, mute: volumeToggle, volumeUp: volumeUp, volumeDown: volumeDown };
+    return { videoOff: videoOff, getIndex: getIndex, radio: radio, setIndex: setIndex, listHandler: listHandler, init: init, destroy: destroy, playToggle: playToggle, next: next, prev: prev, random: randomTrack, plActive: plActive, mute: volumeToggle, volumeUp: volumeUp, volumeDown: volumeDown };
   })();
   window.AP = AudioPlayer;
 }

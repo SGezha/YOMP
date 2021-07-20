@@ -14,7 +14,7 @@ var app = new Vue({
   },
   methods: {
     search() {
-      axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + document.getElementById("search").value + "&maxResults=50&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs")
+      axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + document.getElementById("search").value + "&type=video&maxResults=50&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs")
         .then(res => {
           if (document.getElementById('pl').classList.length == 1) document.getElementById('pl').classList.add("hide");
           this.youtuberesult = [];
@@ -47,7 +47,7 @@ document.getElementById("search").onchange = function (e) {
   let result = [];
   let input = document.getElementById('search');
   var l = input.value.length;
-  axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + document.getElementById("search").value + "&maxResults=10&key=AIzaSyB5jdwiBYfFWBpnHTfc-XA544A8RLvaL_s").then(res => {
+  axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + document.getElementById("search").value + "&type=video&maxResults=10&key=AIzaSyB5jdwiBYfFWBpnHTfc-XA544A8RLvaL_s").then(res => {
     res.data.items.forEach(v => {
       if (v.id.kind == "youtube#video") {
         result.push({
