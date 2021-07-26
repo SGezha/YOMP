@@ -64,7 +64,7 @@
     }
 
     .pin {
-      fill: black;
+      fill: rgba(100, 100, 100, 1);
     }
   </style>
 </head>
@@ -126,7 +126,7 @@
       } else {
         remote.getCurrentWindow().setAlwaysOnTop(false);
         pinStatus = 0;
-        document.getElementsByClassName("pin")[0].style.fill = "black";
+        document.getElementsByClassName("pin")[0].style.fill = "rgba(100, 100, 100, 1)";
       }
     }
 
@@ -194,7 +194,7 @@
           'startSeconds': temp.start
         });
       }
-      if ((temp.start - now) > 0.3 || (temp.start - now) < -0.3) {
+      if (!temp.radio && ((temp.start - now) > 0.3 || (temp.start - now) < -0.3)) {
         player.seekTo(temp.start + 0.3);
       }
       console.log(now, temp.start);

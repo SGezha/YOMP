@@ -12,7 +12,12 @@ function getText() {
   let lastStroka = "";
   let x = document.getElementById("snackbar");
   let now = app._data.playlist[AP.getIndex()];
-  if (now.videoId == null) return console.log("No text");
+  if (now.videoId == null) {
+    subtitles = false;
+    document.querySelector(`#snackbar`).style.display = "none";
+    document.querySelector(".subtitles").classList.remove('ap-active');
+    return console.log("No text");
+  }
   axios.get(`http://video.google.com/timedtext?type=track&v=${now.videoId}&id=0&lang=en`).then(res => {
     if(res.data == "") {
       document.querySelector(".subtitles").classList.remove('ap-active');

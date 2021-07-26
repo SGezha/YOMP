@@ -241,7 +241,6 @@ function start() {
     }
 
     function play() {
-      getText();
       if (wave) wave.destroy();
       index = (index > playList.length - 1) ? 0 : index;
       index;
@@ -257,7 +256,8 @@ function start() {
       audio.play();
       playBtn.classList.add('playing');
       plActive();
-      if (app._data.playlist[AP.getIndex()].videoId == null) {
+      if (subtitles) getText();
+      if (app._data.playlist[AP.getIndex()].videoId == null && video) {
         axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + app._data.playlist[AP.getIndex()].title + "&type=video&maxResults=1&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs&videoEmbeddable=true")
           .then(res => {
             res.data.items.forEach(v => {
@@ -362,7 +362,8 @@ function start() {
       }
     }
 
-    let sync = null;
+    let sync = null,
+      radioId = null;
 
     function videoToggle() {
       var elem = document.querySelector(".video").classList;
@@ -372,8 +373,18 @@ function start() {
         elem.remove('ap-active');
         clearInterval(sync);
       } else {
+        if (app._data.playlist[AP.getIndex()].videoId == null) {
+          axios.get("https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + app._data.playlist[AP.getIndex()].title + "&type=video&maxResults=1&key=AIzaSyBBFxx0yqaUfX8V17A4M8UcAiOx-eKXYcs&videoEmbeddable=true")
+            .then(res => {
+              res.data.items.forEach(v => {
+                if (v.id.kind == "youtube#video") {
+                  app._data.playlist[AP.getIndex()].videoId = v.id.videoId;
+                }
+              })
+            })
+        }
         sync = setInterval(() => {
-          fs.writeFileSync("now.json", JSON.stringify({ volume: audio.volume * 100, id: app._data.playlist[AP.getIndex()].videoId, start: audio.currentTime }));
+          fs.writeFileSync("now.json", JSON.stringify({ volume: audio.volume * 100, id: youtubeRadio ? radioId : app._data.playlist[AP.getIndex()].videoId, start: audio.currentTime, radio: youtubeRadio }));
         }, 100)
         video = true;
         elem.add('ap-active');
@@ -381,13 +392,11 @@ function start() {
     }
 
     function videoOff() {
-      console.log('test')
       var elem = document.querySelector(".video").classList;
       video = false;
       elem.remove('ap-active');
       clearInterval(sync);
     }
-
 
     function randomToggle() {
       var randomel = document.querySelector(".randomToggle").classList;
@@ -579,6 +588,7 @@ function start() {
       }
       id = id.split(`v=`)[1];
       console.log(id);
+      radioId = id;
       document.querySelector(".radio-choise").classList.toggle("active");
       setTimeout(() => { document.querySelector(".radio-choise").style.display = "none"; }, 100)
       if (!audio.paused) {
