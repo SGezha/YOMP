@@ -174,6 +174,7 @@ ipc.on("embed", (event, arg) => {
 
 function createActivity(data) {
   let act = {};
+  appIcon.setToolTip(data.title);
   if (data.title == "") {
     act = { details: "Idle", state: "Chill", largeImageKey: "icon", largeImageText: "YOMP", smallImageKey: "stop", smallImageText: "┬┴┬┴┤( ͡° ͜ʖ├┬┴┬┴" };
     return act;
