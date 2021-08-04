@@ -105,6 +105,8 @@ app.on('ready', createWindow);
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
+    if (embedWindow) embedWindow.close();
+    if (embedWindow) embedWindow = null;
     app.quit();
   }
 });
@@ -163,7 +165,7 @@ ipc.on("embed", (event, arg) => {
 
     embedWindow.on('closed', function(){
         embedWindow = null;
-        mainWindow.webContents.executeJavaScript("AP.videoOff();");
+        if(mainWindow) mainWindow.webContents.executeJavaScript("AP.videoOff();");
     });
   } else {
     if (embedWindow) embedWindow.close();
